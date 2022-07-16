@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useEffect } from "react";
 
 function Header() {
   const router = useRouter();
@@ -15,13 +16,7 @@ function Header() {
         <Link href={"/"}>
           <a>
             {" "}
-             
-              <Image
-                height={30}
-                width={100}
-                src={"/images/logoForDarkBg.png"}
-              />
-         
+            <Image height={30} width={100} src={"/images/logoForDarkBg.png"} />
           </a>
         </Link>
 

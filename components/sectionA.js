@@ -1,8 +1,11 @@
 import { Tabs } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 
 function SectionA({ data }) {
   const [countDown, setCoundown] = useState({});
+  const toStart = useRef(null);
+  const router = useRouter();
 
   // daily countdown timer
 
@@ -54,14 +57,18 @@ function SectionA({ data }) {
     });
   }
 
-  useEffect(() => {
+  useEffect((prevProps) => {
+
     let intervalId = setInterval(countdown, 1000);
     return () => clearInterval(intervalId);
   }, []);
 
   return (
     <>
-      <section className="     my-0   mx-auto mt-10 mb-20 w-full md:max-w-2xl lg:max-w-4xl xl:max-w-6xl p-2    text-white   ">
+      <section
+        ref={toStart}
+        className="      my-0   mx-auto mt-10 mb-20 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   "
+      >
         <div className="relative">
           {" "}
           <img
