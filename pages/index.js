@@ -11,16 +11,12 @@ export function getServerSideProps() {
   const drawUtc = new Date(
     Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12)
   );
-  //  jsjds
-
   const month = drawUtc.toLocaleString("default", { month: "short" });
   const date = drawUtc.getDate();
   const year = drawUtc.getFullYear();
   const hour = drawUtc.getHours();
-  const minute = drawUtc.getMinutes();
-  const second = drawUtc.getSeconds();
-  const amPm = hour >= 12 ? "PM" : "AM";
-  const lastDraw = { month, date, year, hour, minute, second, amPm };
+
+  const lastDraw = { month, date, year, hour };
 
   return {
     props: lastDraw,

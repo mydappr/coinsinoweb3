@@ -4,11 +4,44 @@ import { useRouter } from "next/router";
 
 function SectionA({ data }) {
   const [countDown, setCoundown] = useState({});
+  const [nextDayDraw, setNextDayDraw] = useState({});
   const toStart = useRef(null);
-  const router = useRouter();
+
+  console.log(countDown);
+  // next Draw day
+  const nextDay = (date = new Date()) => {
+    const nextDay = new Date(date.getTime());
+    nextDay.setUTCDate(date.getDate() + 1);
+    return nextDay;
+  };
+
+  const nextDraw = () => {
+    const now = new Date();
+    const date = now.getDate();
+    const month = now.toLocaleString("default", { month: "short" });
+    const year = now.getFullYear();
+    const hour = now.getUTCHours();
+    const minute = now.getMinutes();
+    const second = now.getSeconds();
+    if (hour < 12) {
+      setNextDayDraw({ year, date, month, hour });
+    } else {
+      const next = nextDay();
+      next.setUTCHours(12);
+      setNextDayDraw({
+        year: next.getFullYear(),
+        month: next.toLocaleString("default", { month: "short" }),
+        hour: next.getHours(),
+        date: next.getDate(),
+      });
+    }
+  };
+
+  useEffect(() => {
+    nextDraw();
+  }, []);
 
   // daily countdown timer
-
   function countdown() {
     const now = new Date();
     const hour = 12;
@@ -57,8 +90,7 @@ function SectionA({ data }) {
     });
   }
 
-  useEffect((prevProps) => {
-
+  useEffect(() => {
     let intervalId = setInterval(countdown, 1000);
     return () => clearInterval(intervalId);
   }, []);
@@ -148,7 +180,10 @@ function SectionA({ data }) {
                 <span>Next draw:</span>{" "}
                 <span>
                   <strong className=" text-lg text-coinSinoGreen">#4</strong>{" "}
-                  july 20, 2022, 7:00 PM
+                  <span>{nextDayDraw.month}</span>{" "}
+                  <span>{nextDayDraw.date}</span>{" "}
+                  <span>{nextDayDraw.year}</span>{" "}
+                  <span>{nextDayDraw.hour}</span>:<span>{"00"}</span>
                 </span>
               </p>
               <p>
