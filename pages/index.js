@@ -6,23 +6,6 @@ import Footer from "../components/footer";
 import { useRef } from "react";
 import ToTop from "../components/toTop";
 
-export function getServerSideProps() {
-  const now = new Date();
-  const drawUtc = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12)
-  );
-  const month = drawUtc.toLocaleString("default", { month: "short" });
-  const date = drawUtc.getDate();
-  const year = drawUtc.getFullYear();
-  const hour = drawUtc.getHours();
-
-  const lastDraw = { month, date, year, hour };
-
-  return {
-    props: lastDraw,
-  };
-}
-
 export default function Home(lastDraw) {
   const scrollTargetElementRef = useRef(null);
 
@@ -43,7 +26,7 @@ export default function Home(lastDraw) {
         <SectionA />
       </div>
 
-      <SectionB lastDraw={lastDraw} />
+      <SectionB />
 
       <Footer scrollTargetElementRef={scrollTargetElementRef} />
     </div>

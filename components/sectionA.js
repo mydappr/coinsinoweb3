@@ -7,7 +7,6 @@ function SectionA({ data }) {
   const [nextDayDraw, setNextDayDraw] = useState({});
   const toStart = useRef(null);
 
-  console.log(countDown);
   // next Draw day
   const nextDay = (date = new Date()) => {
     const nextDay = new Date(date.getTime());
@@ -23,8 +22,19 @@ function SectionA({ data }) {
     const hour = now.getUTCHours();
     const minute = now.getMinutes();
     const second = now.getSeconds();
-    if (hour < 12) {
-      setNextDayDraw({ year, date, month, hour });
+    const drawHr = 12;
+    if (hour < drawHr) {
+      const drawDate = new Date();
+      drawDate.setUTCHours(drawHr);
+
+      setNextDayDraw({
+        year,
+        date,
+        month,
+        hour: drawDate.getHours(),
+        minute,
+        second,
+      });
     } else {
       const next = nextDay();
       next.setUTCHours(12);

@@ -3,10 +3,25 @@ import { Tabs } from "flowbite-react";
 import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
 import RandomImage from "./randomenumber";
 
-function SectionB({ lastDraw }) {
-  const [lastDrawTime, setLastDrawTime] = useState(lastDraw);
+function SectionB({}) {
+  const [lastDrawTime, setLastDrawTime] = useState({});
   const [roundCount, setRoundCount] = useState(120);
 
+  useEffect(() => {
+    const now = new Date();
+    const drawUtc = new Date(
+      now.getFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate()
+    );
+    drawUtc.setUTCHours(12);
+    const month = drawUtc.toLocaleString("default", { month: "short" });
+    const date = drawUtc.getDate();
+    const year = drawUtc.getFullYear();
+    const hour = drawUtc.getHours();
+    const lastDraw = { month, date, year, hour };
+    setLastDrawTime(lastDraw);
+  }, []);
   // last
   const lastTimeDraw = (date = new Date()) => {
     const pastDraw = new Date(date.getTime());
@@ -19,8 +34,6 @@ function SectionB({ lastDraw }) {
     nextDay.setUTCDate(date.getDate() + 1);
     return nextDay;
   };
-
-  
 
   return (
     <section className="   my-0  mx-auto mt-10 mb-20 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
