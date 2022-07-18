@@ -9,12 +9,13 @@ function SectionB({}) {
 
   useEffect(() => {
     const now = new Date();
+    const hr = 12;
     const drawUtc = new Date(
-      now.getFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate()
+      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12)
     );
-    drawUtc.setUTCHours(12);
+
+    console.log(drawUtc);
+
     const month = drawUtc.toLocaleString("default", { month: "short" });
     const date = drawUtc.getDate();
     const year = drawUtc.getFullYear();
