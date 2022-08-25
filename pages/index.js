@@ -60,7 +60,6 @@ export const getServerSideProps = async () => {
 
   return {
     props: { keys },
- 
   };
 };
 
@@ -653,7 +652,7 @@ export default function Home({ keys }) {
                 const splittedTicketValues = Array.from(String(e));
 
                 return (
-                  <div className="max-w-md">
+                  <div key={i} className="max-w-md">
                     <div className="flex items-center ">
                       <span className=" p-2   font-bold">{`Ticket ${
                         i + 1
@@ -662,6 +661,7 @@ export default function Home({ keys }) {
                         {splittedTicketValues.map((tn, tIndex) => {
                           return (
                             <span
+                              key={tIndex}
                               className={`${
                                 tIndex === claimpoolLength[tIndex] &&
                                 ` bg-green-600`

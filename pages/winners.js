@@ -10,7 +10,7 @@ function Winners() {
         <meta name="description" content="CoinSino Winners" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="h-screen flex flex-col justify-between ">
+      <div className="flex h-screen flex-col justify-between ">
         <Header />
         <div className="">
           <Footer />

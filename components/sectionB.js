@@ -481,7 +481,6 @@ function SectionB({ keys }) {
     }
   };
 
-
   // connect Wallet
   const connectWallet = async () => {
     try {
@@ -504,7 +503,6 @@ function SectionB({ keys }) {
       setCurrentAccount(accounts[0]);
     } catch (error) {}
   };
-
 
   return (
     <section className="   my-0  mx-auto mt-10 mb-20 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
@@ -560,13 +558,14 @@ function SectionB({ keys }) {
               const splittedTicketValues = Array.from(String(e));
 
               return (
-                <div className=" mx-auto mt-0 w-full ">
+                <div key={i} className=" mx-auto mt-0 w-full ">
                   <div className="mx-auto  flex w-full  max-w-xs items-center  space-x-5   ">
                     <p className="text-sm  font-bold">{`Ticket ${i + 1}`}</p>
                     <p className="  flex-grow-1 flex w-fit items-center space-x-2  text-center ">
                       {splittedTicketValues.map((tn, tIndex) => {
                         return (
                           <p
+                            key={tIndex}
                             className={` flex items-center  p-2 text-lg ${
                               tIndex === claimpoolLength[tIndex] &&
                               `  h-8  w-8 rounded-full bg-coinSinoPink font-bold`

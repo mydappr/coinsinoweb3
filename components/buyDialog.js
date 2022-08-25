@@ -29,16 +29,15 @@ export default function BuyDialog() {
   const inputRef = useRef(null);
 
   const getTelosPrice = async () => {
-  try {
-    
-    const get = await fetch(`https://api.coingecko.com/api/v3/coins/telos`);
-    const res = await get.json();
-    const price = res.market_data.current_price.usd;
-    setTelosPrice(price);
-    console.log(price);
-  } catch (error) {
-    console.log(error)
-  }
+    try {
+      const get = await fetch(`https://api.coingecko.com/api/v3/coins/telos`);
+      const res = await get.json();
+      const price = res.market_data.current_price.usd;
+      setTelosPrice(price);
+      console.log(price);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -114,14 +113,8 @@ export default function BuyDialog() {
     e.preventDefault();
     let invalidChars = /[^0-9]/gi;
     if (invalidChars.test(e.target.value)) {
-      e.target.value = e.target.value.replace(
-        invalidChars,
-        ""
-      );
+      e.target.value = e.target.value.replace(invalidChars, "");
     }
- 
-
-
 
     const { value, maxLength, name, placeholder } = e.target;
 
@@ -360,7 +353,7 @@ export default function BuyDialog() {
 
                   <div className="mt-2">
                     <p className="text-sm ">
-                      "Buy Instantly" chooses random numbers, with no duplicates
+                      `Buy Instantly` chooses random numbers, with no duplicates
                       among your tickets.
                     </p>
                   </div>
@@ -432,10 +425,14 @@ export default function BuyDialog() {
                       const splitTicket = Array.from(String(el));
 
                       return (
-                        <p className="    max-w-full items-center justify-between   space-y-1 space-x-1  ">
+                        <p
+                          key={li}
+                          className="    max-w-full items-center justify-between   space-y-1 space-x-1  "
+                        >
                           {splitTicket.map((eel, i, arr) => {
                             return (
                               <textarea
+                                key={i}
                                 type="number"
                                 ref={inputRef}
                                 pattern="[0-9]*"
@@ -511,7 +508,7 @@ export default function BuyDialog() {
                   </div>
                   <div className="mt-2">
                     <p className="text-sm ">
-                      "Buy Instantly" chooses random numbers, with no duplicates
+                      `Buy Instantly` chooses random numbers, with no duplicates
                       among your tickets.
                     </p>
                   </div>

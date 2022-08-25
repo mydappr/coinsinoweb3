@@ -95,12 +95,15 @@ function ViewTickets() {
 
                   <div className="mt-2">
                     <div className="text-sm ">
-                      {userTickets.map((e) => {
+                      {userTickets.map((e, i) => {
                         const split = Array.from(String(e));
                         return (
-                          <div className="my-2 flex w-full items-center justify-between  rounded-2xl  border-[1px] bg-coinSinoPurpleNav p-2 font-bold">
-                            {split.map((ee) => (
-                              <p>{ee}</p>
+                          <div
+                            key={i}
+                            className="my-2 flex w-full items-center justify-between  rounded-2xl  border-[1px] bg-coinSinoPurpleNav p-2 font-bold"
+                          >
+                            {split.map((ee, i) => (
+                              <p key={i}>{ee}</p>
                             ))}
                           </div>
                         );
