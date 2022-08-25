@@ -53,7 +53,7 @@ const claimable = 3;
 
 // serverside
 export const getServerSideProps = async () => {
-  const a = await fetch("http://localhost:3000/api/hello");
+  const a = await fetch("https://sino-one.vercel.app/api/hello");
   const keys = await a.json();
 
   // fetch initial status for lottery
