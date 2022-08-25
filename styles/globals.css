@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-[#20094d] overflow-y-scroll scrollbar-hide  ;
+    @apply overflow-y-scroll bg-[#20094d] scrollbar-hide;
   }
 }
 
@@ -16,15 +16,25 @@
     @apply mt-5 w-fit cursor-pointer rounded-xl bg-coinSinoGreen  p-3 px-3 text-center font-bold;
   }
   .timeStamp {
-    @apply w-[60px] bg-coinSinoPurple p-3 text-4xl font-bold;
-  }
+    @apply w-[60px] rounded-full bg-coinSinoPurple p-3 text-4xl font-bold;
+  } 
   .daysStamp {
     @apply my-2 block text-lg text-coinSinoTextColor2;
   }
   .activeNave {
     @apply rounded-2xl border-2 border-coinSinoTextColor2 bg-coinSinoPurple p-2;
-  }
+  } 
   .inActiveNave {
     @apply rounded-2xl p-3  hover:bg-coinSinoPurple hover:text-coinSinoTextColor;
   }
+  
+  .waiting{
+    @apply h-10 w-80 self-center mx-auto bg-black bg-opacity-[0.2] rounded-md animate-pulse 
+  }
+}
+
+.no-spin::-webkit-inner-spin-button,
+.no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
 }
