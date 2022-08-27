@@ -14,6 +14,7 @@ import {
   viewTicket,
   rouncount,
   wonSize,
+  usewalletModal,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import Sinoabi from "../utils/Coinsino.json";
@@ -42,6 +43,7 @@ function SectionB({ keys }) {
   const [endTime, setEndTime] = useRecoilState(endLotteryTime);
   const [viewTicketOpen, setviewTicketOpen] = useRecoilState(viewTicket);
   const [wonTicketSize, setWonTicketSize] = useRecoilState(wonSize);
+  const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
 
   useEffect(() => {
     setRoundCount(currentLotteryId);
@@ -187,7 +189,7 @@ function SectionB({ keys }) {
             const rewards = ethers.utils.formatEther(view);
 
             if (!Number(rewards)) {
-              setRewardMessage("sorry you did not win this time");
+              setRewardMessage("sorry you did not win this time!");
               setunClaimedUserRewards(null);
               return;
             }
@@ -481,29 +483,6 @@ function SectionB({ keys }) {
     }
   };
 
-  // connect Wallet
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        return;
-      }
-      let chainId = await ethereum.request({ method: "eth_chainId" });
-
-      if (chainId !== "0x29") {
-        alert("You are not connected to the Telos network!");
-        return;
-      }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      setCurrentAccount(accounts[0]);
-    } catch (error) {}
-  };
-
   return (
     <section className="   my-0  mx-auto mt-10 mb-20 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
       <h2 className=" text-center text-lg font-bold text-coinSinoGreen">
@@ -511,7 +490,7 @@ function SectionB({ keys }) {
       </h2>
       {!rewardMessage && (
         <div className=" my-7 mx-auto w-full max-w-[200px] space-y-5 p-2">
-          <h2 className=" text-center text-xl font-bold">Check if you won!</h2>{" "}
+          <h2 className=" text-center text-xl font-bold">Check if you won.</h2>{" "}
           {currentAccount ? (
             <button
               disabled={!winningNo}
@@ -527,7 +506,7 @@ function SectionB({ keys }) {
             <p
               className=" cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3 text-center   font-bold text-coinSinoTextColor sm:mb-5"
               onClick={() => {
-                connectWallet();
+                setwalletModal(true);
               }}
             >
               Connect Wallet
@@ -659,7 +638,45 @@ function SectionB({ keys }) {
             </div>
           </Tabs.Item>
           <Tabs.Item title="Your History">
-            <div></div>
+            {currentAccount ? (
+              <>
+                {" "}
+                <div className="flex justify-between font-bold  text-coinSinoGreen ">
+                  <span>#</span>
+                  <span>Date</span>
+                  <span>Your Tickets</span>
+                </div>{" "}
+                <div className="my-4  flex max-h-10 items-center justify-between  text-xs font-bold text-coinSinoTextColor2">
+                  <span>{roundCount}</span>
+                  {lastDrawTime.month ? (
+                    <div className="my-5 text-coinSinoTextColor2 ">
+                      <span>{lastDrawTime.month}</span> {""}
+                      <span>{lastDrawTime.date}</span> {""}
+                      <span>{lastDrawTime.year}</span> {""}
+                      <span>{lastDrawTime.hour}</span>:
+                      <span>{lastDrawTime.minute}</span> {""}
+                      <span>{lastDrawTime.antePost}</span> {""}
+                    </div>
+                  ) : (
+                    <div className="waiting"></div>
+                  )}
+                  <span className="">{userTickets.length}</span>
+                </div>
+              </>
+            ) : (
+              <div className=" flex flex-col justify-center space-y-5 p-5 text-center text-coinSinoTextColor2">
+                {" "}
+                <p>Connect your wallet to check your history</p>{" "}
+                <p
+                  className="w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3 font-bold   text-coinSinoTextColor outline-none sm:mb-5"
+                  onClick={() => {
+                    setwalletModal(true);
+                  }}
+                >
+                  Connect Wallet
+                </p>
+              </div>
+            )}
           </Tabs.Item>
         </Tabs.Group>
       </div>

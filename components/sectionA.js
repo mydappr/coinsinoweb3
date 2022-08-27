@@ -1,14 +1,14 @@
 import { Tabs } from "flowbite-react";
 
 import CountUp from "react-countup";
-
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
 import Sinoabi from "../utils/Coinsino.json";
 import moment from "moment";
 import { useRecoilState } from "recoil";
-import buyDialog from "./buyDialog";
+
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 import {
   latestLotteryId,
@@ -26,8 +26,12 @@ import {
   sixthpool,
   endLotteryTime,
   winningNumbers,
+  usewalletModal,
 } from "../atoms/atoms";
 import BuyDialog from "./buyDialog";
+import Web3 from "web3";
+import { providers } from "ethers";
+
 // coinsino contract address
 const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
 
@@ -62,6 +66,8 @@ function SectionA({ keys }) {
   const [fourthPoolFunds, setfourthPoolFunds] = useRecoilState(fourthpool);
   const [fifthPoolFunds, setFifthPoolFunds] = useRecoilState(fiftpool);
   const [sixthPoolFunds, setSixthPoolFunds] = useRecoilState(sixthpool);
+  const [proverConnector, setProviderConnector] = useState("");
+  const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
 
   const nextDraw = () => {
     console.log(endTime);
@@ -69,20 +75,6 @@ function SectionA({ keys }) {
     const todaydraw = moment.unix(endTime).utcOffset(0);
     todaydraw.toISOString();
     todaydraw.format();
-
-    let yesterday = moment().add(-1, "days");
-
-    // const now = new Date();
-    // const date = now.getDate();
-    // const month = now.toLocaleString("default", { month: "short" });
-    // const year = now.getFullYear();
-    // const hour = now.getUTCHours();
-    // const minute = now.getMinutes();
-    // const second = now.getSeconds();
-    // const drawHr = 12;
-
-    // const drawDate = new Date();
-    // drawDate.setUTCHours(drawHr);
     let tomorrow = moment(todaydraw.add(1, "days").local());
 
     const date = tomorrow.date();
@@ -101,66 +93,44 @@ function SectionA({ keys }) {
       minute,
       antePost,
     });
-
-    // const next = nextDay();
-    // next.setUTCHours(12);
-    // setNextDayDraw({
-    //   year: next.getFullYear(),
-    //   month: next.toLocaleString("default", { month: "short" }),
-    //   hour: next.getHours(),
-    //   date: next.getDate(),
-    // });
   };
 
   useEffect(() => {
     nextDraw();
   }, [endTime]);
 
-  const LotteryInfo = async () => {
-    try {
-      // signers wallet get smartcontract
-      const rpcUrl = "https://testnet.telos.net/evm";
+  // const LotteryInfo = async () => {
+  //   try {
+  //     // signers wallet get smartcontract
+  //     const rpcUrl = "https://testnet.telos.net/evm";
 
-      // signers wallet get smartcontract
-      const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+  //     // signers wallet get smartcontract
+  //     const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 
-      // operator signer and contract
-      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
-      const operatorcoinSinoContract = new ethers.Contract(
-        coinSinoContractAddress,
-        Sinoabi,
-        operatorSigner
-      );
-      // current lotteryid
-      const currentLotteryId = await convertHexToInt(
-        await operatorcoinSinoContract.viewCurrentLotteryId()
-      );
+  //     // operator signer and contract
+  //     const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+  //     const operatorcoinSinoContract = new ethers.Contract(
+  //       coinSinoContractAddress,
+  //       Sinoabi,
+  //       operatorSigner
+  //     );
+  //     // current lotteryid
+  //     const currentLotteryId = await convertHexToInt(
+  //       await operatorcoinSinoContract.viewCurrentLotteryId()
+  //     );
 
-      const getLotterystatus = await operatorcoinSinoContract.viewLottery(
-        currentLotteryId
-      );
+  //     const getLotterystatus = await operatorcoinSinoContract.viewLottery(
+  //       currentLotteryId
+  //     );
 
-      const { treasuryFee } = getLotterystatus;
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
-      // setWinningNO(finalNumber);
-
-      // console.log("lottery info", getLotterystatus);
-
-      // const { startTime, endTime, amountCollectedInTelos } = getLotterystatus;
-
-      // setTotalLotteryDeposit(
-      //   ethers.utils.formatEther(amountCollectedInTelos, "ether")
-      // );
-
-      // console.log(Number(amountCollectedInTelos));
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  useEffect(() => {
-    LotteryInfo();
-  }, []);
+  // useEffect(() => {
+  //   LotteryInfo();
+  // }, []);
 
   async function countdown() {
     // console.log(dateString.day(), dateString.days());
@@ -215,29 +185,6 @@ function SectionA({ keys }) {
     return () => clearInterval(intervalId);
   }, [countDown]);
 
-  // connectWallet
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        return;
-      }
-      let chainId = await ethereum.request({ method: "eth_chainId" });
-
-      if (chainId !== "0x29") {
-        alert("You are not connected to the Telos network!");
-        return;
-      }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      setCurrentAccount(accounts[0]);
-    } catch (error) {}
-  };
-
   return (
     <>
       <section
@@ -280,7 +227,7 @@ function SectionA({ keys }) {
               <p
                 className="w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3   font-bold text-coinSinoTextColor sm:mb-5"
                 onClick={() => {
-                  connectWallet();
+                  setwalletModal(true);
                 }}
               >
                 Connect Wallet
@@ -411,7 +358,7 @@ function SectionA({ keys }) {
                 <p
                   className="joinBtn"
                   onClick={() => {
-                    connectWallet();
+                    setwalletModal(true);
                   }}
                 >
                   Connect Wallet

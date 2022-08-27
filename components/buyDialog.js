@@ -10,8 +10,6 @@ import {
 } from "../atoms/atoms";
 import Sinoabi from "../utils/Coinsino.json";
 import { ethers, BigNumber } from "ethers";
-import { list } from "postcss";
-import { arrayify, id } from "ethers/lib/utils";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
@@ -26,6 +24,7 @@ export default function BuyDialog() {
     useRecoilState(latestLotteryId);
   const [errorMessage, setErrorMessage] = useState("");
   const [telosPrice, setTelosPrice] = useRecoilState(tlosPrice);
+  const [userBalance, setuserBalance] = useState(0);
   const inputRef = useRef(null);
 
   const getTelosPrice = async () => {
@@ -47,7 +46,7 @@ export default function BuyDialog() {
   const discountDivisor = 2000;
 
   const pricePerTicket = "15";
-  const userBalance = 99;
+
   const totalTicketsPrice = noOfTickets * pricePerTicket;
 
   const priceTopay =
@@ -300,7 +299,7 @@ export default function BuyDialog() {
                     {userBalance < totalTicketsPrice && (
                       <div className="text-end ">
                         <p className=" text-coinSinoPink  ">
-                          Insufficient CAKE balance
+                          Insufficient Tlos balance
                         </p>
                         <p>Telos Balance: {userBalance}</p>
                       </div>

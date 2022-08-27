@@ -3,7 +3,9 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { activeAccount } from "../atoms/atoms";
+import { activeAccount, usewalletModal } from "../atoms/atoms";
+import WalletModal from "./connectWalletModal";
+import useWallets from "./useWallets";
 
 function Header() {
   const router = useRouter();
@@ -12,68 +14,8 @@ function Header() {
   const [loadingState, setLoadingState] = useState(0);
   const [txError, setTxError] = useState(null);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
-  const [correctNetwork, setCorrectNetwork] = useState(false);
-
-  // Checks if wallet is connected
-  const checkIfWalletIsConnected = async () => {
-    const { ethereum } = window;
-    if (ethereum) {
-      // const provider = new ethers.providers.Web3Provider(ethereum);
-      // const signer = provider.getSigner();
-      // console.log(signer);
-    } else {
-      return
-    }
-
-    const accounts = await ethereum.request({ method: "eth_accounts" });
-
-    if (accounts.length !== 0) {
-      setCurrentAccount(accounts[0]);
-    } else {
-    }
-  };
-
-  // Calls Metamask to connect wallet on clicking Connect Wallet button
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-
-      if (!ethereum) {
-        return;
-      }
-      let chainId = await ethereum.request({ method: "eth_chainId" });
-
-      if (chainId !== "0x29") {
-        alert("You are not connected to the Telos network!");
-        return;
-      }
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      setCurrentAccount(accounts[0]);
-    } catch (error) {}
-  };
-
-  // Checks if wallet is connected to the correct network
-  const checkCorrectNetwork = async () => {
-    const { ethereum } = window;
-    if(!ethereum) return
-    let chainId = await ethereum.request({ method: "eth_chainId" });
-
-    if (Number(chainId) !== 41) {
-      setCorrectNetwork(false);
-      setCurrentAccount("");
-    } else {
-      setCorrectNetwork(true);
-    }
-  };
-
-  useEffect(() => {
-    checkIfWalletIsConnected();
-    checkCorrectNetwork();
-  }, []);
+  const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
+  const { disConnectWallet } = useWallets();
 
   const naveStyle = (page) => {
     return `${router.pathname == `/${page}` ? "activeNave" : "inActiveNave"}`;
@@ -89,9 +31,13 @@ function Header() {
           </a>
         </Link>
 
+        <WalletModal />
+
         {/* connect button */}
         <a
-          onClick={connectWallet}
+          onClick={() =>
+            !currentAccount ? setwalletModal(true) : disConnectWallet()
+          }
           className="group relative inline-block cursor-pointer text-lg"
         >
           <span className="relative z-10 block overflow-hidden rounded-lg border-2 border-gray-900 px-5 py-3 font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out group-hover:text-white">
@@ -107,7 +53,7 @@ function Header() {
           ></span>
         </a>
 
-        <ul className="fixed  bottom-0 text-xs left-0 z-10 flex h-16  w-full items-center justify-between rounded-xl border border-coinSinoTextColor2  bg-coinSinoPurpleNav p-5     text-white  sm:static   sm:top-0 sm:z-[51]  sm:float-right  sm:w-fit sm:space-x-3 sm:border-none ">
+        <ul className="fixed  bottom-0 left-0 z-10 flex h-16 w-full  items-center justify-between rounded-xl border border-coinSinoTextColor2 bg-coinSinoPurpleNav  p-5 text-xs     text-white  sm:static   sm:top-0 sm:z-[51]  sm:float-right  sm:w-fit sm:space-x-3 sm:border-none ">
           <Link href={"/faq"}>
             <a className={naveStyle("faq")}>How to play</a>
           </Link>

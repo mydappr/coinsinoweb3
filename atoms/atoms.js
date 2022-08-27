@@ -112,3 +112,8 @@ export const wonSize = atom({
   key: "wonSize",
   default: 0,
 });
+
+export const usewalletModal = atom({
+  key: "usewalletModal",
+  default: false,
+});
