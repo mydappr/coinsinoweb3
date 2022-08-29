@@ -26,7 +26,7 @@ function WalletModal() {
     <Transition appear show={walletModal} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-10 "
+        className="relative z-30 "
         open={walletModal}
         onClose={closeWalletModals}
       >
@@ -74,7 +74,7 @@ function WalletModal() {
                   >
                     {" "}
                     <p className=" max-h-[100px]   self-center    bg-[url('/images/metamask.svg')]     bg-contain  bg-no-repeat p-6"></p>
-                    <p className="text-base font-bold">metamask</p>
+                    <p className="text-base font-bold">MetaMask</p>
                   </div>
                   <div
                     className="flex cursor-pointer  flex-col   items-center"

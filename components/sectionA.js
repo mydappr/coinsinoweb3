@@ -9,12 +9,14 @@ import moment from "moment";
 import { useRecoilState } from "recoil";
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
 
 import {
   latestLotteryId,
   activeAccount,
   totalLotteryFunds,
   userTickets as accountTicket,
+  lotteryStatus as Lstatus,
   buyModal,
   burnfee,
   firstpool,
@@ -31,24 +33,24 @@ import {
 import BuyDialog from "./buyDialog";
 import Web3 from "web3";
 import { providers } from "ethers";
+import OperatorFunctions from "./OperatorFunctions";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
+const Pending = 0;
+const Open = 1;
+const closed = 2;
+const claimable = 3;
 
 async function convertHexToInt(hex) {
   return parseInt(hex, 16);
 }
 
 function SectionA({ keys }) {
+  const { startLottery, closeLottery, drawLottery } = OperatorFunctions(keys);
+
   const [buyModalStat, setbuyModalStat] = useRecoilState(buyModal);
-  const [countDown, setCoundown] = useState({
-    years: 0,
-    months: 0,
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const [countDown, setCoundown] = useState({});
   const [nextDayDraw, setNextDayDraw] = useState({});
   const [totalLotteryDeposit, setTotalLotteryDeposit] =
     useRecoilState(totalLotteryFunds);
@@ -68,9 +70,9 @@ function SectionA({ keys }) {
   const [sixthPoolFunds, setSixthPoolFunds] = useRecoilState(sixthpool);
   const [proverConnector, setProviderConnector] = useState("");
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
+  const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
 
   const nextDraw = () => {
-    console.log(endTime);
     // today
     const todaydraw = moment.unix(endTime).utcOffset(0);
     todaydraw.toISOString();
@@ -134,56 +136,78 @@ function SectionA({ keys }) {
 
   async function countdown() {
     // console.log(dateString.day(), dateString.days());
+    if (endTime) {
+      let T = moment.unix(endTime).format();
 
-    const a = moment.unix(1660608000).format();
+      const dateString = moment(T);
+      const now = moment();
+      const y = dateString.year();
+      const mo = dateString.month();
+      const d = dateString.date();
+      const h = dateString.hours();
+      const m = dateString.minute();
+      const s = dateString.seconds();
 
-    const dateString = moment(a);
-    const now = new Date();
-    const y = dateString.year();
-    const mo = dateString.month();
-    const d = dateString.date();
-    const h = dateString.hours();
-    const m = dateString.minute();
-    const s = dateString.seconds();
+      let maxTime = moment();
+      maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
 
-    let maxTime = moment();
-    maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+      if (now > maxTime) {
+        setCoundown({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        });
 
-    if (now > maxTime) {
-      setCoundown({
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      });
-      return;
-      maxTime = new Date(
-        Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1, h, m, s)
+        if (
+          countDown.days === 0 &&
+          countDown.hours === 0 &&
+          countDown.minutes === 0 &&
+          countDown.seconds === 0
+        ) {
+          // maxTime = moment();
+          // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+          return
+          console.log()
+          if (lotteryStatus === Open) {
+            closeLottery();
+          } else if (lotteryStatus === closed) {
+            drawLottery();
+          } else {
+            startLottery();
+          }
+
+          // startLottery();
+          // await
+          // await drawLottery();
+        }
+        return;
+      }
+      console.log(countDown);
+
+      const countDownDate = moment.unix(maxTime.unix());
+      const timeleft = countDownDate - moment();
+      const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
       );
+      const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+
+      setCoundown({
+        days,
+        hours,
+        minutes,
+        seconds,
+      });
     }
-
-    const countDownDate = moment.unix(maxTime.unix());
-    const timeleft = countDownDate - moment();
-    const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-
-    setCoundown({
-      days,
-      hours,
-      minutes,
-      seconds,
-    });
   }
 
   useEffect(() => {
     let intervalId = setInterval(countdown, 1000);
 
     return () => clearInterval(intervalId);
-  }, [countDown]);
+  }, [endTime, countDown]);
 
   return (
     <>
@@ -196,6 +220,7 @@ function SectionA({ keys }) {
             <h2 className="mt-2 text-base font-bold text-coinSinoTextColor md:mt-3">
               The pool lottery
             </h2>
+
             <div className="    ">
               <p>Total price:</p>
               {totalLotteryDeposit ? (
@@ -239,49 +264,53 @@ function SectionA({ keys }) {
         {/* gets your ticket now Time is running */}
 
         <div className=" mt-20 p-2 text-center ">
-          <h1 className="mb-7 text-3xl font-bold text-coinSinoGreen ">
+         {lotteryStatus===Open? <> <h1 className="mb-7 text-3xl font-bold text-coinSinoGreen ">
             Get your tickets now!
           </h1>
           <div className="">
             <p className="text-coinSinoTextColor">Times remaining for draw</p>
-            <div className="my-5  flex justify-center space-x-2">
-              <div className="">
-                <div className="inline-flex items-center space-x-2">
-                  <h2 className="timeStamp text-3xl">{countDown.days}</h2>
-                  <span className="text-3xl font-bold text-coinSinoTextColor2 ">
-                    :
-                  </span>
+            {endTime ? (
+              <div className="my-5  flex justify-center space-x-2">
+                <div className="">
+                  <div className="inline-flex items-center space-x-2">
+                    <h2 className="timeStamp text-3xl">{countDown.days}</h2>
+                    <span className="text-3xl font-bold text-coinSinoTextColor2 ">
+                      :
+                    </span>
+                  </div>
+                  <span className="daysStamp">Days</span>
                 </div>
-                <span className="daysStamp">Days</span>
-              </div>
-              <div>
-                <div className="inline-flex items-center space-x-2">
-                  <h2 className="timeStamp text-3xl">{countDown.hours}</h2>
-                  <span className="text-3xl font-bold text-coinSinoTextColor2 ">
-                    :
-                  </span>
-                </div>
+                <div>
+                  <div className="inline-flex items-center space-x-2">
+                    <h2 className="timeStamp text-3xl">{countDown.hours}</h2>
+                    <span className="text-3xl font-bold text-coinSinoTextColor2 ">
+                      :
+                    </span>
+                  </div>
 
-                <span className="daysStamp">Hour</span>
-              </div>
-              <div>
-                <div className="inline-flex items-center space-x-2">
-                  <h2 className="timeStamp text-3xl">{countDown.minutes}</h2>
-                  <span className="text-3xl font-bold text-coinSinoTextColor2 ">
-                    :
-                  </span>
+                  <span className="daysStamp">Hour</span>
                 </div>
-                <span className="daysStamp">Minutes</span>
-              </div>
-              <div>
-                <div className="inline-flex items-center space-x-2">
-                  <h2 className="timeStamp text-3xl">{countDown.seconds}</h2>
-                  <span className="text-3xl font-bold text-coinSinoTextColor2 "></span>
+                <div>
+                  <div className="inline-flex items-center space-x-2">
+                    <h2 className="timeStamp text-3xl">{countDown.minutes}</h2>
+                    <span className="text-3xl font-bold text-coinSinoTextColor2 ">
+                      :
+                    </span>
+                  </div>
+                  <span className="daysStamp">Minutes</span>
                 </div>
-                <span className="daysStamp">Seconds</span>
+                <div>
+                  <div className="inline-flex items-center space-x-2">
+                    <h2 className="timeStamp text-3xl">{countDown.seconds}</h2>
+                    <span className="text-3xl font-bold text-coinSinoTextColor2 "></span>
+                  </div>
+                  <span className="daysStamp">Seconds</span>
+                </div>
               </div>
-            </div>
-          </div>
+            ) : (
+              <div className="waiting"></div>
+            )}
+          </div></>:lotteryStatus===closed?<div>Drawing Lottery</div>: ''}
         </div>
 
         {/* pool details */}

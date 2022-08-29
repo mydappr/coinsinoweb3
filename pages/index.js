@@ -118,176 +118,7 @@ export default function Home({ keys }) {
     return rand;
   }
 
-  async function generateTicketNumbers(numberOfTickets) {
-    const numbers = [];
-    for (let i = 0; i < numberOfTickets; i++) {
-      const ticket = await generateRandom(100000, 999999);
-      numbers.push(ticket);
-    }
-    return numbers;
-  }
-
-  const wonTicketArr = [];
-  const pools = [];
-
-  let i = 0;
-  function wonPools(arr1, arr2) {
-    while (i < arr1.length) {
-      if (arr1[i] === arr2[i]) {
-        // return single array if there duplicate
-        pools.push(i);
-        wonTicketArr.push(arr1);
-        i++;
-      } else {
-        return;
-      }
-    }
-  }
-
-  async function generatePossibleTicketIds(length) {
-    const iDs = Array.from({ length }, (_, i) => i + 1);
-    return iDs;
-  }
-
-  const close = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        // operator signer and contract
-        const operatorSigner = new ethers.Wallet(keys.opkey, provider);
-        const operatorcoinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
-          Sinoabi,
-          operatorSigner
-        );
-
-        const RNGContract = new ethers.Contract(
-          rngContractaddress,
-          Rngabi,
-          operatorSigner
-        );
-
-        const getLastRound = await convertHexToInt(
-          await RNGContract.getLastRound()
-        );
-        await operatorcoinSinoContract.closeLottery(
-          currentLotteryId,
-          getLastRound
-        );
-
-        console.log("closed");
-      }
-    } catch (error) {
-      console.log("Error minting character", error);
-    }
-  };
-
-  const start = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        // operator signer and contract
-        const operatorSigner = new ethers.Wallet(keys.opkey, provider);
-        const operatorcoinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
-          Sinoabi,
-          operatorSigner
-        );
-
-        const oneMinute = await convertInput("10 minutes");
-
-        // start a lottery
-        const startLottery = await operatorcoinSinoContract.startLottery(
-          oneMinute,
-          ethers.utils.parseUnits(pricePerTicket, "ether"),
-          300,
-          [500, 960, 1430, 1910, 2390, 2810],
-          1000
-        );
-
-        await startLottery;
-
-        console.log("lottery started");
-        // get current lottery id
-
-        console.log(currentLotteryId, "currentid");
-        const getLotterystatus = await operatorcoinSinoContract.viewLottery(
-          currentLotteryId
-        );
-
-        console.log("lottery status", getLotterystatus.status);
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-      console.log("Error minting character", error);
-      // setTxError(error.message);
-    }
-  };
-
-  // lottery info
-  const drawFinal = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const operatorSigner = new ethers.Wallet(keys.opkey, provider);
-        const operatorcoinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
-          Sinoabi,
-          operatorSigner
-        );
-
-        const RNGContract = new ethers.Contract(
-          rngContractaddress,
-          Rngabi,
-          operatorSigner
-        );
-        // set random value
-
-        const lastround = await convertHexToInt(
-          await RNGContract.getLastRound()
-        );
-        await RNGContract.setRandomValue(
-          initialRound === 0 ? data.round : lastround + 1,
-          data.randomness,
-          data.signature,
-          data.previous_signature
-        );
-        const getLastRound = await convertHexToInt(
-          await RNGContract.getLastRound()
-        );
-
-        console.log(getLastRound);
-
-        console.log(currentLotteryId, "latest lottery id");
-        const drawFinalNumberAndMakeLotteryClaimable =
-          await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
-            currentLotteryId,
-            false,
-            getLastRound
-            // { gasLimit: 26250 }
-          );
-        console.log(
-          drawFinalNumberAndMakeLotteryClaimable,
-          "lottery has now been drawn and rewards  now claimable"
-        );
-        await drawFinalNumberAndMakeLotteryClaimable.wait();
-        console.log(
-          drawFinalNumberAndMakeLotteryClaimable,
-          "lottery has now been drawn and rewards  now claimable"
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+ 
   const getLatestLotteryInfo = async () => {
     const { ethereum } = window;
 
@@ -317,6 +148,7 @@ export default function Home({ keys }) {
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
         latestLotteryId
       );
+      console.log(getLotterystatus)
 
       // current lottery status
       const {
@@ -328,7 +160,7 @@ export default function Home({ keys }) {
         rewardsBreakdown,
       } = getLotterystatus;
 
-      setEndTime(endTime);
+      setEndTime(Number(endTime));
 
       setTotalLotteryDeposit(
         ethers.utils.formatEther(amountCollectedInTelos, "ether")
@@ -364,13 +196,15 @@ export default function Home({ keys }) {
         ((Number(rewardsBreakdown[5]) / 10000) * 100 * totalPoolFunds) / 100;
       setSixthPoolFunds(sixthpool);
 
-      status === Open
-        ? setlotteryStatus(Open)
-        : status === closed
-        ? setlotteryStatus(closed)
-        : status === claimable
-        ? setlotteryStatus(claimable)
-        : setlotteryStatus(Pending);
+        if(endTime){
+          status === Open
+          ? setlotteryStatus(Open)
+          : status === closed
+          ? setlotteryStatus(closed)
+          : status === claimable
+          ? setlotteryStatus(claimable)
+          : setlotteryStatus(Pending);
+        }
     } catch (error) {
       console.log(error);
     }
@@ -613,7 +447,7 @@ export default function Home({ keys }) {
         className="bg-[url('/images/bg.png')] bg-center bg-no-repeat "
       >
         <div className=" flex w-fit flex-col space-y-5 ">
-          <button className=" bg-white  p-5" onClick={start}>
+          {/* <button className=" bg-white  p-5" onClick={start}>
             operator: start lottery
           </button>
           <button className=" bg-white  p-5" onClick={close}>
@@ -622,7 +456,7 @@ export default function Home({ keys }) {
 
           <button className=" bg-white  p-5" onClick={drawFinal}>
             operator: Draw final
-          </button>
+          </button> */}
           {/* <button className=" bg-white  p-5" onClick={info}>
             operator: check Info
           </button> */}

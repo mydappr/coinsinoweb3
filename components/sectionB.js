@@ -46,7 +46,7 @@ function SectionB({ keys }) {
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
 
   useEffect(() => {
-    setRoundCount(currentLotteryId);
+    setRoundCount(currentLotteryId - 1);
   }, [currentLotteryId]);
 
   // convert hex to int
@@ -478,7 +478,7 @@ function SectionB({ keys }) {
     }
   };
   const nextDraws = async () => {
-    if (roundCount < currentLotteryId) {
+    if (roundCount < currentLotteryId - 1) {
       setRoundCount((prev) => prev + 1);
     }
   };
@@ -587,8 +587,9 @@ function SectionB({ keys }) {
               <div className="flex justify-between p-3">
                 <PlayIcon
                   onClick={previousDraws}
-                  className=" h-10  rotate-180 cursor-pointer rounded-full  bg-white text-coinSinoPurple "
+                  className=" h-10  rotate-180  cursor-pointer rounded-full  bg-white text-coinSinoPurple "
                 />
+                
                 <div className=" ">
                   <div className="mx-auto my-2 w-fit space-y-2 text-center">
                     <h2 className="font-bold text-coinSinoTextColor ">Round</h2>
