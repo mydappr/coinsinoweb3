@@ -53,7 +53,15 @@ const claimable = 3;
 
 // serverside
 export const getServerSideProps = async () => {
-  const a = await fetch("http://localhost:3000/api/hello");
+  let baseUrl;
+  const env = process.env.NODE_ENV;
+  if (env == "development") {
+    baseUrl = "http://localhost:3000";
+  } else if (env == "production") {
+    baseUrl = "https://sino-one.vercel.app";
+  }
+
+  const a = await fetch(`${baseUrl}/api/hello`);
   const keys = await a.json();
 
   // fetch initial status for lottery
@@ -118,7 +126,6 @@ export default function Home({ keys }) {
     return rand;
   }
 
- 
   const getLatestLotteryInfo = async () => {
     const { ethereum } = window;
 
@@ -148,7 +155,7 @@ export default function Home({ keys }) {
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
         latestLotteryId
       );
-      console.log(getLotterystatus)
+      console.log(getLotterystatus);
 
       // current lottery status
       const {
@@ -196,15 +203,15 @@ export default function Home({ keys }) {
         ((Number(rewardsBreakdown[5]) / 10000) * 100 * totalPoolFunds) / 100;
       setSixthPoolFunds(sixthpool);
 
-        if(endTime){
-          status === Open
+      if (endTime) {
+        status === Open
           ? setlotteryStatus(Open)
           : status === closed
           ? setlotteryStatus(closed)
           : status === claimable
           ? setlotteryStatus(claimable)
           : setlotteryStatus(Pending);
-        }
+      }
     } catch (error) {
       console.log(error);
     }
