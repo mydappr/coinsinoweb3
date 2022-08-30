@@ -7,6 +7,7 @@ import { activeAccount, usewalletModal } from "../atoms/atoms";
 import WalletModal from "./connectWalletModal";
 import useWallets from "./useWallets";
 import {
+  LightningBoltIcon,
   PresentationChartLineIcon,
   QuestionMarkCircleIcon,
   ViewListIcon,
@@ -95,7 +96,7 @@ function Header() {
             <div>
               <a>Odd Pool</a>
             </div>
-            <ViewListIcon className="h-6 self-center text-center sm:hidden" />
+            <LightningBoltIcon className="h-6 self-center text-center sm:hidden" />
           </div>
         </ul>
       </header>

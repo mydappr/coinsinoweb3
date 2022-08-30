@@ -21,13 +21,15 @@ import Sinoabi from "../utils/Coinsino.json";
 import { ethers } from "ethers";
 import moment from "moment";
 import ViewTickets from "./viewTickets";
+import SectionA from "./sectionA";
+import UseToaster from "./UseToaster";
+import UseLoadingSpinner from "./UseLoadingSpinner";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
 
 function SectionB({ keys }) {
   const [lastDrawTime, setLastDrawTime] = useState({});
-
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
   const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
@@ -44,11 +46,16 @@ function SectionB({ keys }) {
   const [viewTicketOpen, setviewTicketOpen] = useRecoilState(viewTicket);
   const [wonTicketSize, setWonTicketSize] = useRecoilState(wonSize);
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
+  const [isloading, setisloading] = useState(false);
+  const { Toast } = UseToaster();
+  const { Loading } = UseLoadingSpinner(isloading);
 
   useEffect(() => {
-    setRoundCount(currentLotteryId - 1);
+    if (currentLotteryId) {
+      setRoundCount(currentLotteryId - 1);
+    }
   }, [currentLotteryId]);
-
+  SectionA;
   // convert hex to int
   async function convertHexToInt(hex) {
     return parseInt(hex, 16);
@@ -109,6 +116,7 @@ function SectionB({ keys }) {
 
   const Check = async () => {
     try {
+      setisloading(true);
       const { ethereum } = window;
       if (ethereum) {
         // signers wallet get smartcontract
@@ -206,6 +214,7 @@ function SectionB({ keys }) {
 
               // won pools
               setclaimpoolLength(pools);
+              setisloading(false);
 
               return;
 
@@ -225,7 +234,10 @@ function SectionB({ keys }) {
           });
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      Toast(error.reason);
+      setisloading(false);
+    }
   };
 
   // claim now
@@ -370,7 +382,7 @@ function SectionB({ keys }) {
         }
       }
     } catch (error) {
-      console.log(error.reason);
+      Toast(error.reason);
     }
   };
 
@@ -465,7 +477,9 @@ function SectionB({ keys }) {
           );
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      Toast(error.reason);
+    }
   };
 
   useEffect(() => {
@@ -492,16 +506,22 @@ function SectionB({ keys }) {
         <div className=" my-7 mx-auto w-full max-w-[200px] space-y-5 p-2">
           <h2 className=" text-center text-xl font-bold">Check if you won.</h2>{" "}
           {currentAccount ? (
-            <button
-              disabled={!winningNo}
-              onClick={Check}
-              className={`joinBtn w-full  ${
-                !winningNo &&
-                " cursor-not-allowed border border-coinSinoTextColor2 bg-transparent text-coinSinoTextColor2"
-              }`}
-            >
-              Check Now
-            </button>
+            <div>
+              {isloading ? (
+                Loading()
+              ) : (
+                <button
+                  disabled={!winningNo}
+                  onClick={Check}
+                  className={`joinBtn w-full  ${
+                    !winningNo &&
+                    "  cursor-not-allowed border border-coinSinoTextColor2 bg-transparent text-coinSinoTextColor2 "
+                  }`}
+                >
+                  Check Now
+                </button>
+              )}
+            </div>
           ) : (
             <p
               className=" cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3 text-center   font-bold text-coinSinoTextColor sm:mb-5"
@@ -589,7 +609,7 @@ function SectionB({ keys }) {
                   onClick={previousDraws}
                   className=" h-10  rotate-180  cursor-pointer rounded-full  bg-white text-coinSinoPurple "
                 />
-                
+
                 <div className=" ">
                   <div className="mx-auto my-2 w-fit space-y-2 text-center">
                     <h2 className="font-bold text-coinSinoTextColor ">Round</h2>

@@ -155,7 +155,7 @@ export default function Home({ keys }) {
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
         latestLotteryId
       );
-      console.log(getLotterystatus);
+      // console.log(getLotterystatus);
 
       // current lottery status
       const {

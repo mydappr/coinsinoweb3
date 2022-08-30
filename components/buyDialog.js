@@ -3,13 +3,16 @@ import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
+  activeAccount,
   buyModal,
   editModal,
+  errMessage,
   latestLotteryId,
   tlosPrice,
 } from "../atoms/atoms";
 import Sinoabi from "../utils/Coinsino.json";
 import { ethers, BigNumber } from "ethers";
+import UseToaster from "./UseToaster";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
@@ -25,7 +28,9 @@ export default function BuyDialog() {
   const [errorMessage, setErrorMessage] = useState("");
   const [telosPrice, setTelosPrice] = useRecoilState(tlosPrice);
   const [userBalance, setuserBalance] = useState(0);
+  const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
   const inputRef = useRef(null);
+  const { Toast } = UseToaster();
 
   const getTelosPrice = async () => {
     try {
@@ -43,9 +48,30 @@ export default function BuyDialog() {
     getTelosPrice();
   }, [isOpen, telosPrice]);
 
+  useEffect(() => {
+    return async () => {
+      try {
+        const { ethereum } = window;
+        if (ethereum) {
+          console.log("started");
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          const balance = parseFloat(
+            ethers.utils.formatEther(
+              await provider.getBalance(currentAccount),
+              "ethers"
+            )
+          ).toFixed(3);
+
+          setuserBalance(balance);
+          console.log(userBalance);
+        }
+      } catch (error) {}
+    };
+  }, [userBalance, currentAccount, isOpen]);
+
   const discountDivisor = 2000;
 
-  const pricePerTicket = "15";
+  const pricePerTicket = "3";
 
   const totalTicketsPrice = noOfTickets * pricePerTicket;
 
@@ -146,7 +172,6 @@ export default function BuyDialog() {
       setErrorMessage("");
     }
 
-    console.log("running");
 
     // placeholder = value;
 
@@ -164,7 +189,9 @@ export default function BuyDialog() {
   // console.log(listOfTicketsToBuy);
 
   const buyTicket = async () => {
-    if (disablebtn) return;
+    if (disablebtn) {
+      return;
+    }
     try {
       const { ethereum } = window;
       if (ethereum) {
@@ -190,14 +217,6 @@ export default function BuyDialog() {
         );
         const costOfTickets = BigNumber.from(String(_costOfTickets));
 
-        const a = 123;
-        const b = BigNumber.from(Number(a));
-        console.log(b);
-
-        console.log(Number(b));
-
-        return;
-
         // buy a ticket and wait for completion
 
         // const tickets = await generateTicketNumbers(noOfTickets);
@@ -212,7 +231,7 @@ export default function BuyDialog() {
         await buyTicket.wait();
       }
     } catch (error) {
-      console.log("Error minting character", error);
+      Toast(error.reason);
     }
   };
 

@@ -27,6 +27,8 @@
     "react-countup": "^6.3.0",
     "react-dom": "18.2.0",
     "react-redux": "^8.0.2",
+    "react-spinners": "^0.13.4",
+    "react-toastify": "^9.0.8",
     "recoil": "^0.7.5",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tw-elements": "^1.0.0-alpha12",

@@ -31,9 +31,11 @@ import {
   usewalletModal,
 } from "../atoms/atoms";
 import BuyDialog from "./buyDialog";
-import Web3 from "web3";
 import { providers } from "ethers";
 import OperatorFunctions from "./OperatorFunctions";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BeatLoader } from "react-spinners";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
@@ -167,8 +169,8 @@ function SectionA({ keys }) {
         ) {
           // maxTime = moment();
           // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
-          return
-          console.log()
+          return;
+          console.log();
           if (lotteryStatus === Open) {
             closeLottery();
           } else if (lotteryStatus === closed) {
@@ -215,6 +217,8 @@ function SectionA({ keys }) {
         ref={toStart}
         className="  my-0   mx-auto mt-10 mb-20 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   "
       >
+        {/* toast Message */}
+        <ToastContainer />
         <div className=" mx-auto mt-0 h-[300px] w-full bg-[url('/images/heroBg.png')] bg-cover bg-right  md:h-[500px]">
           <div className="mx-auto flex h-full  max-w-[300px] flex-col justify-between text-center  ">
             <h2 className="mt-2 text-base font-bold text-coinSinoTextColor md:mt-3">
@@ -224,7 +228,7 @@ function SectionA({ keys }) {
             <div className="    ">
               <p>Total price:</p>
               {totalLotteryDeposit ? (
-                <h2 className="mt-1 rounded-lg border-2  border-coinSinoGreen  bg-coinSinoGreen px-5 py-3 text-2xl font-bold  antialiased md:px-10 lg:text-3xl">
+                <h2 className="mx-auto mt-1 w-60 rounded-lg  border-2 border-coinSinoGreen  bg-coinSinoGreen px-5 py-3 text-2xl font-bold  antialiased md:px-10 lg:text-3xl">
                   <CountUp
                     duration={2}
                     separator=" "
@@ -240,14 +244,17 @@ function SectionA({ keys }) {
             </div>
 
             {currentAccount ? (
-              <p
-                className="w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3   font-bold text-coinSinoTextColor sm:mb-5"
+              <button
+                disabled={lotteryStatus !== Open}
+                className={`w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3   font-bold text-coinSinoTextColor sm:mb-5 ${
+                  lotteryStatus !== Open && "cursor-not-allowed bg-gray-600"
+                }`}
                 onClick={() => {
                   setbuyModalStat(true);
                 }}
               >
                 Get your tickets
-              </p>
+              </button>
             ) : (
               <p
                 className="w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3   font-bold text-coinSinoTextColor sm:mb-5"
@@ -264,53 +271,81 @@ function SectionA({ keys }) {
         {/* gets your ticket now Time is running */}
 
         <div className=" mt-20 p-2 text-center ">
-         {lotteryStatus===Open? <> <h1 className="mb-7 text-3xl font-bold text-coinSinoGreen ">
-            Get your tickets now!
-          </h1>
-          <div className="">
-            <p className="text-coinSinoTextColor">Times remaining for draw</p>
-            {endTime ? (
-              <div className="my-5  flex justify-center space-x-2">
-                <div className="">
-                  <div className="inline-flex items-center space-x-2">
-                    <h2 className="timeStamp text-3xl">{countDown.days}</h2>
-                    <span className="text-3xl font-bold text-coinSinoTextColor2 ">
-                      :
-                    </span>
-                  </div>
-                  <span className="daysStamp">Days</span>
-                </div>
-                <div>
-                  <div className="inline-flex items-center space-x-2">
-                    <h2 className="timeStamp text-3xl">{countDown.hours}</h2>
-                    <span className="text-3xl font-bold text-coinSinoTextColor2 ">
-                      :
-                    </span>
-                  </div>
+          {lotteryStatus === Open ? (
+            <>
+              {" "}
+              <h1 className="mb-7 text-3xl font-bold text-coinSinoGreen ">
+                Get your tickets now!
+              </h1>
+              <div className="">
+                <p className="text-coinSinoTextColor">
+                  Times remaining for draw
+                </p>
+                {endTime ? (
+                  <div className="my-5  flex justify-center space-x-2">
+                    <div className="">
+                      <div className="inline-flex items-center space-x-2">
+                        <h2 className="timeStamp text-3xl">{countDown.days}</h2>
+                        <span className="text-3xl font-bold text-coinSinoTextColor2 ">
+                          :
+                        </span>
+                      </div>
+                      <span className="daysStamp">Days</span>
+                    </div>
+                    <div>
+                      <div className="inline-flex items-center space-x-2">
+                        <h2 className="timeStamp text-3xl">
+                          {countDown.hours}
+                        </h2>
+                        <span className="text-3xl font-bold text-coinSinoTextColor2 ">
+                          :
+                        </span>
+                      </div>
 
-                  <span className="daysStamp">Hour</span>
-                </div>
-                <div>
-                  <div className="inline-flex items-center space-x-2">
-                    <h2 className="timeStamp text-3xl">{countDown.minutes}</h2>
-                    <span className="text-3xl font-bold text-coinSinoTextColor2 ">
-                      :
-                    </span>
+                      <span className="daysStamp">Hour</span>
+                    </div>
+                    <div>
+                      <div className="inline-flex items-center space-x-2">
+                        <h2 className="timeStamp text-3xl">
+                          {countDown.minutes}
+                        </h2>
+                        <span className="text-3xl font-bold text-coinSinoTextColor2 ">
+                          :
+                        </span>
+                      </div>
+                      <span className="daysStamp">Minutes</span>
+                    </div>
+                    <div>
+                      <div className="inline-flex items-center space-x-2">
+                        <h2 className="timeStamp text-3xl">
+                          {countDown.seconds}
+                        </h2>
+                        <span className="text-3xl font-bold text-coinSinoTextColor2 "></span>
+                      </div>
+                      <span className="daysStamp">Seconds</span>
+                    </div>
                   </div>
-                  <span className="daysStamp">Minutes</span>
-                </div>
+                ) : (
+                  <div className="waiting"></div>
+                )}
+              </div>
+            </>
+          ) : lotteryStatus === closed ? (
+            <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
+              <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
+                <p>
+                  {" "}
+                  <strong>Drawing </strong>
+                </p>
                 <div>
-                  <div className="inline-flex items-center space-x-2">
-                    <h2 className="timeStamp text-3xl">{countDown.seconds}</h2>
-                    <span className="text-3xl font-bold text-coinSinoTextColor2 "></span>
-                  </div>
-                  <span className="daysStamp">Seconds</span>
+                  {" "}
+                  <BeatLoader color="#ffffff" size={10} className="mt-2" />
                 </div>
               </div>
-            ) : (
-              <div className="waiting"></div>
-            )}
-          </div></>:lotteryStatus===closed?<div>Drawing Lottery</div>: ''}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
 
         {/* pool details */}
@@ -376,7 +411,9 @@ function SectionA({ keys }) {
             <div>
               {currentAccount ? (
                 <p
-                  className="joinBtn"
+                  className={`joinBtn ${
+                    lotteryStatus !== Open && "cursor-not-allowed bg-gray-600"
+                  }`}
                   onClick={() => {
                     setbuyModalStat(true);
                   }}
