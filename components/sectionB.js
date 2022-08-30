@@ -26,7 +26,7 @@ import UseToaster from "./UseToaster";
 import UseLoadingSpinner from "./UseLoadingSpinner";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
+const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
 
 function SectionB({ keys }) {
   const [lastDrawTime, setLastDrawTime] = useState({});

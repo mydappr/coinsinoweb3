@@ -2,13 +2,16 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import Web3 from "web3";
-import { activeAccount, usewalletModal } from "../atoms/atoms";
+import { activeAccount, connectorType, usewalletModal } from "../atoms/atoms";
+import UseToaster from "./UseToaster";
 
 function useWallets() {
-  const [proverConnector, setProviderConnector] = useState("");
+  const [providerConnector, setProviderConnector] =
+    useRecoilState(connectorType);
   const [userBalance, setuserBalance] = useState(0);
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
+  const { Toast } = UseToaster();
 
   // Checks if wallet is connected
   const checkIfWalletIsConnected = async () => {
@@ -68,7 +71,7 @@ function useWallets() {
     const web3 = new Web3(p);
     const chainId = await web3.eth.getChainId();
     if (chainId !== 41) {
-      alert("You are not connected to the Telos network!");
+      Toast("You are not connected to the Telos network!");
       return;
     }
     const accounts = await web3.eth.getAccounts();
@@ -87,7 +90,7 @@ function useWallets() {
       if (ethereum) {
         let chainId = await ethereum.request({ method: "eth_chainId" });
         if (chainId !== "0x29") {
-          alert("You are not connected to the Telos network!");
+          Toast("You are not connected to the Telos network!");
           return;
         }
         const accounts = await ethereum.request({

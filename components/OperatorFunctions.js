@@ -38,12 +38,11 @@ function OperatorFunctions(keys) {
   const pricePerTicket = "3";
 
   // coinsino contract address
-  const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
+  const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
   // rng contract address
-  const rngContractaddress = "0x219948CB7513D25E0CDDF16654fBc54a0405a29c";
+  const rngContractaddress = "0x2C5c6A061ceD5435A547ad8219f7a7A48C5AF672";
 
   const startLottery = async () => {
-    console.log("starting lottery");
     try {
       const { ethereum } = window;
       if (ethereum) {
@@ -73,15 +72,6 @@ function OperatorFunctions(keys) {
 
         console.log("lottery started");
         // get current lottery id
-
-        console.log(currentLotteryId, "currentid");
-        const getLotterystatus = await operatorcoinSinoContract.viewLottery(
-          currentLotteryId
-        );
-
-        console.log("lottery status", getLotterystatus.status);
-      } else {
-        console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
       console.log("Error minting character", error);
@@ -90,7 +80,6 @@ function OperatorFunctions(keys) {
   };
 
   const closeLottery = async () => {
-    console.log("clossing lottery");
     try {
       const { ethereum } = window;
       if (ethereum) {
@@ -114,7 +103,7 @@ function OperatorFunctions(keys) {
         const lastround = await RNGContract.getLastRound();
         await operatorcoinSinoContract.closeLottery(
           currentLotteryId,
-          lastround
+          lastround === 0 ? lastround + 1 : lastround
         );
 
         console.log("closed");
@@ -149,8 +138,10 @@ function OperatorFunctions(keys) {
 
         const lastround = await RNGContract.getLastRound();
 
+        console.log(lastround, "last round");
+
         await RNGContract.setRandomValue(
-          lastround,
+          lastround === 0 ? lastround + 1 : lastround,
           data.randomness,
           data.signature,
           data.previous_signature
@@ -160,17 +151,10 @@ function OperatorFunctions(keys) {
           await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
             currentLotteryId,
             false,
-            lastround + 1
+            lastround === 0 ? lastround + 1 : lastround
           );
-        console.log(
-          drawFinalNumberAndMakeLotteryClaimable,
-          "lottery has now been drawn and rewards  now claimable"
-        );
+
         await drawFinalNumberAndMakeLotteryClaimable.wait();
-        console.log(
-          drawFinalNumberAndMakeLotteryClaimable,
-          "lottery has now been drawn and rewards  now claimable"
-        );
       }
     } catch (error) {
       console.log(error);

@@ -38,7 +38,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
+const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
 const Pending = 0;
 const Open = 1;
 const closed = 2;
@@ -169,15 +169,18 @@ function SectionA({ keys }) {
         ) {
           // maxTime = moment();
           // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+
           return;
-          console.log();
+
           if (lotteryStatus === Open) {
             closeLottery();
           } else if (lotteryStatus === closed) {
+            console.log(currentLotteryId, "this is lottry id");
             drawLottery();
           } else {
             startLottery();
           }
+          return;
 
           // startLottery();
           // await

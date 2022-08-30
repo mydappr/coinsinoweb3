@@ -28,9 +28,9 @@ import {
 import { useRecoilState } from "recoil";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
+const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
 // rng contract address
-const rngContractaddress = "0x219948CB7513D25E0CDDF16654fBc54a0405a29c";
+const rngContractaddress = "0x2C5c6A061ceD5435A547ad8219f7a7A48C5AF672";
 // helper hex converter
 async function convertHexToInt(hex) {
   return parseInt(hex, 16);
@@ -61,8 +61,9 @@ export const getServerSideProps = async () => {
     baseUrl = "https://sino-one.vercel.app";
   }
 
-  const a = await fetch(`${baseUrl}/api/hello`);
-  const keys = await a.json();
+  // const a = await fetch(`${baseUrl}/api/hello`);
+  // const keys = await a.json();
+  const keys = {};
 
   // fetch initial status for lottery
 

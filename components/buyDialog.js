@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import {
   activeAccount,
   buyModal,
+  connectorType,
   editModal,
   errMessage,
   latestLotteryId,
@@ -15,7 +16,8 @@ import { ethers, BigNumber } from "ethers";
 import UseToaster from "./UseToaster";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xbB1c15B915171410d9D3269A91A27442a4eDa871";
+const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
+const rpcUrl = "https://testnet.telos.net/evm";
 
 export default function BuyDialog() {
   const [isOpen, setIsOpen] = useRecoilState(buyModal);
@@ -29,6 +31,8 @@ export default function BuyDialog() {
   const [telosPrice, setTelosPrice] = useRecoilState(tlosPrice);
   const [userBalance, setuserBalance] = useState(0);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
+  const [providerConnector, setProviderConnector] =
+    useRecoilState(connectorType);
   const inputRef = useRef(null);
   const { Toast } = UseToaster();
 
@@ -172,7 +176,6 @@ export default function BuyDialog() {
       setErrorMessage("");
     }
 
-
     // placeholder = value;
 
     arr[i] = value;
@@ -193,10 +196,11 @@ export default function BuyDialog() {
       return;
     }
     try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
+      if (
+        (providerConnector === "metaMask") |
+        (providerConnector === "walletConnect")
+      ) {
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
         const signer = provider.getSigner();
         const coinSinoContract = new ethers.Contract(
           coinSinoContractAddress,
@@ -204,12 +208,12 @@ export default function BuyDialog() {
           signer
         );
 
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        let chainId = await ethereum.request({ method: "eth_chainId" });
+        // const accounts = await ethereum.request({
+        //   method: "eth_requestAccounts",
+        // });
+        // let chainId = await ethereum.request({ method: "eth_chainId" });
 
-        if (Number(chainId) !== 41) return;
+        // if (Number(chainId) !== 41) return;
 
         const _costOfTickets = ethers.utils.parseUnits(
           String(Number(pricePerTicket) * noOfTickets),

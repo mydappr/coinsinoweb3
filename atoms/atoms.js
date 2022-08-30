@@ -117,3 +117,8 @@ export const usewalletModal = atom({
   key: "usewalletModal",
   default: false,
 });
+
+export const connectorType = atom({
+  key: "connectorType",
+  default: "",
+});
