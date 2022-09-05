@@ -58,7 +58,7 @@ export const getServerSideProps = async () => {
   if (env == "development") {
     baseUrl = "http://localhost:3000";
   } else if (env == "production") {
-    baseUrl = "https://sino-one.vercel.app";
+    baseUrl = "https://sino-realrufans.vercel.app";
   }
   const a = await fetch(`${baseUrl}/api/hello`);
   const keys = await a.json();
