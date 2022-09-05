@@ -3,23 +3,30 @@ import Rngabi from "../utils/RNGabi.json";
 import { ethers } from "ethers";
 import moment from "moment";
 import { useRecoilState } from "recoil";
-import { latestLotteryId } from "../atoms/atoms";
+import { latestLotteryId, lotteryStatus as Lstatus } from "../atoms/atoms";
 import { NonceManager } from "@ethersproject/experimental";
+import DrandFetch from "./DrandFetch";
+import { useEffect, useState } from "react";
+const Pending = 0;
+const Open = 1;
+const closed = 2;
+const claimable = 3;
 
 function OperatorFunctions(keys) {
   const [currentLotteryId, setCurrentLotteryId] =
     useRecoilState(latestLotteryId);
+  const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
+  const [rngData, setrngData] = useState({});
 
-  // drand
-  const data = {
-    round: 1,
-    randomness:
-      "7621935dbd01816416f0458f1b129b4d6b4c34ab0e53cbf70dfafbd4fed0efb6",
-    signature:
-      "8777102f74b8a55d3c84e7e1331f3d507f5d3bc091fdb0378ea40285479aaed4b19be5c73da3e790f3fb6bc54c74ef2902ef7b11fc21ebd6c497f8eb8c0d75a5ced4596cd5cb806b78650949974a69e5669222af6c0d20efd7958acce517ef4f",
-    previous_signature:
-      "aea7024808de545930c1267fba13d9180bde3f543e4e4b646a05fb50d1b0a20ca4f5c27bfaf80b69d6ec4584b8d1cc26168b9091f784eadace5fe3d04115784348bac4585222c2768abfebf09fa05bce9e84908daebbd2cb7d5c0680fb1b13b5",
+  const DrandFetch = async () => {
+    const res = await fetch("https://randomnumber.willdera.repl.co/fetch");
+    const rngData = await res.json();
+    setrngData(rngData);
   };
+
+  useEffect(() => {
+    DrandFetch();
+  }, []);
 
   // helper hex converter
   async function convertHexToInt(hex) {
@@ -38,41 +45,43 @@ function OperatorFunctions(keys) {
   const pricePerTicket = "3";
 
   // coinsino contract address
-  const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
+  const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
   // rng contract address
   const rngContractaddress = "0x2C5c6A061ceD5435A547ad8219f7a7A48C5AF672";
+  const rpcUrl = "https://testnet.telos.net/evm";
 
   const startLottery = async () => {
     try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
+      // signers wallet get smartcontract
 
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        // operator signer and contract
-        const operatorSigner = new ethers.Wallet(keys.opkey, provider);
-        const managedSigner = new NonceManager(operatorSigner);
+      // signers wallet get smartcontract
+      const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      // operator signer and contract
 
-        const operatorcoinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
-          Sinoabi,
-          managedSigner
-        );
-        const lottryDuration = await convertInput("5 minutes");
-        // start a lottery
-        const startLottery = await operatorcoinSinoContract.startLottery(
-          lottryDuration,
-          ethers.utils.parseUnits(pricePerTicket, "ether"),
-          300,
-          [500, 960, 1430, 1910, 2390, 2810],
-          1000
-        );
+      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const managedSigner = new NonceManager(operatorSigner);
 
-        await startLottery;
+      const operatorcoinSinoContract = new ethers.Contract(
+        coinSinoContractAddress,
+        Sinoabi,
+        managedSigner
+      );
+      const lottryDuration = await convertInput("5 minutes");
 
-        console.log("lottery started");
-        // get current lottery id
-      }
+      // start a lottery
+      const startLottery = await operatorcoinSinoContract.startLottery(
+        lottryDuration,
+        ethers.utils.parseUnits(pricePerTicket, "ether"),
+        2000,
+        [500, 960, 1430, 1910, 2390, 2810],
+        1000
+   
+      );
+
+      await startLottery;
+      setlotteryStatus(Open);
+      console.log("lottery started");
+      // get current lottery id
     } catch (error) {
       console.log("Error minting character", error);
       // setTxError(error.message);
@@ -81,35 +90,34 @@ function OperatorFunctions(keys) {
 
   const closeLottery = async () => {
     try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        // operator signer and contract
-        const operatorSigner = new ethers.Wallet(keys.opkey, provider);
-        const managedSigner = new NonceManager(operatorSigner);
-        const operatorcoinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
-          Sinoabi,
-          managedSigner
-        );
+      const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      // operator signer and contract
+      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const managedSigner = new NonceManager(operatorSigner);
+      const operatorcoinSinoContract = new ethers.Contract(
+        coinSinoContractAddress,
+        Sinoabi,
+        operatorSigner
+      );
 
-        const RNGContract = new ethers.Contract(
-          rngContractaddress,
-          Rngabi,
-          operatorSigner
-        );
+      const RNGContract = new ethers.Contract(
+        rngContractaddress,
+        Rngabi,
+        managedSigner,
+      
+      );
 
-        const lastround = await RNGContract.getLastRound();
-        await operatorcoinSinoContract.closeLottery(
-          currentLotteryId,
-          lastround === 0 ? lastround + 1 : lastround
-        );
+      // const lastround = await RNGContract.getLastRound();
+      await operatorcoinSinoContract.closeLottery(
+        currentLotteryId,
+        rngData.round,
+       
+      );
 
-        console.log("closed");
-      }
+      console.log("lottery closed");
+      setlotteryStatus(closed);
     } catch (error) {
-      console.log("Error minting character", error);
+      console.log("", error);
     }
   };
 
@@ -117,45 +125,46 @@ function OperatorFunctions(keys) {
   const drawLottery = async () => {
     console.log("drawing lottery");
     try {
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const operatorSigner = new ethers.Wallet(keys.opkey, provider);
-        const managedSigner = new NonceManager(operatorSigner);
-        const operatorcoinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
-          Sinoabi,
-          managedSigner
+      // signers wallet get smartcontract
+      const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      // operator signer and contract
+      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const managedSigner = new NonceManager(operatorSigner);
+      const operatorcoinSinoContract = new ethers.Contract(
+        coinSinoContractAddress,
+        Sinoabi,
+        managedSigner
+      );
+
+      const RNGContract = new ethers.Contract(
+        rngContractaddress,
+        Rngabi,
+        managedSigner,
+  
+      );
+      // set random value
+
+      // const lastround = await RNGContract.getLastRound();
+
+      await RNGContract.setRandomValue(
+        rngData.round,
+        rngData.randomness,
+        rngData.signature,
+        rngData.previous_signature,
+     
+      );
+
+      const drawFinalNumberAndMakeLotteryClaimable =
+        await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
+          currentLotteryId,
+          false,
+          rngData.round,
+      
         );
-
-        const RNGContract = new ethers.Contract(
-          rngContractaddress,
-          Rngabi,
-          operatorSigner
-        );
-        // set random value
-
-        const lastround = await RNGContract.getLastRound();
-
-        console.log(lastround, "last round");
-
-        await RNGContract.setRandomValue(
-          lastround === 0 ? lastround + 1 : lastround,
-          data.randomness,
-          data.signature,
-          data.previous_signature
-        );
-
-        const drawFinalNumberAndMakeLotteryClaimable =
-          await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
-            currentLotteryId,
-            false,
-            lastround === 0 ? lastround + 1 : lastround
-          );
-
-        await drawFinalNumberAndMakeLotteryClaimable.wait();
-      }
+     console.log('about to draw')
+      await drawFinalNumberAndMakeLotteryClaimable.wait();
+      console.log("lottery drawn");
+      setlotteryStatus(claimable);
     } catch (error) {
       console.log(error);
     }

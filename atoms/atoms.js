@@ -122,3 +122,8 @@ export const connectorType = atom({
   key: "connectorType",
   default: "",
 });
+
+export const drandData = atom({
+  key: "drandData",
+  default: {},
+});

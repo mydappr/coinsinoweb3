@@ -28,7 +28,7 @@ import {
 import { useRecoilState } from "recoil";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
+const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 // rng contract address
 const rngContractaddress = "0x2C5c6A061ceD5435A547ad8219f7a7A48C5AF672";
 // helper hex converter
@@ -60,10 +60,8 @@ export const getServerSideProps = async () => {
   } else if (env == "production") {
     baseUrl = "https://sino-one.vercel.app";
   }
-
-  // const a = await fetch(`${baseUrl}/api/hello`);
-  // const keys = await a.json();
-  const keys = {};
+  const a = await fetch(`${baseUrl}/api/hello`);
+  const keys = await a.json();
 
   // fetch initial status for lottery
 
@@ -132,7 +130,7 @@ export default function Home({ keys }) {
 
     try {
       const rpcUrl = "https://testnet.telos.net/evm";
-      console.log(rpcUrl);
+
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
 
@@ -145,18 +143,20 @@ export default function Home({ keys }) {
       );
 
       // current lotteryid
-      const latestLotteryId = await convertHexToInt(
+      const latestLotteryId = Number(
         await operatorcoinSinoContract.viewCurrentLotteryId()
       );
 
       // chnage back to lottyied
       setCurrentLotteryId(latestLotteryId);
 
+      if (!currentLotteryId) return;
       // current lottery details
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
-        latestLotteryId
+        currentLotteryId
       );
-      // console.log(getLotterystatus);
+
+      console.log(getLotterystatus);
 
       // current lottery status
       const {
@@ -205,13 +205,7 @@ export default function Home({ keys }) {
       setSixthPoolFunds(sixthpool);
 
       if (endTime) {
-        status === Open
-          ? setlotteryStatus(Open)
-          : status === closed
-          ? setlotteryStatus(closed)
-          : status === claimable
-          ? setlotteryStatus(claimable)
-          : setlotteryStatus(Pending);
+        setlotteryStatus(status);
       }
     } catch (error) {
       console.log(error);
@@ -271,6 +265,8 @@ export default function Home({ keys }) {
       }
     }
   };
+
+  console.log("curreeeeeeent status", lotteryStatus);
 
   useEffect(() => {
     fetchTickets();

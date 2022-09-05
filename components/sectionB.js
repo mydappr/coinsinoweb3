@@ -26,7 +26,7 @@ import UseToaster from "./UseToaster";
 import UseLoadingSpinner from "./UseLoadingSpinner";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
+const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
 function SectionB({ keys }) {
   const [lastDrawTime, setLastDrawTime] = useState({});
@@ -142,7 +142,7 @@ function SectionB({ keys }) {
         if (lotteryStatus === Pending) return;
 
         // current lotteryid
-        const latestLotteryId = await convertHexToInt(
+        const latestLotteryId = Number(
           await coinSinoContract.viewCurrentLotteryId()
         );
 
@@ -269,7 +269,7 @@ function SectionB({ keys }) {
         if (lotteryStatus === Pending) return;
 
         // current lotteryid
-        const latestLotteryId = await convertHexToInt(
+        const latestLotteryId = Number(
           await coinSinoContract.viewCurrentLotteryId()
         );
 
@@ -372,11 +372,11 @@ function SectionB({ keys }) {
 
               await claimTickets.wait();
 
-              console.log("climed");
+              // console.log("climed");
               const userbalanceafter = Number(
                 ethers.utils.formatEther(await provider.getBalance(accounts[0]))
               );
-              console.log("b4", userbalanceafter);
+              // console.log("b4", userbalanceafter);
             });
           });
         }
@@ -404,7 +404,7 @@ function SectionB({ keys }) {
         roundCount
       );
 
-      console.log(getLotterystatus);
+      // console.log(getLotterystatus);
 
       // current lottery status
       const {
@@ -484,7 +484,7 @@ function SectionB({ keys }) {
 
   useEffect(() => {
     fetchRoundDetails();
-  }, [roundCount, userTickets.length]);
+  }, [roundCount, userTickets.length, lotteryStatus]);
 
   const previousDraws = async () => {
     if (roundCount > 1) {

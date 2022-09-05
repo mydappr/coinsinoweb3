@@ -16,7 +16,7 @@ import { ethers, BigNumber } from "ethers";
 import UseToaster from "./UseToaster";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
+const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 const rpcUrl = "https://testnet.telos.net/evm";
 
 export default function BuyDialog() {
@@ -57,7 +57,7 @@ export default function BuyDialog() {
       try {
         const { ethereum } = window;
         if (ethereum) {
-          console.log("started");
+          // console.log("started");
           const provider = new ethers.providers.Web3Provider(ethereum);
           const balance = parseFloat(
             ethers.utils.formatEther(

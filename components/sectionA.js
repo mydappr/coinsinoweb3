@@ -38,7 +38,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
 
 // coinsino contract address
-const coinSinoContractAddress = "0xb8b3E281DfcaF7afDee4EDC29b44e52C3D628d1e";
+const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 const Pending = 0;
 const Open = 1;
 const closed = 2;
@@ -73,6 +73,7 @@ function SectionA({ keys }) {
   const [proverConnector, setProviderConnector] = useState("");
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
   const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
+  const [timeElasped, setTimeElapsed] = useState(false);
 
   const nextDraw = () => {
     // today
@@ -138,75 +139,110 @@ function SectionA({ keys }) {
 
   async function countdown() {
     // console.log(dateString.day(), dateString.days());
-    if (endTime) {
-      let T = moment.unix(endTime).format();
 
-      const dateString = moment(T);
-      const now = moment();
-      const y = dateString.year();
-      const mo = dateString.month();
-      const d = dateString.date();
-      const h = dateString.hours();
-      const m = dateString.minute();
-      const s = dateString.seconds();
+    let T = moment.unix(endTime).format();
 
-      let maxTime = moment();
-      maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+    const dateString = moment(T);
+    const now = moment();
+    const y = dateString.year();
+    const mo = dateString.month();
+    const d = dateString.date();
+    const h = dateString.hours();
+    const m = dateString.minute();
+    const s = dateString.seconds();
 
-      if (now > maxTime) {
-        setCoundown({
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-        });
+    let maxTime = moment();
+    maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
 
-        if (
-          countDown.days === 0 &&
-          countDown.hours === 0 &&
-          countDown.minutes === 0 &&
-          countDown.seconds === 0
-        ) {
-          // maxTime = moment();
-          // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
-
-          return;
-
-          if (lotteryStatus === Open) {
-            closeLottery();
-          } else if (lotteryStatus === closed) {
-            console.log(currentLotteryId, "this is lottry id");
-            drawLottery();
-          } else {
-            startLottery();
-          }
-          return;
-
-          // startLottery();
-          // await
-          // await drawLottery();
-        }
-        return;
-      }
-      console.log(countDown);
-
-      const countDownDate = moment.unix(maxTime.unix());
-      const timeleft = countDownDate - moment();
-      const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
-
+    if (now > maxTime) {
       setCoundown({
-        days,
-        hours,
-        minutes,
-        seconds,
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
       });
+      setTimeElapsed(true);
+      // if (
+      //   countDown.days === 0 &&
+      //   countDown.hours === 0 &&
+      //   countDown.minutes === 0 &&
+      //   countDown.seconds === 0
+      // ) {
+      //   // maxTime = moment();
+      //   // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+      //   console.log(lotteryStatus);
+      //   if (lotteryStatus === Open) {
+      //     console.log("close");
+
+      //     await closeLottery();
+      //   } else if (lotteryStatus === closed) {
+      //     console.log("drawit");
+
+      //     await drawLottery();
+      //   } else if (lotteryStatus === Pending || lotteryStatus === claimable) {
+      //     console.log("start");
+
+      //     await startLottery();
+      //   }
+      // }
+      return;
     }
+    setTimeElapsed(false);
+    const countDownDate = moment.unix(maxTime.unix());
+    const timeleft = countDownDate - moment();
+    const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+
+    setCoundown({
+      days,
+      hours,
+      minutes,
+      seconds,
+    });
   }
+
+  useEffect(() => {
+    const a = async () => {
+      if (
+        countDown.days === 0 &&
+        countDown.hours === 0 &&
+        countDown.minutes === 0 &&
+        countDown.seconds === 0
+      ) {
+        // maxTime = moment();
+        // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+        // const Pending = 0;
+        // const Open = 1;
+        // const closed = 2;
+        // const claimable = 3;
+
+        console.log(currentLotteryId, lotteryStatus);
+
+        console.log(lotteryStatus, "lottery status");
+        if (lotteryStatus === Open) {
+          console.log("close");
+
+          await closeLottery();
+        } else if (lotteryStatus === closed) {
+          console.log("drawit");
+
+          await drawLottery();
+        } else if (
+          (lotteryStatus === Pending) |
+          (lotteryStatus === claimable)
+        ) {
+          console.log("start");
+
+          await startLottery();
+        }
+      }
+    };
+    a();
+  }, [lotteryStatus, timeElasped]);
 
   useEffect(() => {
     let intervalId = setInterval(countdown, 1000);
@@ -347,7 +383,12 @@ function SectionA({ keys }) {
               </div>
             </div>
           ) : (
-            ""
+            <div>
+              {" "}
+              <h2>Lottery Drawn!</h2>
+              <p>Check if you won!</p>
+              <h2>Lottery Drawn!</h2>
+            </div>
           )}
         </div>
 
