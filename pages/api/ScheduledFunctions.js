@@ -1,6 +1,10 @@
+import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { lotteryStatus as Lstatus } from "../../atoms/atoms";
 import OperatorFunctions from "../../components/OperatorFunctions";
+import { NonceManager } from "@ethersproject/experimental";
+import Sinoabi from "../../utils/Coinsino.json";
+const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
 export default async function handler(req, res) {
   const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
@@ -10,37 +14,28 @@ export default async function handler(req, res) {
     rngData
   );
 
-  const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      // operator signer and contract
-      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
-      const managedSigner = new NonceManager(operatorSigner);
-      const operatorcoinSinoContract = new ethers.Contract(
-        coinSinoContractAddress,
-        Sinoabi,
-        operatorSigner
-      );
+  const operatorProvider = new ethers.providers.JsonRpcProvider('https://testnet.telos.net/evm');
 
-      const RNGContract = new ethers.Contract(
-        rngContractaddress,
-        Rngabi,
-        managedSigner
-      );
+  // operator signer and contract
+  const operatorSigner = new ethers.Wallet(process.env.opkey, operatorProvider);
+  const managedSigner = new NonceManager(operatorSigner);
 
-      console.log(rngData);
+  const operatorcoinSinoContract = new ethers.Contract(
+    coinSinoContractAddress,
+    Sinoabi,
+    operatorSigner
+  );
 
-      // const lastround = await RNGContract.getLastRound();
-      if (!rngData.round) return;
-           // current lotteryid
-           const latestLotteryId = Number(
-            await operatorcoinSinoContract.viewCurrentLotteryId()
-          );
+  // current lotteryid
+  const latestLotteryId = Number(
+    await operatorcoinSinoContract.viewCurrentLotteryId()
+  );
 
-          
   await startLottery();
   await closeLottery();
   await drawLottery();
 
   res.status(200).json({
-    message: `lottery round completed }`,
+    message: `current LotteryId ${latestLotteryId} }`,
   });
 }

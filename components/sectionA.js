@@ -214,6 +214,7 @@ function SectionA({ keys }) {
   }, [endTime, countDown, rngData]);
 
   useEffect(() => {
+    return;
     const a = async () => {
       if (
         countDown.days === 0 &&
