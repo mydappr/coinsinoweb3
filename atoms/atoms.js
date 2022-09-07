@@ -127,3 +127,7 @@ export const drandData = atom({
   key: "drandData",
   default: {},
 });
+export const timeCountDown = atom({
+  key: "timeCountDown",
+  default: {},
+});

@@ -24,8 +24,11 @@ import {
   fiftpool,
   sixthpool,
   endLotteryTime,
+  drandData,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
+import { Toast } from "flowbite-react";
+import UseToaster from "../components/UseToaster";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
@@ -53,21 +56,23 @@ const claimable = 3;
 
 // serverside
 export const getServerSideProps = async () => {
-  let baseUrl;
-  const env = process.env.NODE_ENV;
-  if (env == "development") {
-    baseUrl = "http://localhost:3000";
-  } else if (env == "production") {
-    baseUrl = "https://sino-realrufans.vercel.app";
-  }
-  const a = await fetch(`${baseUrl}/api/hello`);
-  const keys = await a.json();
+  try {
+    let baseUrl;
+    const env = process.env.NODE_ENV;
+    if (env == "development") {
+      baseUrl = "http://localhost:3000";
+    } else if (env == "production") {
+      baseUrl = "https://sino-realrufans.vercel.app";
+    }
+    const a = await fetch(`${baseUrl}/api/hello`);
+    const keys = await a.json();
 
-  // fetch initial status for lottery
+    // fetch initial status for lottery
 
-  return {
-    props: { keys },
-  };
+    return {
+      props: { keys },
+    };
+  } catch (error) {}
 };
 
 export default function Home({ keys }) {
@@ -91,19 +96,8 @@ export default function Home({ keys }) {
   const [fouthPoolFunds, setFouthPoolFunds] = useRecoilState(fourthpool);
   const [fifthPoolFunds, setFifthPoolFunds] = useRecoilState(fiftpool);
   const [sixthPoolFunds, setSixthPoolFunds] = useRecoilState(sixthpool);
-
+  const [rngData, setrngData] = useRecoilState(drandData);
   const scrollTargetElementRef = useRef(null);
-
-  // drand
-  const data = {
-    round: 1,
-    randomness:
-      "7621935dbd01816416f0458f1b129b4d6b4c34ab0e53cbf70dfafbd4fed0efb6",
-    signature:
-      "8777102f74b8a55d3c84e7e1331f3d507f5d3bc091fdb0378ea40285479aaed4b19be5c73da3e790f3fb6bc54c74ef2902ef7b11fc21ebd6c497f8eb8c0d75a5ced4596cd5cb806b78650949974a69e5669222af6c0d20efd7958acce517ef4f",
-    previous_signature:
-      "aea7024808de545930c1267fba13d9180bde3f543e4e4b646a05fb50d1b0a20ca4f5c27bfaf80b69d6ec4584b8d1cc26168b9091f784eadace5fe3d04115784348bac4585222c2768abfebf09fa05bce9e84908daebbd2cb7d5c0680fb1b13b5",
-  };
 
   const splittedWinningValues = Array.from(String(winningNo));
 
@@ -125,15 +119,28 @@ export default function Home({ keys }) {
     return rand;
   }
 
-  const getLatestLotteryInfo = async () => {
-    const { ethereum } = window;
+  // fetch latest drand data
+  const DrandFetch = async () => {
+    const { Toast } = UseToaster();
+    try {
+      const res = await fetch("https://randomnumber.willdera.repl.co/fetch");
+      const rngData = await res.json();
+      setrngData(rngData);
+    } catch (error) {
+      // Toast(error);
+    }
+  };
 
+  useEffect(() => {
+    let fetchInterval = setInterval(async () => await DrandFetch(), 5000);
+    return () => clearInterval(fetchInterval);
+  }, [rngData]);
+
+  const getLatestLotteryInfo = async () => {
     try {
       const rpcUrl = "https://testnet.telos.net/evm";
-
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-
       // operator signer and contract
       const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
       const operatorcoinSinoContract = new ethers.Contract(
@@ -141,13 +148,11 @@ export default function Home({ keys }) {
         Sinoabi,
         operatorSigner
       );
-
       // current lotteryid
       const latestLotteryId = Number(
         await operatorcoinSinoContract.viewCurrentLotteryId()
       );
-
-      // chnage back to lottyied
+      // set lottyied
       setCurrentLotteryId(latestLotteryId);
 
       if (!currentLotteryId) return;
@@ -266,14 +271,13 @@ export default function Home({ keys }) {
     }
   };
 
-  console.log("curreeeeeeent status", lotteryStatus);
-
   useEffect(() => {
     fetchTickets();
   }, [currentLotteryId]);
 
   useEffect(() => {
-    getLatestLotteryInfo();
+    let fetch = getLatestLotteryInfo();
+    return () => (fetch = null);
   }, [currentLotteryId, lotteryStatus]);
 
   // const info = async () => {

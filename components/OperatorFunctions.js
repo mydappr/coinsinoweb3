@@ -3,7 +3,13 @@ import Rngabi from "../utils/RNGabi.json";
 import { ethers } from "ethers";
 import moment from "moment";
 import { useRecoilState } from "recoil";
-import { latestLotteryId, lotteryStatus as Lstatus } from "../atoms/atoms";
+import {
+  latestLotteryId,
+  lotteryStatus as Lstatus,
+  drandData,
+  timeCountDown,
+  endLotteryTime,
+} from "../atoms/atoms";
 import { NonceManager } from "@ethersproject/experimental";
 import DrandFetch from "./DrandFetch";
 import { useEffect, useState } from "react";
@@ -16,22 +22,17 @@ function OperatorFunctions(keys) {
   const [currentLotteryId, setCurrentLotteryId] =
     useRecoilState(latestLotteryId);
   const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
-  const [rngData, setrngData] = useState({});
+  const [rngData, setrngData] = useRecoilState(drandData);
+  const [countDown, setCoundown] = useRecoilState(timeCountDown);
+  const [endTime, setEndTime] = useRecoilState(endLotteryTime);
 
-  const DrandFetch = async () => {
-    const res = await fetch("https://randomnumber.willdera.repl.co/fetch");
-    const rngData = await res.json();
-    setrngData(rngData);
-  };
+  // rng not working
+  console.log(rngData);
+  // console.log(countDown);
+  // console.log(currentLotteryId, "id");
+  // console.log(lotteryStatus, "status");
+  // console.log(endTime, "endTime");
 
-  useEffect(() => {
-    DrandFetch();
-  }, []);
-
-  // helper hex converter
-  async function convertHexToInt(hex) {
-    return parseInt(hex, 16);
-  }
   // time helper funciton
   async function convertInput(date) {
     const splitDate = date.split(" ");
@@ -75,12 +76,11 @@ function OperatorFunctions(keys) {
         2000,
         [500, 960, 1430, 1910, 2390, 2810],
         1000
-   
       );
 
       await startLottery;
-      setlotteryStatus(Open);
-      console.log("lottery started");
+
+      console.log(lotteryStatus, "currentid");
       // get current lottery id
     } catch (error) {
       console.log("Error minting character", error);
@@ -103,17 +103,20 @@ function OperatorFunctions(keys) {
       const RNGContract = new ethers.Contract(
         rngContractaddress,
         Rngabi,
-        managedSigner,
-      
+        managedSigner
       );
+
+      console.log(rngData);
 
       // const lastround = await RNGContract.getLastRound();
+      if (!rngData.round) return;
+
       await operatorcoinSinoContract.closeLottery(
         currentLotteryId,
-        rngData.round,
-       
+        rngData.round
       );
-
+      console.log("rng round", rngData.round);
+      console.log(lotteryStatus, "currentid");
       console.log("lottery closed");
       setlotteryStatus(closed);
     } catch (error) {
@@ -139,32 +142,34 @@ function OperatorFunctions(keys) {
       const RNGContract = new ethers.Contract(
         rngContractaddress,
         Rngabi,
-        managedSigner,
-  
+        managedSigner
       );
       // set random value
 
       // const lastround = await RNGContract.getLastRound();
+      if (!rngData.round) return;
+      console.log(" before setting", rngData.round);
 
       await RNGContract.setRandomValue(
         rngData.round,
         rngData.randomness,
         rngData.signature,
-        rngData.previous_signature,
-     
+        rngData.previous_signature
       );
+      console.log(" after setting", rngData.round);
 
       const drawFinalNumberAndMakeLotteryClaimable =
         await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
           currentLotteryId,
           false,
-          rngData.round,
-      
+          rngData.round
         );
-     console.log('about to draw')
+      console.log("about to draw");
       await drawFinalNumberAndMakeLotteryClaimable.wait();
       console.log("lottery drawn");
+
       setlotteryStatus(claimable);
+      console.log(lotteryStatus, "currentid");
     } catch (error) {
       console.log(error);
     }

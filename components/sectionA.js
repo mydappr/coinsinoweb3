@@ -29,6 +29,8 @@ import {
   endLotteryTime,
   winningNumbers,
   usewalletModal,
+  timeCountDown,
+  drandData,
 } from "../atoms/atoms";
 import BuyDialog from "./buyDialog";
 import { providers } from "ethers";
@@ -52,7 +54,7 @@ function SectionA({ keys }) {
   const { startLottery, closeLottery, drawLottery } = OperatorFunctions(keys);
 
   const [buyModalStat, setbuyModalStat] = useRecoilState(buyModal);
-  const [countDown, setCoundown] = useState({});
+  const [countDown, setCoundown] = useRecoilState(timeCountDown);
   const [nextDayDraw, setNextDayDraw] = useState({});
   const [totalLotteryDeposit, setTotalLotteryDeposit] =
     useRecoilState(totalLotteryFunds);
@@ -74,7 +76,7 @@ function SectionA({ keys }) {
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
   const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
   const [timeElasped, setTimeElapsed] = useState(false);
-
+  const [rngData, setrngData] = useRecoilState(drandData);
   const nextDraw = () => {
     // today
     const todaydraw = moment.unix(endTime).utcOffset(0);
@@ -155,6 +157,7 @@ function SectionA({ keys }) {
     maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
 
     if (now > maxTime) {
+      if (!endTime) return;
       setCoundown({
         days: 0,
         hours: 0,
@@ -206,23 +209,24 @@ function SectionA({ keys }) {
   }
 
   useEffect(() => {
+    let intervalId = setInterval(countdown, 1000);
+    return () => clearInterval(intervalId);
+  }, [endTime, countDown, rngData]);
+
+  useEffect(() => {
     const a = async () => {
       if (
         countDown.days === 0 &&
         countDown.hours === 0 &&
         countDown.minutes === 0 &&
-        countDown.seconds === 0
+        countDown.seconds === 0 &&
+        endTime
       ) {
-        // maxTime = moment();
-        // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
         // const Pending = 0;
         // const Open = 1;
         // const closed = 2;
         // const claimable = 3;
 
-        console.log(currentLotteryId, lotteryStatus);
-
-        console.log(lotteryStatus, "lottery status");
         if (lotteryStatus === Open) {
           console.log("close");
 
@@ -242,13 +246,8 @@ function SectionA({ keys }) {
       }
     };
     a();
+    return () => endTime;
   }, [lotteryStatus, timeElasped]);
-
-  useEffect(() => {
-    let intervalId = setInterval(countdown, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [endTime, countDown]);
 
   return (
     <>
@@ -310,7 +309,7 @@ function SectionA({ keys }) {
         {/* gets your ticket now Time is running */}
 
         <div className=" mt-20 p-2 text-center ">
-          {lotteryStatus === Open ? (
+          {!timeElasped ? (
             <>
               {" "}
               <h1 className="mb-7 text-3xl font-bold text-coinSinoGreen ">
@@ -369,7 +368,7 @@ function SectionA({ keys }) {
                 )}
               </div>
             </>
-          ) : lotteryStatus === closed ? (
+          ) : timeElasped ? (
             <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
               <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
                 <p>
@@ -382,13 +381,14 @@ function SectionA({ keys }) {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : lotteryStatus === claimable ? (
             <div>
               {" "}
               <h2>Lottery Drawn!</h2>
               <p>Check if you won!</p>
-              <h2>Lottery Drawn!</h2>
             </div>
+          ) : (
+            <p>Lottery Starting Soon!</p>
           )}
         </div>
 
