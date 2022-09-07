@@ -18,13 +18,13 @@ const Open = 1;
 const closed = 2;
 const claimable = 3;
 
-function OperatorFunctions(keys) {
-  const [currentLotteryId, setCurrentLotteryId] =
-    useRecoilState(latestLotteryId);
-  const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
-  const [rngData, setrngData] = useRecoilState(drandData);
-  const [countDown, setCoundown] = useRecoilState(timeCountDown);
-  const [endTime, setEndTime] = useRecoilState(endLotteryTime);
+function OperatorFunctions(keys,rngData) {
+  // const [currentLotteryId, setCurrentLotteryId] =
+  //   useRecoilState(latestLotteryId);
+  // const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
+  // const [rngData, setrngData] = useRecoilState(drandData);
+  // const [countDown, setCoundown] = useRecoilState(timeCountDown);
+  // const [endTime, setEndTime] = useRecoilState(endLotteryTime);
 
   // rng not working
    
@@ -110,15 +110,19 @@ function OperatorFunctions(keys) {
 
       // const lastround = await RNGContract.getLastRound();
       if (!rngData.round) return;
-
+           // current lotteryid
+           const latestLotteryId = Number(
+            await operatorcoinSinoContract.viewCurrentLotteryId()
+          );
+          // set lottyied
+ 
       await operatorcoinSinoContract.closeLottery(
-        currentLotteryId,
+        latestLotteryId,
         rngData.round
       );
       console.log("rng round", rngData.round);
-      console.log(lotteryStatus, "currentid");
-      console.log("lottery closed");
-      setlotteryStatus(closed);
+       console.log("lottery closed");
+      
     } catch (error) {
       console.log("", error);
     }
@@ -158,9 +162,15 @@ function OperatorFunctions(keys) {
       );
       console.log(" after setting", rngData.round);
 
+           // current lotteryid
+           const latestLotteryId = Number(
+            await operatorcoinSinoContract.viewCurrentLotteryId()
+          );
+          // set lottyied
+ 
       const drawFinalNumberAndMakeLotteryClaimable =
         await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
-          currentLotteryId,
+          latestLotteryId,
           false,
           rngData.round
         );
@@ -168,7 +178,7 @@ function OperatorFunctions(keys) {
       await drawFinalNumberAndMakeLotteryClaimable.wait();
       console.log("lottery drawn");
 
-      setlotteryStatus(claimable);
+       
       console.log(lotteryStatus, "currentid");
     } catch (error) {
       console.log(error);
