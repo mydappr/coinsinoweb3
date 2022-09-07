@@ -27,7 +27,7 @@ function OperatorFunctions(keys) {
   const [endTime, setEndTime] = useRecoilState(endLotteryTime);
 
   // rng not working
-  console.log(rngData);
+   
   // console.log(countDown);
   // console.log(currentLotteryId, "id");
   // console.log(lotteryStatus, "status");
