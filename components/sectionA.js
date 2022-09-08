@@ -1,5 +1,4 @@
 import { Tabs } from "flowbite-react";
-
 import CountUp from "react-countup";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
@@ -46,13 +45,8 @@ const Open = 1;
 const closed = 2;
 const claimable = 3;
 
-async function convertHexToInt(hex) {
-  return parseInt(hex, 16);
-}
-
 function SectionA({ keys }) {
   const { startLottery, closeLottery, drawLottery } = OperatorFunctions(keys);
-
   const [buyModalStat, setbuyModalStat] = useRecoilState(buyModal);
   const [countDown, setCoundown] = useRecoilState(timeCountDown);
   const [nextDayDraw, setNextDayDraw] = useState({});
@@ -138,13 +132,30 @@ function SectionA({ keys }) {
   // useEffect(() => {
   //   LotteryInfo();
   // }, []);
+  async function convertInput(date) {
+    const splitDate = date.split(" ");
+    const value = parseInt(splitDate[0]);
+    const interval = splitDate[1];
+    const epoch = moment(new Date()).add(value, interval).toDate();
+    const _epoch = moment(epoch).unix();
+    return _epoch;
+  }
 
+  const initialStartTime = async () => {
+    const initialTime = await convertInput("5 minutes");
+
+    if (lotteryStatus === 0 && !endTime) {
+      return initialTime;
+    } else {
+      return null;
+    }
+  };
   async function countdown() {
-    // console.log(dateString.day(), dateString.days());
+    const initalT = await initialStartTime();
 
-    let T = moment.unix(endTime).format();
+    let Time = moment.unix(endTime ? endTime : initalT).format();
 
-    const dateString = moment(T);
+    const dateString = moment(Time);
     const now = moment();
     const y = dateString.year();
     const mo = dateString.month();
@@ -212,43 +223,6 @@ function SectionA({ keys }) {
     let intervalId = setInterval(countdown, 1000);
     return () => clearInterval(intervalId);
   }, [endTime, countDown, rngData]);
-
-  useEffect(() => {
-    return;
-    const a = async () => {
-      if (
-        countDown.days === 0 &&
-        countDown.hours === 0 &&
-        countDown.minutes === 0 &&
-        countDown.seconds === 0 &&
-        endTime
-      ) {
-        // const Pending = 0;
-        // const Open = 1;
-        // const closed = 2;
-        // const claimable = 3;
-
-        if (lotteryStatus === Open) {
-          console.log("close");
-
-          await closeLottery();
-        } else if (lotteryStatus === closed) {
-          console.log("drawit");
-
-          await drawLottery();
-        } else if (
-          (lotteryStatus === Pending) |
-          (lotteryStatus === claimable)
-        ) {
-          console.log("start");
-
-          await startLottery();
-        }
-      }
-    };
-    a();
-    return () => endTime;
-  }, [lotteryStatus, timeElasped]);
 
   return (
     <>

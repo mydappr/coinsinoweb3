@@ -1,0 +1,13 @@
+name: 5 mintues startLottery cron job
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 5 mintues startLottery cron job
+        run: |
+          curl --request POST \
+          --url 'https://sino-realrufans.vercel.app/api/startlottery' \
+          --header 'Authorization: Bearer ${{ secrets.ACTION_KEY }}'
