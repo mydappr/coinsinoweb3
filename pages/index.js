@@ -1,4 +1,5 @@
 import Head from "next/head";
+
 import Header from "../components/header";
 import SectionA from "../components/sectionA";
 import SectionB from "../components/sectionB";
