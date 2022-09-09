@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import {} from "dotenv/config";
 import { useRecoilState } from "recoil";
 import { lotteryStatus as Lstatus } from "../../atoms/atoms";
 import OperatorFunctions from "../../components/OperatorFunctions";
@@ -14,7 +15,9 @@ export default async function handler(req, res) {
     rngData
   );
 
-  const operatorProvider = new ethers.providers.JsonRpcProvider('https://testnet.telos.net/evm');
+  const operatorProvider = new ethers.providers.JsonRpcProvider(
+    "https://testnet.telos.net/evm"
+  );
 
   // operator signer and contract
   const operatorSigner = new ethers.Wallet(process.env.opkey, operatorProvider);
@@ -31,9 +34,11 @@ export default async function handler(req, res) {
     await operatorcoinSinoContract.viewCurrentLotteryId()
   );
 
-  await startLottery();
-  await closeLottery();
-  await drawLottery();
+  // await startLottery();
+  // await closeLottery();
+  // await drawLottery();
+
+  console.log(await startLottery());
 
   res.status(200).json({
     message: `current LotteryId ${latestLotteryId} }`,
