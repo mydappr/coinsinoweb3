@@ -1,10 +1,4 @@
 import { ethers } from "ethers";
-<<<<<<< HEAD:pages/api/ScheduledFunctions.js
-import {} from "dotenv/config";
-import { useRecoilState } from "recoil";
-import { lotteryStatus as Lstatus } from "../../atoms/atoms";
-=======
->>>>>>> ecb7050ea67cef57ac107ed1e733f7733cb6cd18:pages/api/closelottery.js
 import OperatorFunctions from "../../components/OperatorFunctions";
 import { NonceManager } from "@ethersproject/experimental";
 import Sinoabi from "../../utils/Coinsino.json";
@@ -15,10 +9,7 @@ export default async function handler(req, res) {
   const rngData = await drandres.json();
   const { closeLottery } = OperatorFunctions(rngData);
 
-<<<<<<< HEAD:pages/api/ScheduledFunctions.js
-=======
   // operator provider,and signer
->>>>>>> ecb7050ea67cef57ac107ed1e733f7733cb6cd18:pages/api/closelottery.js
   const operatorProvider = new ethers.providers.JsonRpcProvider(
     "https://testnet.telos.net/evm"
   );
@@ -48,15 +39,7 @@ export default async function handler(req, res) {
     return;
   }
 
-<<<<<<< HEAD:pages/api/ScheduledFunctions.js
-  // await startLottery();
-  // await closeLottery();
-  // await drawLottery();
-
-  console.log(await startLottery());
-=======
   await closeLottery();
->>>>>>> ecb7050ea67cef57ac107ed1e733f7733cb6cd18:pages/api/closelottery.js
 
   res.status(200).json({
     message: `Lottery ${latestLotteryId} closed  successfully!  }`,
