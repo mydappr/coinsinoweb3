@@ -10,4 +10,4 @@ jobs:
         run: |
           curl --request POST \
           --url 'https://sino-realrufans.vercel.app/api/closelottery' \
-          --header 'Authorization: Bearer ${{ secrets.ACTION_KEY }}'
+          --header 'Authorization: ${{ secrets.ACTION_KEY }}'
