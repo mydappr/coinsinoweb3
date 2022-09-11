@@ -10,4 +10,4 @@ jobs:
         run: |
           curl --request POST \
           --url 'https://sino-realrufans.vercel.app/api/startlottery' \
-          --header 'Authorization:  ${{ startLottery_Key }}'
+          --header 'Authorization:  ${{ secrets.startLottery_Key }}'
