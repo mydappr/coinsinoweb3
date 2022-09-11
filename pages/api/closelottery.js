@@ -25,8 +25,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log("Working");
-    return;
     const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
     const rngData = await drandres.json();
     const { closeLottery } = OperatorFunctions(rngData);
@@ -60,13 +58,12 @@ export default async function handler(req, res) {
     // current lottery status
     const { status } = getLotterystatus;
     if (status !== 1) {
-      console.log("status is not 1");
       return;
     }
 
     await closeLottery();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: `Lottery ${latestLotteryId} closed  successfully!  }`,
     });
   } catch (error) {}

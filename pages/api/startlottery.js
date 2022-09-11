@@ -9,29 +9,23 @@ import { doc, getDoc } from "firebase/firestore";
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
 export default async function handler(req, res) {
-
-     
   try {
     const authorization_key = req.headers.authorization;
     const docRef = doc(database, "authorization", authorization_key);
     const docSnap = await getDoc(docRef);
 
-     // verify token
+    // verify token
     const data = docSnap.data();
     const verification = jwt.verify(data.token, process.env.jwt_secret);
 
     // check if roles from data and verification are correct
-     
 
-    
     if (data.role !== verification.role) return;
   } catch (error) {
     return res.status(400).json({ Error: "Something went wrong" });
   }
 
   try {
-    console.log('starting')
-  
     const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
     const rngData = await drandres.json();
     const { startLottery } = OperatorFunctions(rngData);
@@ -65,20 +59,15 @@ export default async function handler(req, res) {
       console.log("not yet time to start lottery");
       return;
     }
-    console.log('why is is')
-     
+    console.log("why is is");
 
     // await startLottery();
     const getLotterystatus = await operatorcoinSinoContract.viewLottery(
       latestLotteryId
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       message: ` LotteryId started with id ${latestLotteryId} }`,
-    });
-
-    res.status(200).json({
-      message: `Lottery ${latestLotteryId} closed  successfully!  }`,
     });
   } catch (error) {}
 }
