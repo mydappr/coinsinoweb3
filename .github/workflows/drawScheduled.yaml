@@ -1,7 +1,7 @@
 name: 5 mintues drawLottery cron job
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
 jobs:
   cron:
     runs-on: ubuntu-latest
@@ -10,4 +10,4 @@ jobs:
         run: |
           curl --request POST \
           --url 'https://sino-realrufans.vercel.app/api/drawlottery' \
-          --header 'Authorization: Bearer ${{ secrets.ACTION_KEY }}'
+          --header 'Authorization:  ${{ sec }}'

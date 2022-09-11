@@ -19,13 +19,13 @@ export default async function handler(req, res) {
     const verification = jwt.verify(data.token, process.env.jwt_secret);
 
     // check if roles from data and verification are correct
+
     if (data.role !== verification.role) return;
   } catch (error) {
     return res.status(400).json({ Error: "Something went wrong" });
   }
 
   try {
-    console.log("Draw working!");
     return;
     const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
     const rngData = await drandres.json();

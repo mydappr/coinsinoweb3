@@ -55,28 +55,29 @@ const Open = 1;
 const closed = 2;
 const claimable = 3;
 
-// serverside
-export const getServerSideProps = async () => {
-  try {
-    let baseUrl;
-    const env = process.env.NODE_ENV;
-    if (env == "development") {
-      baseUrl = "http://localhost:3000";
-    } else if (env == "production") {
-      baseUrl = "https://sino-realrufans.vercel.app";
-    }
-    const a = await fetch(`${baseUrl}/api/hello`);
-    const keys = await a.json();
+// // serverside
+// export const getServerSideProps = async () => {
+//   try {
+//     let baseUrl;
+//     const env = process.env.NODE_ENV;
+//     if (env == "development") {
+//       baseUrl = "http://localhost:3000";
+//     } else if (env == "production") {
+//       baseUrl = "https://sino-realrufans.vercel.app";
+//     }
+//     const a = await fetch(`${baseUrl}/api/hello`);
+//     const keys = await a.json();
 
-    // fetch initial status for lottery
+//     // fetch initial status for lottery
 
-    return {
-      props: { keys },
-    };
-  } catch (error) {}
-};
+//     return {
+//       props: { keys },
+//     };
+//   } catch (error) {}
+// };
 
-export default function Home({ keys }) {
+export default function Home() {
+  const opkey = process.env.opkey;
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
   const [rewardMessage, setRewardMessage] = useState("");
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
@@ -143,7 +144,7 @@ export default function Home({ keys }) {
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // operator signer and contract
-      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const operatorSigner = new ethers.Wallet(opkey, operatorProvider);
       const operatorcoinSinoContract = new ethers.Contract(
         coinSinoContractAddress,
         Sinoabi,
@@ -288,7 +289,7 @@ export default function Home({ keys }) {
   //       // signers wallet get smartcontract
   //       const provider = new ethers.providers.Web3Provider(ethereum);
   //       // operator signer and contract
-  //       const operatorSigner = new ethers.Wallet(keys.opkey, provider);
+  //       const operatorSigner = new ethers.Wallet(opkey, provider);
   //       const operatorcoinSinoContract = new ethers.Contract(
   //         coinSinoContractAddress,
   //         Sinoabi,
@@ -524,10 +525,10 @@ export default function Home({ keys }) {
         </div>
         <ToTop scrollTargetElementRef={scrollTargetElementRef} />
         <Header />
-        <SectionA keys={keys} />
+        <SectionA keys={opkey} />
       </div>
 
-      <SectionB keys={keys} />
+      <SectionB keys={opkey} />
 
       <Footer scrollTargetElementRef={scrollTargetElementRef} />
     </div>
