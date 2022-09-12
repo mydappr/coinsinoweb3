@@ -1,12 +1,12 @@
-name: 7 mintues drawLottery cron job
+name: 12 mintues drawLottery cron job
 on:
   schedule:
-    - cron: "*/7 * * * *"
+    - cron: "*/12 * * * *"
 jobs:
   cron:
     runs-on: ubuntu-latest
     steps:
-      - name: 7 mintues drawLottery cron job
+      - name: 12 mintues drawLottery cron job
         run: |
           curl --request POST \
           --url 'https://sino-realrufans.vercel.app/api/drawlottery' \

@@ -1,12 +1,12 @@
-name: 6 mintues closeLottery cron job
+name: 11 mintues closeLottery cron job
 on:
   schedule:
-    - cron: "*/6 * * * *"
+    - cron: "*/11 * * * *"
 jobs:
   cron:
     runs-on: ubuntu-latest
     steps:
-      - name: 6 mintues closeLottery cron job
+      - name: 11 mintues closeLottery cron job
         run: |
           curl --request POST \
           --url 'https://sino-realrufans.vercel.app/api/closelottery' \

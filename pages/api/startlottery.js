@@ -26,6 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("starting");
     const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
     const rngData = await drandres.json();
     const { startLottery } = OperatorFunctions(rngData);
@@ -47,27 +48,25 @@ export default async function handler(req, res) {
       managedSigner
     );
 
+    console.log("before lotteryid");
+
     // current lotteryid
     const latestLotteryId = Number(
       await operatorcoinSinoContract.viewCurrentLotteryId()
     );
     // current lottery details
-
-    // current lottery status
-    const { status } = getLotterystatus;
-    if (status !== 3 || status !== 0) {
-      console.log("not yet time to start lottery");
-      return;
-    }
-    console.log("why is is");
-
-    // await startLottery();
     const getLotterystatus = await operatorcoinSinoContract.viewLottery(
       latestLotteryId
     );
 
-    return res.status(200).json({
-      message: ` LotteryId started with id ${latestLotteryId} }`,
-    });
+    // current lottery status
+    const { status } = getLotterystatus;
+
+    if (status === 3 || status === 0) {
+      await startLottery();
+      return res.status(200).json({
+        message: ` LotteryId started with id ${latestLotteryId} }`,
+      });
+    }
   } catch (error) {}
 }

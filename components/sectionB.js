@@ -29,6 +29,7 @@ import UseLoadingSpinner from "./UseLoadingSpinner";
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
 function SectionB({ keys }) {
+  
   const [lastDrawTime, setLastDrawTime] = useState({});
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
@@ -60,6 +61,7 @@ function SectionB({ keys }) {
   async function convertHexToInt(hex) {
     return parseInt(hex, 16);
   }
+  console.log(winningNo)
 
   // retuns won tickets and won pool Ids
   const wonTicketArr = [];
@@ -392,7 +394,7 @@ function SectionB({ keys }) {
 
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const operatorSigner = new ethers.Wallet(keys, operatorProvider);
       const operatorcoinSinoContract = new ethers.Contract(
         coinSinoContractAddress,
         Sinoabi,
