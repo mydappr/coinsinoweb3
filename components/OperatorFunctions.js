@@ -53,7 +53,7 @@ function OperatorFunctions(rngData) {
   const startLottery = async () => {
     console.log("starting");
     
-    return;
+  
     try {
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
@@ -92,8 +92,7 @@ function OperatorFunctions(rngData) {
   };
 
   const closeLottery = async () => {
-    console.log("closing");
-    return;
+   
     try {
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // operator signer and contract
@@ -136,9 +135,7 @@ function OperatorFunctions(rngData) {
   // draw lottery
   const drawLottery = async () => {
     try {
-      console.log("drawing lottery");
-
-      return;
+    
 
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);

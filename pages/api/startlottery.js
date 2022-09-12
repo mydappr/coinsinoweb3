@@ -65,7 +65,11 @@ export default async function handler(req, res) {
     if (status === 3 || status === 0) {
       await startLottery();
       return res.status(200).json({
-        message: ` LotteryId started with id ${latestLotteryId} }`,
+        message: ` LotteryId started with id ${latestLotteryId} `,
+      });
+    } else {
+      return res.status(400).json({
+        message: ` error`,
       });
     }
   } catch (error) {}
