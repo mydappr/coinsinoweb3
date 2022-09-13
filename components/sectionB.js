@@ -629,7 +629,7 @@ function SectionB({ keys }) {
                       <span>{lastDrawTime.antePost}</span> {""}
                     </div>
                   ) : (
-                    <div className="waiting"></div>
+                    <div className="waiting w-40 md:w-80"></div>
                   )}
                 </div>
                 <PlayIcon
@@ -681,7 +681,7 @@ function SectionB({ keys }) {
                       <span>{lastDrawTime.antePost}</span> {""}
                     </div>
                   ) : (
-                    <div className="waiting"></div>
+                    <div className="waiting w-40 md:w-80"></div>
                   )}
                   <span className="">{userTickets.length}</span>
                 </div>

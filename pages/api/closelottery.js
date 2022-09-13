@@ -25,9 +25,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("closing");
     const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
     const rngData = await drandres.json();
+    console.log(rngData);
     const { closeLottery } = OperatorFunctions(rngData);
+    console.log(rngData);
 
     // operator provider,and signer
     const operatorProvider = new ethers.providers.JsonRpcProvider(
@@ -57,7 +60,9 @@ export default async function handler(req, res) {
 
     // current lottery status
     const { status } = getLotterystatus;
+    console.log(status);
     if (status !== 1) {
+      console.log("not going to work");
       return;
     }
 
