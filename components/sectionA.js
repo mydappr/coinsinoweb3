@@ -37,6 +37,7 @@ import OperatorFunctions from "./OperatorFunctions";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
+import { async } from "@firebase/util";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
@@ -73,10 +74,12 @@ function SectionA({ keys }) {
   const [rngData, setrngData] = useRecoilState(drandData);
   const nextDraw = () => {
     // today
+    if (!endTime) return;
     const todaydraw = moment.unix(endTime).utcOffset(0);
     todaydraw.toISOString();
     todaydraw.format();
     let tomorrow = moment(todaydraw.add(1, "days").local());
+    console.log(tomorrow);
 
     const date = tomorrow.date();
     const month = tomorrow.format("MMM");
@@ -143,13 +146,23 @@ function SectionA({ keys }) {
 
   const initialStartTime = async () => {
     const initialTime = await convertInput("5 minutes");
-
+    
     if (lotteryStatus === 0 && !endTime) {
       return initialTime;
     } else {
       return null;
     }
   };
+
+  useEffect(() => {
+    let intervalId = setInterval(initialStartTime, 1000);
+   
+    return () => clearInterval(intervalId);
+  }, [lotteryStatus, endTime]);
+
+
+ 
+
   async function countdown() {
     const initalT = await initialStartTime();
 
@@ -252,7 +265,7 @@ function SectionA({ keys }) {
                   Tlos
                 </h2>
               ) : (
-                <div className="waiting"></div>
+                <div className="waiting w-40 md:w-80"></div>
               )}
             </div>
 
@@ -294,7 +307,7 @@ function SectionA({ keys }) {
                 <p className="text-coinSinoTextColor">
                   Times remaining for draw
                 </p>
-                {endTime ? (
+                {countDown.hours || countDown.minutes || countDown.seconds ? (
                   <div className="my-5  flex justify-center space-x-2">
                     <div className="">
                       <div className="inline-flex items-center space-x-2">
@@ -339,31 +352,36 @@ function SectionA({ keys }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="waiting"></div>
+                  <div className="waiting w-40 md:w-80"></div>
                 )}
               </div>
             </>
           ) : timeElasped ? (
-            <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
-              <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
-                <p>
-                  {" "}
-                  <strong>Drawing </strong>
-                </p>
+            <>
+              {lotteryStatus === claimable ? (
                 <div>
                   {" "}
-                  <BeatLoader color="#ffffff" size={10} className="mt-2" />
+                  <h2>Lottery Drawn!</h2>
+                  <p>Check if you won!</p>
+                  <h2>Lottery Starting Soon!</h2>
                 </div>
-              </div>
-            </div>
-          ) : lotteryStatus === claimable ? (
-            <div>
-              {" "}
-              <h2>Lottery Drawn!</h2>
-              <p>Check if you won!</p>
-            </div>
+              ) : (
+                <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
+                  <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
+                    <p>
+                      {" "}
+                      <strong>Drawing </strong>
+                    </p>
+                    <div>
+                      {" "}
+                      <BeatLoader color="#ffffff" size={10} className="mt-2" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
-            <p>Lottery Starting Soon!</p>
+            ""
           )}
         </div>
 
@@ -371,25 +389,34 @@ function SectionA({ keys }) {
         <div className=" my-5 border-2 border-coinSinoTextColor2 p-2">
           <div className="  flex   flex-col items-center justify-between border-b-[1px] border-coinSinoTextColor2 sm:flex-row md:justify-between md:p-7 ">
             <div className=" space-y-3 text-base ">
-              <p className="">
-                <span>Next draw:</span>{" "}
-                <span>
-                  <strong className=" text-lg text-coinSinoGreen">
-                    #
-                    {currentLotteryId ? (
-                      currentLotteryId + 1
-                    ) : (
-                      <span className="waiting"></span>
-                    )}
-                  </strong>{" "}
-                  <span>{nextDayDraw.month}</span>{" "}
-                  <span>{nextDayDraw.date}</span>{" "}
-                  <span>{nextDayDraw.year}</span>{" "}
-                  <span>{nextDayDraw.hour}</span>:
-                  <span>{nextDayDraw.minute}</span>{" "}
-                  <span>{nextDayDraw.antePost}</span>
-                </span>
-              </p>
+              <div className=" flex items-center space-x-2 ">
+                <p>
+                  {" "}
+                  <span>Next draw:</span>{" "}
+                </p>
+                <div>
+                  {endTime ? (
+                    <span>
+                      <strong className=" text-lg text-coinSinoGreen">
+                        {currentLotteryId && (
+                          <>
+                            <span> #</span>
+                            {currentLotteryId + 1}
+                          </>
+                        )}
+                      </strong>{" "}
+                      <span>{nextDayDraw.month}</span>{" "}
+                      <span>{nextDayDraw.date}</span>{" "}
+                      <span>{nextDayDraw.year}</span>{" "}
+                      <span>{nextDayDraw.hour}</span>:
+                      <span>{nextDayDraw.minute}</span>{" "}
+                      <span>{nextDayDraw.antePost}</span>
+                    </span>
+                  ) : (
+                    <div className="waiting w-40"></div>
+                  )}
+                </div>
+              </div>
               <p>
                 <span>Total pool price:</span>{" "}
                 <strong className=" text-lg text-coinSinoGreen">

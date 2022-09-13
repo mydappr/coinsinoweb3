@@ -75,7 +75,7 @@ const claimable = 3;
 //     };
 //   } catch (error) {}
 // };
- 
+
 export default function Home() {
   const opkey = process.env.opkey;
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
@@ -278,9 +278,9 @@ export default function Home() {
   }, [currentLotteryId]);
 
   useEffect(() => {
-    let fetch = getLatestLotteryInfo();
-    return () => (fetch = null);
-  }, [currentLotteryId, lotteryStatus]);
+    let intervalId = setInterval(getLatestLotteryInfo, 5000);
+    return () => clearInterval(intervalId);
+  }, [currentLotteryId, endTime, lotteryStatus]);
 
   // const info = async () => {
   //   try {

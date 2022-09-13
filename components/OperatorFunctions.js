@@ -71,7 +71,7 @@ function OperatorFunctions(rngData) {
         managedSigner
       );
       const lottryDuration = await convertInput("5 minutes");
-
+       console.log('lottery time', lottryDuration)
       // start a lottery
       const startLottery = await operatorcoinSinoContract.startLottery(
         lottryDuration,
@@ -83,7 +83,7 @@ function OperatorFunctions(rngData) {
 
       await startLottery;
 
-      console.log(lotteryStatus, "currentid");
+      console.log( "lottery started");
       // get current lottery id
     } catch (error) {
       console.log("Error minting character", error);

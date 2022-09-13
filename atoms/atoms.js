@@ -1,7 +1,5 @@
 import { atom } from "recoil";
 
-
-
 export const userTickets = atom({
   key: "userTickets", // all the atoms in recoil have their unique key
   default: [], // this is the default value of an atom
@@ -131,5 +129,10 @@ export const drandData = atom({
 });
 export const timeCountDown = atom({
   key: "timeCountDown",
-  default: {},
+  default: {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  },
 });
