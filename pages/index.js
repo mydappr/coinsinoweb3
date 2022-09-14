@@ -26,6 +26,7 @@ import {
   sixthpool,
   endLotteryTime,
   drandData,
+  activeAccount,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import { Toast } from "flowbite-react";
@@ -99,7 +100,9 @@ export default function Home() {
   const [fifthPoolFunds, setFifthPoolFunds] = useRecoilState(fiftpool);
   const [sixthPoolFunds, setSixthPoolFunds] = useRecoilState(sixthpool);
   const [rngData, setrngData] = useRecoilState(drandData);
+  const [userCurrentTickets, setUserCurrentTickets] = useState(0);
   const scrollTargetElementRef = useRef(null);
+  const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
 
   const splittedWinningValues = Array.from(String(winningNo));
 
@@ -219,13 +222,17 @@ export default function Home() {
     }
   };
 
+  console.log('current tick', userCurrentTickets)
+
   // fetch tickets on launch
   const fetchTickets = async () => {
     const { ethereum } = window;
 
     if (ethereum) {
       try {
-        const { ethereum } = window;
+       
+// deal with userCurrentTickets
+
         if (ethereum) {
           // user contract
           const userProvider = new ethers.providers.Web3Provider(ethereum);
@@ -240,19 +247,18 @@ export default function Home() {
             signer
           );
 
-          const accounts = await ethereum.request({
-            method: "eth_requestAccounts",
-          });
+       
           const latestLotteryId = await convertHexToInt(
             await coinSinoContract.viewCurrentLotteryId()
           );
 
           const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
-            accounts[0],
+            currentAccount,
             latestLotteryId,
             0,
             100
           );
+          console.log(currentAccount)
 
           const userticketIds = [];
           for (let i = 0; i < userInfo[0].length; i++) {
@@ -265,7 +271,7 @@ export default function Home() {
             await coinSinoContract.viewNumbersAndStatusesForTicketIds(
               userticketIds
             );
-          setUserTickets(list[0]);
+          setUserCurrentTickets(list[0]);
         }
       } catch (error) {
         console.log(error);
@@ -275,10 +281,10 @@ export default function Home() {
 
   useEffect(() => {
     fetchTickets();
-  }, [currentLotteryId]);
+  }, [currentLotteryId, currentAccount]);
 
   useEffect(() => {
-    let intervalId = setInterval(getLatestLotteryInfo, 5000);
+    let intervalId = setInterval(getLatestLotteryInfo, 10000);
     return () => clearInterval(intervalId);
   }, [currentLotteryId, endTime, lotteryStatus]);
 

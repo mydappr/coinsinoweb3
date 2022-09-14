@@ -46,8 +46,8 @@ function Header() {
           }
           className="group relative order-1 inline-block cursor-pointer text-lg"
         >
-          <span className="relative z-10 block overflow-hidden rounded-lg border-2 border-gray-900 px-5 py-3 font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out group-hover:text-white">
-            <span className="absolute inset-0 h-full w-full rounded-lg bg-coinSinoTextColor px-5 py-3"></span>
+          <span className="relative z-10 block overflow-hidden rounded-lg border-2 border-gray-900 px-5 py-3 font-medium leading-tight  transition-colors duration-300 ease-out group-hover:text-white">
+            <span className="absolute inset-0 h-full w-full rounded-lg bg-coinSinoPurpleNav border-coinSinoTextColor2 border-2 text-coinSinoTextColor px-5 py-3"></span>
             <span className="ease absolute left-0 -ml-2 h-48 w-48 origin-top-right -translate-x-full translate-y-12 -rotate-90 bg-coinSinoPurple transition-all duration-300 group-hover:-rotate-180"></span>
             <span className="relative">
               {!currentAccount ? "Connect" : "Disconnect"}

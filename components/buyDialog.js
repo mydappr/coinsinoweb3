@@ -14,6 +14,9 @@ import {
 import Sinoabi from "../utils/Coinsino.json";
 import { ethers, BigNumber } from "ethers";
 import UseToaster from "./UseToaster";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import Web3 from "web3";
+import UseLoadingSpinner from "./UseLoadingSpinner";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
@@ -35,6 +38,8 @@ export default function BuyDialog() {
     useRecoilState(connectorType);
   const inputRef = useRef(null);
   const { Toast } = UseToaster();
+  const [isloading, setisloading] = useState(false);
+  const { Loading } = UseLoadingSpinner(isloading);
 
   const getTelosPrice = async () => {
     try {
@@ -42,7 +47,7 @@ export default function BuyDialog() {
       const res = await get.json();
       const price = res.market_data.current_price.usd;
       setTelosPrice(price);
-      console.log(price);
+      console.log("price", price);
     } catch (error) {
       console.log(error);
     }
@@ -52,26 +57,26 @@ export default function BuyDialog() {
     getTelosPrice();
   }, [isOpen, telosPrice]);
 
+  // fetch userBalance
+  const currentBalance = async () => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      const balance = parseFloat(
+        ethers.utils.formatEther(
+          await provider.getBalance(currentAccount),
+          "ethers"
+        )
+      ).toFixed(3);
+      console.log(currentAccount);
+      setuserBalance(balance);
+      console.log("current  balance", balance);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    return async () => {
-      try {
-        const { ethereum } = window;
-        if (ethereum) {
-          // console.log("started");
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const balance = parseFloat(
-            ethers.utils.formatEther(
-              await provider.getBalance(currentAccount),
-              "ethers"
-            )
-          ).toFixed(3);
-
-          setuserBalance(balance);
-          console.log(userBalance);
-        }
-      } catch (error) {}
-    };
-  }, [userBalance, currentAccount, isOpen]);
+    currentBalance();
+  }, [currentAccount, userBalance]);
 
   const discountDivisor = 2000;
 
@@ -88,9 +93,7 @@ export default function BuyDialog() {
     (priceTopay * 100) / totalTicketsPrice
   ).toFixed(2);
   const disablebtn =
-    (userBalance < totalTicketsPrice) |
-    (noOfTickets < 1) |
-    (errorMessage !== "");
+    userBalance < totalTicketsPrice || noOfTickets < 1 || errorMessage !== "";
 
   // random generator
   async function generateRandom(min = 0, max = 100) {
@@ -120,6 +123,7 @@ export default function BuyDialog() {
 
   // modal functions
   function closeBuyModals() {
+    setisloading(false);
     setIsOpen(false);
   }
 
@@ -155,9 +159,6 @@ export default function BuyDialog() {
     }
 
     if (value == "") {
-      console.log(placeholder);
-      console.log(name);
-      console.log(value);
       setErrorMessage("");
       return;
     }
@@ -196,17 +197,35 @@ export default function BuyDialog() {
       return;
     }
     try {
+      setisloading(true);
+      let provider;
       if (
         (providerConnector === "metaMask") |
         (providerConnector === "walletConnect")
       ) {
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-        const signer = provider.getSigner();
-        const coinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
+        if (providerConnector === "walletConnect") {
+          provider = new WalletConnectProvider({
+            rpc: {
+              [41]: "https://testnet.telos.net/evm",
+            },
+          });
+        } else if (providerConnector === "metaMask") {
+          provider = window.ethereum;
+        }
+
+        await provider.enable();
+
+        const web3 = new Web3(provider);
+
+        const coinSinoContract = new web3.eth.Contract(
           Sinoabi,
-          signer
+          coinSinoContractAddress
         );
+
+        // check if network is metamask
+        let chainId = await web3.eth.getChainId();
+
+        if (chainId !== 41) return;
 
         // const accounts = await ethereum.request({
         //   method: "eth_requestAccounts",
@@ -226,16 +245,20 @@ export default function BuyDialog() {
         // const tickets = await generateTicketNumbers(noOfTickets);
         // console.log("user tickets", tickets);
 
-        const buyTicket = await coinSinoContract.buyTickets(
-          currentLotteryId,
-          listOfTicketsToBuy,
-          { value: costOfTickets }
-        );
+        const buyTicket = await coinSinoContract.methods
+          .buyTickets(currentLotteryId, listOfTicketsToBuy)
+          .send({
+            from: currentAccount,
+            value: costOfTickets,
+          });
 
-        await buyTicket.wait();
+        await buyTicket;
+        Toast("Ticket bought");
+        closeBuyModals();
       }
     } catch (error) {
-      Toast(error.reason);
+      setisloading(false);
+      console.log(error);
     }
   };
 
@@ -290,6 +313,7 @@ export default function BuyDialog() {
                     </div>
                     <div className=" relative">
                       <textarea
+                      disabled={isloading}
                         value={noOfTickets}
                         onChange={async (e) => {
                           let invalidChars = /[^0-9]/gi;
@@ -341,36 +365,46 @@ export default function BuyDialog() {
                       <span>You pay</span>{" "}
                       <span className="text-white">~{priceTopay} Tlos</span>
                     </p>
-
-                    <button
-                      disabled={
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1)
-                      }
-                      className={` w-full rounded-full bg-coinSinoGreen p-3  text-sm font-bold text-white ${
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1) &&
-                        " cursor-not-allowed border border-coinSinoTextColor2 bg-transparent text-coinSinoTextColor2"
-                      }`}
-                      onClick={buyTicket}
-                    >
-                      {" "}
-                      Buy Instantly
-                    </button>
-                    <button
-                      disabled={
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1)
-                      }
-                      className={` flex w-full justify-around rounded-full bg-coinSinoTextColor2 p-3  text-sm font-bold text-white ${
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1) &&
-                        " cursor-not-allowed border border-coinSinoTextColor2 bg-inherit text-coinSinoTextColor2"
-                      }`}
-                      onClick={() => {
-                        openEditModals();
-                        closeBuyModals();
-                      }}
-                    >
-                      {" "}
-                      View/Edit Numbers <ArrowSmRightIcon className="w-7 " />
-                    </button>
+                    {isloading ? (
+                      Loading()
+                    ) : (
+                      <>
+                        <button
+                          disabled={
+                            (userBalance < totalTicketsPrice) |
+                            (noOfTickets < 1)
+                          }
+                          className={` w-full rounded-full bg-coinSinoGreen p-3  text-sm font-bold text-white ${
+                            (userBalance < totalTicketsPrice) |
+                              (noOfTickets < 1) &&
+                            " cursor-not-allowed border border-coinSinoTextColor2 bg-transparent text-coinSinoTextColor2"
+                          }`}
+                          onClick={buyTicket}
+                        >
+                          {" "}
+                          Buy Instantly
+                        </button>
+                        <button
+                          disabled={
+                            (userBalance < totalTicketsPrice) |
+                            (noOfTickets < 1)
+                          }
+                          className={` flex w-full justify-around rounded-full bg-coinSinoTextColor2 p-3  text-sm font-bold text-white ${
+                            (userBalance < totalTicketsPrice) |
+                              (noOfTickets < 1) &&
+                            " cursor-not-allowed border border-coinSinoTextColor2 bg-inherit text-coinSinoTextColor2"
+                          }`}
+                          onClick={() => {
+                            openEditModals();
+                            closeBuyModals();
+                          }}
+                        >
+                          {" "}
+                          View/Edit Numbers{" "}
+                          <ArrowSmRightIcon className="w-7 " />
+                        </button>
+                      </>
+                    )}
                   </div>
 
                   <div className="mt-2">
@@ -499,34 +533,30 @@ export default function BuyDialog() {
                   </div>
                   <div className=" mt-5 space-y-2    text-coinSinoTextColor2">
                     {" "}
-                    <button
-                      disabled={disablebtn}
-                      className={` w-full rounded-full bg-coinSinoGreen p-3  text-sm font-bold text-white ${
-                        disablebtn &&
-                        " cursor-not-allowed border border-coinSinoTextColor2 bg-transparent text-coinSinoTextColor2"
-                      }`}
-                      onClick={buyTicket}
-                    >
-                      {" "}
-                      Confirm and buy
-                    </button>
-                    <button
-                      onClick={() => {
-                        closeEditModals();
-                        closeBuyModals();
-                        setErrorMessage("");
-                      }}
-                      disabled={
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1)
-                      }
-                      className={` flex w-full justify-center rounded-full bg-coinSinoTextColor2 p-3  text-sm font-bold text-white ${
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1) &&
-                        " cursor-not-allowed border border-coinSinoTextColor2 bg-inherit text-coinSinoTextColor2"
-                      }`}
-                    >
-                      {" "}
-                      <ArrowSmRightIcon className="w-7 rotate-180 " /> Go back
-                    </button>
+                    {isloading ? (
+                      Loading()
+                    ) : (
+                      <>
+                        <button
+                          className={` w-full rounded-full bg-coinSinoGreen p-3  text-sm font-bold text-white  `}
+                          onClick={buyTicket}
+                        >
+                          {" "}
+                          Confirm and buy
+                        </button>
+                        <button
+                          onClick={() => {
+                            closeEditModals();
+                            closeBuyModals();
+                            setErrorMessage("");
+                          }}
+                          className={` flex w-full justify-center rounded-full bg-coinSinoTextColor2 p-3  text-sm font-bold text-white `}
+                        >
+                          {" "}
+                          Cancel
+                        </button>
+                      </>
+                    )}
                   </div>
                   <div className="mt-2">
                     <p className="text-sm ">
