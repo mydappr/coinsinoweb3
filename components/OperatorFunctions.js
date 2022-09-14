@@ -70,7 +70,7 @@ function OperatorFunctions(rngData) {
         Sinoabi,
         managedSigner
       );
-      const lottryDuration = await convertInput("2 hours");
+      const lottryDuration = await convertInput("1 hour");
        console.log('lottery time', lottryDuration)
       // start a lottery
       const startLottery = await operatorcoinSinoContract.startLottery(
