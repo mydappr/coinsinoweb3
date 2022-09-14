@@ -146,7 +146,7 @@ function SectionA({ keys }) {
 
   const initialStartTime = async () => {
     const initialTime = await convertInput("5 minutes");
-    
+
     if (lotteryStatus === 0 && !endTime) {
       return initialTime;
     } else {
@@ -156,12 +156,9 @@ function SectionA({ keys }) {
 
   useEffect(() => {
     let intervalId = setInterval(initialStartTime, 1000);
-   
+
     return () => clearInterval(intervalId);
   }, [lotteryStatus, endTime]);
-
-
- 
 
   async function countdown() {
     const initalT = await initialStartTime();
@@ -271,9 +268,9 @@ function SectionA({ keys }) {
 
             {currentAccount ? (
               <button
-                disabled={lotteryStatus !== Open}
+                disabled={timeElasped}
                 className={`w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3   font-bold text-coinSinoTextColor sm:mb-5 ${
-                  lotteryStatus !== Open && "cursor-not-allowed bg-gray-600"
+                  timeElasped && "cursor-not-allowed bg-gray-600"
                 }`}
                 onClick={() => {
                   setbuyModalStat(true);
@@ -362,7 +359,6 @@ function SectionA({ keys }) {
                 <div>
                   {" "}
                   <h2>Lottery Drawn!</h2>
-                   
                   <h2>A new Lottery Starting Soon!</h2>
                 </div>
               ) : (
@@ -456,16 +452,18 @@ function SectionA({ keys }) {
           <div className=" my-5 flex flex-wrap justify-between  gap-2 p-2 sm:p-10">
             <div>
               {currentAccount ? (
-                <p
+                <button
+                  disabled={timeElasped || lotteryStatus !== Open}
                   className={`joinBtn ${
-                    lotteryStatus !== Open && "cursor-not-allowed bg-gray-600"
+                    (timeElasped || lotteryStatus !== Open) &&
+                    "cursor-not-allowed bg-gray-600"
                   }`}
                   onClick={() => {
                     setbuyModalStat(true);
                   }}
                 >
                   Join Tlos pool
-                </p>
+                </button>
               ) : (
                 <p
                   className="joinBtn"

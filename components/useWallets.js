@@ -75,7 +75,7 @@ function useWallets() {
       return;
     }
     const accounts = await web3.eth.getAccounts();
-    alert(accounts[0]);
+
     setCurrentAccount(accounts[0]);
     setProviderConnector("walletConnect");
     setwalletModal(false);
@@ -96,7 +96,7 @@ function useWallets() {
           method: "eth_requestAccounts",
         });
         setCurrentAccount(accounts[0]);
-        alert(accounts[0]);
+
         setProviderConnector("metaMask");
         setwalletModal(false);
       } else {
@@ -113,7 +113,7 @@ function useWallets() {
       if (ethereum) {
         ethereum.on("accountsChanged", (accounts) => {
           if (accounts[0] !== currentAccount) {
-            setCurrentAccount(accounts[0])
+            setCurrentAccount(accounts[0]);
           }
         });
       }

@@ -244,6 +244,7 @@ function SectionB({ keys }) {
             });
           });
         }
+        setisloading(false)
       }
     } catch (error) {
       Toast(error.reason);
