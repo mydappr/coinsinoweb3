@@ -278,7 +278,7 @@ export default function Home() {
   }, [currentLotteryId]);
 
   useEffect(() => {
-    let intervalId = setInterval(getLatestLotteryInfo, 5000);
+    let intervalId = setInterval(getLatestLotteryInfo, 10000);
     return () => clearInterval(intervalId);
   }, [currentLotteryId, endTime, lotteryStatus]);
 

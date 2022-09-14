@@ -362,8 +362,8 @@ function SectionA({ keys }) {
                 <div>
                   {" "}
                   <h2>Lottery Drawn!</h2>
-                  <p>Check if you won!</p>
-                  <h2>Lottery Starting Soon!</h2>
+                   
+                  <h2>A new Lottery Starting Soon!</h2>
                 </div>
               ) : (
                 <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">

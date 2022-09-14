@@ -77,9 +77,8 @@ function useWallets() {
     const accounts = await web3.eth.getAccounts();
     alert(accounts[0]);
     setCurrentAccount(accounts[0]);
-
-    setwalletModal(false);
     setProviderConnector("walletConnect");
+    setwalletModal(false);
   };
 
   // Calls Metamask to connect wallet on clicking Connect Wallet button
@@ -97,14 +96,29 @@ function useWallets() {
           method: "eth_requestAccounts",
         });
         setCurrentAccount(accounts[0]);
-        setwalletModal(false);
-
+        alert(accounts[0]);
         setProviderConnector("metaMask");
+        setwalletModal(false);
       } else {
         window.location.href = "https://metamask.io/download/";
       }
     } catch (error) {}
   };
+
+  // on Account chnaged
+
+  useEffect(() => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        ethereum.on("accountsChanged", (accounts) => {
+          if (accounts[0] !== currentAccount) {
+            setCurrentAccount(accounts[0])
+          }
+        });
+      }
+    } catch (error) {}
+  }, []);
 
   const disConnectWallet = async () => {
     try {
