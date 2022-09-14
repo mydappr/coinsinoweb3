@@ -93,9 +93,7 @@ export default function BuyDialog() {
     (priceTopay * 100) / totalTicketsPrice
   ).toFixed(2);
   const disablebtn =
-    (userBalance < totalTicketsPrice) |
-    (noOfTickets < 1) |
-    (errorMessage !== "");
+    userBalance < totalTicketsPrice || noOfTickets < 1 || errorMessage !== "";
 
   // random generator
   async function generateRandom(min = 0, max = 100) {
@@ -125,8 +123,6 @@ export default function BuyDialog() {
 
   // modal functions
   function closeBuyModals() {
-    setNoOfTickets(0);
-    
     setisloading(false);
     setIsOpen(false);
   }
@@ -163,9 +159,6 @@ export default function BuyDialog() {
     }
 
     if (value == "") {
-      console.log(placeholder);
-      console.log(name);
-      console.log(value);
       setErrorMessage("");
       return;
     }
@@ -320,6 +313,7 @@ export default function BuyDialog() {
                     </div>
                     <div className=" relative">
                       <textarea
+                      disabled={isloading}
                         value={noOfTickets}
                         onChange={async (e) => {
                           let invalidChars = /[^0-9]/gi;
@@ -539,34 +533,30 @@ export default function BuyDialog() {
                   </div>
                   <div className=" mt-5 space-y-2    text-coinSinoTextColor2">
                     {" "}
-                    <button
-                      disabled={disablebtn}
-                      className={` w-full rounded-full bg-coinSinoGreen p-3  text-sm font-bold text-white ${
-                        disablebtn &&
-                        " cursor-not-allowed border border-coinSinoTextColor2 bg-transparent text-coinSinoTextColor2"
-                      }`}
-                      onClick={buyTicket}
-                    >
-                      {" "}
-                      Confirm and buy
-                    </button>
-                    <button
-                      onClick={() => {
-                        closeEditModals();
-                        closeBuyModals();
-                        setErrorMessage("");
-                      }}
-                      disabled={
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1)
-                      }
-                      className={` flex w-full justify-center rounded-full bg-coinSinoTextColor2 p-3  text-sm font-bold text-white ${
-                        (userBalance < totalTicketsPrice) | (noOfTickets < 1) &&
-                        " cursor-not-allowed border border-coinSinoTextColor2 bg-inherit text-coinSinoTextColor2"
-                      }`}
-                    >
-                      {" "}
-                      <ArrowSmRightIcon className="w-7 rotate-180 " /> Go back
-                    </button>
+                    {isloading ? (
+                      Loading()
+                    ) : (
+                      <>
+                        <button
+                          className={` w-full rounded-full bg-coinSinoGreen p-3  text-sm font-bold text-white  `}
+                          onClick={buyTicket}
+                        >
+                          {" "}
+                          Confirm and buy
+                        </button>
+                        <button
+                          onClick={() => {
+                            closeEditModals();
+                            closeBuyModals();
+                            setErrorMessage("");
+                          }}
+                          className={` flex w-full justify-center rounded-full bg-coinSinoTextColor2 p-3  text-sm font-bold text-white `}
+                        >
+                          {" "}
+                          Cancel
+                        </button>
+                      </>
+                    )}
                   </div>
                   <div className="mt-2">
                     <p className="text-sm ">
