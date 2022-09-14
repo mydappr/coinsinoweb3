@@ -30,8 +30,7 @@ export default async function handler(req, res) {
     const rngData = await drandres.json();
     console.log(rngData);
     const { closeLottery } = OperatorFunctions(rngData);
-    console.log(rngData);
-
+    console.log("got randomNumber");
     // operator provider,and signer
     const operatorProvider = new ethers.providers.JsonRpcProvider(
       "https://testnet.telos.net/evm"
@@ -62,7 +61,6 @@ export default async function handler(req, res) {
     const { status } = getLotterystatus;
     console.log(status);
     if (status !== 1) {
-      console.log("not going to work");
       return;
     }
 

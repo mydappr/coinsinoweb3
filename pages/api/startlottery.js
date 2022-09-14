@@ -12,29 +12,28 @@ export default async function handler(req, res) {
   try {
     const authorization_key = req.headers.authorization;
 
-    console.log(authorization_key)
+    console.log(authorization_key);
     const docRef = doc(database, "authorization", authorization_key);
     const docSnap = await getDoc(docRef);
 
-    console.log('snapshot gotten')
+    console.log("snapshot gotten");
     // verify token
     const data = docSnap.data();
     const verification = jwt.verify(data.token, process.env.jwt_secret);
 
     // check if roles from data and verification are correct
-  
-    if (data.role !== verification.role) return;
 
-    console.log('check passed')
+    if (data.role !== verification.role) return;
   } catch (error) {
-    return res.status(400).json({ Error: "Something went wrong" });
+    return res.status(400).json({ Error: "Not Authorized!" });
   }
 
   try {
-    console.log("starting");
-    const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
-    const rngData = await drandres.json();
-    const { startLottery } = OperatorFunctions(rngData);
+    // console.log("starting");
+    // const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
+    // const rngData = await drandres.json();
+    // console.log(rngData)
+    const { startLottery } = OperatorFunctions();
 
     // operator provider,and signer
     const operatorProvider = new ethers.providers.JsonRpcProvider(
@@ -74,7 +73,7 @@ export default async function handler(req, res) {
       });
     } else {
       return res.status(400).json({
-        message: ` error`,
+        message: ` lottery not ready to be started`,
       });
     }
   } catch (error) {}

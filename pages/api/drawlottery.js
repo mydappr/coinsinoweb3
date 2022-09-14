@@ -64,6 +64,8 @@ export default async function handler(req, res) {
       return;
     }
 
+    console.log("stopped draw");
+
     await drawLottery();
 
     return res.status(200).json({
