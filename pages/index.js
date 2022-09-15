@@ -124,22 +124,22 @@ export default function Home() {
     return rand;
   }
 
-  // fetch latest drand data
-  const DrandFetch = async () => {
-    const { Toast } = UseToaster();
-    try {
-      const res = await fetch("https://randomnumber.willdera.repl.co/fetch");
-      const rngData = await res.json();
-      setrngData(rngData);
-    } catch (error) {
-      // Toast(error);
-    }
-  };
+  // // fetch latest drand data
+  // const DrandFetch = async () => {
+  //   const { Toast } = UseToaster();
+  //   try {
+  //     const res = await fetch("https://randomnumber.willdera.repl.co/fetch");
+  //     const rngData = await res.json();
+  //     setrngData(rngData);
+  //   } catch (error) {
+  //     // Toast(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    let fetchInterval = setInterval(async () => await DrandFetch(), 5000);
-    return () => clearInterval(fetchInterval);
-  }, [rngData]);
+  // useEffect(() => {
+  //   let fetchInterval = setInterval(async () => await DrandFetch(), 5000);
+  //   return () => clearInterval(fetchInterval);
+  // }, [rngData]);
 
   const getLatestLotteryInfo = async () => {
     try {

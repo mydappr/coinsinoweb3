@@ -8,9 +8,7 @@ import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
-import { ctester } from "./closelottery";
-import { stester } from "./startlottery";
-import { dtester } from "./drawlottery";
+const { startLottery, closeLottery, drawLottery } = OperatorFunctions();
 
 export default async function handler(req, res) {
   // firstly, make sure client is authorized
@@ -32,6 +30,12 @@ export default async function handler(req, res) {
 
   // next, get current lottery status
   let lotteryStatus;
+
+  // rnd data for close and draw fucntion
+  let rngData;
+
+  // lottery Id
+  let latestLotteryId;
 
   try {
     // get lottery ID and status
@@ -55,7 +59,7 @@ export default async function handler(req, res) {
     console.log("before lotteryid");
 
     // current lotteryid
-    const latestLotteryId = Number(
+    latestLotteryId = Number(
       await operatorcoinSinoContract.viewCurrentLotteryId()
     );
     // current lottery details
@@ -65,30 +69,40 @@ export default async function handler(req, res) {
 
     // current lottery status
     lotteryStatus = getLotterystatus.status;
+
+    if (lotteryStatus === 1 || lotteryStatus === 2) {
+      try {
+        const drandres = await fetch("https://drandapi.herokuapp.com/fetch");
+        const dranddata = await drandres.json();
+        rngData = dranddata;
+      } catch (error) {
+        return res.status(400).json({ error });
+      }
+    }
   } catch (error) {
     return res.status(400).json({ error });
   }
 
   // After lottery status is retrieved, the right action is executed
 
-  console.log({ lotteryStatus });
   switch (lotteryStatus) {
     case 1:
       // lottery status is open, therefore close the lottery
       console.log("Closed lottery");
-      await ctester();
+      await closeLottery(rngData, latestLotteryId);
       res.status(200).json({ Status: "Ok" });
       break;
+
     case 2:
       // lottery status is closed, therefore draw winning number and make lottery claimable
       console.log("Make lottery claimable");
-      await dtester();
+      await drawLottery(rngData, latestLotteryId);
       res.status(200).json({ Status: "Ok" });
       break;
     case 3:
       // lottery status is claimable, therefore start a new lottery
       console.log("Started lottery");
-      await stester();
+      await startLottery();
       res.status(200).json({ Status: "Ok" });
       break;
     default:
