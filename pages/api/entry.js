@@ -8,7 +8,9 @@ import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
-import { tester } from "./closelottery";
+import { ctester } from "./closelottery";
+import { stester } from "./startlottery";
+import { dtester } from "./drawlottery";
 
 export default async function handler(req, res) {
   // firstly, make sure client is authorized
@@ -29,7 +31,6 @@ export default async function handler(req, res) {
   }
 
   // next, get current lottery status
-
   let lotteryStatus;
 
   try {
@@ -69,28 +70,30 @@ export default async function handler(req, res) {
   }
 
   // After lottery status is retrieved, the right action is executed
-  try {
-    console.log({ lotteryStatus });
-    switch (lotteryStatus) {
-      case 1:
-        // lottery status is open, therefore close the lottery
-        console.log("Closed lottery");
-        break;
-      case 2:
-        // lottery status is closed, therefore draw winning number and make lottery claimable
-        console.log("Made lottery claimable");
-        tester(req);
-        break;
-      case 3:
-        // lottery status is claimable, therefore start a new lottery
-        console.log("Started lottery");
-        break;
-      default:
-        console.log(
-          "Lottery is pending, no lottery has been created, create the first lottery"
-        );
-    }
-  } catch (error) {
-    return res.status(400).json({ error });
+
+  console.log({ lotteryStatus });
+  switch (lotteryStatus) {
+    case 1:
+      // lottery status is open, therefore close the lottery
+      console.log("Closed lottery");
+      await ctester();
+      res.status(200).json({ Status: "Ok" });
+      break;
+    case 2:
+      // lottery status is closed, therefore draw winning number and make lottery claimable
+      console.log("Make lottery claimable");
+      await dtester();
+      res.status(200).json({ Status: "Ok" });
+      break;
+    case 3:
+      // lottery status is claimable, therefore start a new lottery
+      console.log("Started lottery");
+      await stester();
+      res.status(200).json({ Status: "Ok" });
+      break;
+    default:
+      console.log(
+        "Lottery is pending, no lottery has been created, create the first lottery"
+      );
   }
 }

@@ -8,7 +8,7 @@ import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
-export default async function handler(req, res) {
+export async function handler(req, res) {
   try {
     const authorization_key = req.headers.authorization;
     const docRef = doc(database, "authorization", authorization_key);
@@ -72,4 +72,8 @@ export default async function handler(req, res) {
       message: `Lottery ${latestLotteryId}   drawn!  }`,
     });
   } catch (error) {}
+}
+
+export async function dtester() {
+  console.log("Hello from drawlottery tester");
 }
