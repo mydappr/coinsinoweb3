@@ -2,17 +2,17 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
-import { usewalletModal } from "../atoms/atoms";
+import { usewalletModal, connectorType } from "../atoms/atoms";
 import useWallets from "./useWallets";
 
 function WalletModal() {
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
-
   const { connectMetaMask, connectWalletConnect } = useWallets();
-
-  const [proverConnector, setProviderConnector] = useState("");
+  const [providerConnector, setProviderConnector] =
+    useRecoilState(connectorType);
   const [userBalance, setuserBalance] = useState(0);
 
+  
   // edit ticket functions
   function closeWalletModals() {
     setwalletModal(false);

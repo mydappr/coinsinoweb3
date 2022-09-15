@@ -26,6 +26,7 @@ import {
   sixthpool,
   endLotteryTime,
   drandData,
+  activeAccount,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import { Toast } from "flowbite-react";
@@ -55,28 +56,29 @@ const Open = 1;
 const closed = 2;
 const claimable = 3;
 
-// serverside
-export const getServerSideProps = async () => {
-  try {
-    let baseUrl;
-    const env = process.env.NODE_ENV;
-    if (env == "development") {
-      baseUrl = "http://localhost:3000";
-    } else if (env == "production") {
-      baseUrl = "https://sino-realrufans.vercel.app";
-    }
-    const a = await fetch(`${baseUrl}/api/hello`);
-    const keys = await a.json();
+// // serverside
+// export const getServerSideProps = async () => {
+//   try {
+//     let baseUrl;
+//     const env = process.env.NODE_ENV;
+//     if (env == "development") {
+//       baseUrl = "http://localhost:3000";
+//     } else if (env == "production") {
+//       baseUrl = "https://sino-realrufans.vercel.app";
+//     }
+//     const a = await fetch(`${baseUrl}/api/hello`);
+//     const keys = await a.json();
 
-    // fetch initial status for lottery
+//     // fetch initial status for lottery
 
-    return {
-      props: { keys },
-    };
-  } catch (error) {}
-};
+//     return {
+//       props: { keys },
+//     };
+//   } catch (error) {}
+// };
 
-export default function Home({ keys }) {
+export default function Home() {
+  const opkey = process.env.opkey;
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
   const [rewardMessage, setRewardMessage] = useState("");
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
@@ -98,7 +100,9 @@ export default function Home({ keys }) {
   const [fifthPoolFunds, setFifthPoolFunds] = useRecoilState(fiftpool);
   const [sixthPoolFunds, setSixthPoolFunds] = useRecoilState(sixthpool);
   const [rngData, setrngData] = useRecoilState(drandData);
+  const [userCurrentTickets, setUserCurrentTickets] = useState(0);
   const scrollTargetElementRef = useRef(null);
+  const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
 
   const splittedWinningValues = Array.from(String(winningNo));
 
@@ -143,7 +147,7 @@ export default function Home({ keys }) {
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // operator signer and contract
-      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const operatorSigner = new ethers.Wallet(opkey, operatorProvider);
       const operatorcoinSinoContract = new ethers.Contract(
         coinSinoContractAddress,
         Sinoabi,
@@ -218,13 +222,17 @@ export default function Home({ keys }) {
     }
   };
 
+  console.log('current tick', userCurrentTickets)
+
   // fetch tickets on launch
   const fetchTickets = async () => {
     const { ethereum } = window;
 
     if (ethereum) {
       try {
-        const { ethereum } = window;
+       
+// deal with userCurrentTickets
+
         if (ethereum) {
           // user contract
           const userProvider = new ethers.providers.Web3Provider(ethereum);
@@ -239,19 +247,18 @@ export default function Home({ keys }) {
             signer
           );
 
-          const accounts = await ethereum.request({
-            method: "eth_requestAccounts",
-          });
+       
           const latestLotteryId = await convertHexToInt(
             await coinSinoContract.viewCurrentLotteryId()
           );
 
           const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
-            accounts[0],
+            currentAccount,
             latestLotteryId,
             0,
             100
           );
+          console.log(currentAccount)
 
           const userticketIds = [];
           for (let i = 0; i < userInfo[0].length; i++) {
@@ -264,7 +271,7 @@ export default function Home({ keys }) {
             await coinSinoContract.viewNumbersAndStatusesForTicketIds(
               userticketIds
             );
-          setUserTickets(list[0]);
+          setUserCurrentTickets(list[0]);
         }
       } catch (error) {
         console.log(error);
@@ -274,12 +281,12 @@ export default function Home({ keys }) {
 
   useEffect(() => {
     fetchTickets();
-  }, [currentLotteryId]);
+  }, [currentLotteryId, currentAccount]);
 
   useEffect(() => {
-    let fetch = getLatestLotteryInfo();
-    return () => (fetch = null);
-  }, [currentLotteryId, lotteryStatus]);
+    let intervalId = setInterval(getLatestLotteryInfo, 10000);
+    return () => clearInterval(intervalId);
+  }, [currentLotteryId, endTime, lotteryStatus]);
 
   // const info = async () => {
   //   try {
@@ -288,7 +295,7 @@ export default function Home({ keys }) {
   //       // signers wallet get smartcontract
   //       const provider = new ethers.providers.Web3Provider(ethereum);
   //       // operator signer and contract
-  //       const operatorSigner = new ethers.Wallet(keys.opkey, provider);
+  //       const operatorSigner = new ethers.Wallet(opkey, provider);
   //       const operatorcoinSinoContract = new ethers.Contract(
   //         coinSinoContractAddress,
   //         Sinoabi,
@@ -524,10 +531,10 @@ export default function Home({ keys }) {
         </div>
         <ToTop scrollTargetElementRef={scrollTargetElementRef} />
         <Header />
-        <SectionA keys={keys} />
+        <SectionA keys={opkey} />
       </div>
 
-      <SectionB keys={keys} />
+      <SectionB keys={opkey} />
 
       <Footer scrollTargetElementRef={scrollTargetElementRef} />
     </div>

@@ -15,6 +15,7 @@ import {
   rouncount,
   wonSize,
   usewalletModal,
+  connectorType,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import Sinoabi from "../utils/Coinsino.json";
@@ -24,6 +25,8 @@ import ViewTickets from "./viewTickets";
 import SectionA from "./sectionA";
 import UseToaster from "./UseToaster";
 import UseLoadingSpinner from "./UseLoadingSpinner";
+import Web3 from "web3";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 // coinsino contract address
 const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
@@ -46,6 +49,8 @@ function SectionB({ keys }) {
   const [viewTicketOpen, setviewTicketOpen] = useRecoilState(viewTicket);
   const [wonTicketSize, setWonTicketSize] = useRecoilState(wonSize);
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
+  const [providerConnector, setProviderConnector] =
+    useRecoilState(connectorType);
   const [isloading, setisloading] = useState(false);
   const { Toast } = UseToaster();
   const { Loading } = UseLoadingSpinner(isloading);
@@ -60,6 +65,7 @@ function SectionB({ keys }) {
   async function convertHexToInt(hex) {
     return parseInt(hex, 16);
   }
+  console.log(winningNo);
 
   // retuns won tickets and won pool Ids
   const wonTicketArr = [];
@@ -115,55 +121,62 @@ function SectionB({ keys }) {
   // };
 
   const Check = async () => {
+    let provider;
     try {
       setisloading(true);
-      const { ethereum } = window;
-      if (ethereum) {
-        // signers wallet get smartcontract
-        const provider = new ethers.providers.Web3Provider(ethereum);
 
-        // user contract
-        const signer = provider.getSigner();
+      if (
+        providerConnector === "metaMask" ||
+        providerConnector === "walletConnect"
+      ) {
+        if (providerConnector === "walletConnect") {
+          provider = new WalletConnectProvider({
+            rpc: {
+              [41]: "https://testnet.telos.net/evm",
+            },
+          });
+        } else if (providerConnector === "metaMask") {
+          provider = window.ethereum;
+        }
 
-        const coinSinoContract = new ethers.Contract(
-          coinSinoContractAddress,
+        await provider.enable();
+
+        const web3 = new Web3(provider);
+
+        const coinSinoContract = new web3.eth.Contract(
           Sinoabi,
-          signer
+          coinSinoContractAddress
         );
 
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        let chainId = await ethereum.request({ method: "eth_chainId" });
-
         // check if network is metamask
-        if (Number(chainId) !== 41) return;
+        let chainId = await web3.eth.getChainId();
 
-        if (lotteryStatus === Pending) return;
+        if (chainId !== 41) {
+          setisloading(false);
+          Toast("You are no t connected to the Telos Netowrk!");
+          return;
+        }
 
         // current lotteryid
         const latestLotteryId = Number(
-          await coinSinoContract.viewCurrentLotteryId()
+          await coinSinoContract.methods.viewCurrentLotteryId().call()
         );
 
         const previousLotteryId =
           latestLotteryId === 1 ? latestLotteryId : latestLotteryId - 1;
 
         // current lottery details
-        const getLotterystatus = await coinSinoContract.viewLottery(
-          previousLotteryId
-        );
+        const getLotterystatus = await coinSinoContract.methods
+          .viewLottery(previousLotteryId)
+          .call();
 
         // current lottery status
         const { status } = getLotterystatus;
 
-        if (status === claimable) {
-          const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
-            accounts[0],
-            previousLotteryId,
-            0,
-            100
-          );
+        if (Number(status) === claimable) {
+          const userInfo = await coinSinoContract.methods
+            .viewUserInfoForLotteryId(currentAccount, previousLotteryId, 0, 100)
+            .call();
 
           const userticketIds = [];
           for (let i = 0; i < userInfo[0].length; i++) {
@@ -172,11 +185,11 @@ function SectionB({ keys }) {
           }
 
           // list of user's tickets
-          const list =
-            await coinSinoContract.viewNumbersAndStatusesForTicketIds(
-              userticketIds
-            );
-
+          const list = await coinSinoContract.methods
+            .viewNumbersAndStatusesForTicketIds(userticketIds)
+            .call();
+          console.log(list[0]);
+          setisloading(false);
           setUserTickets(list[0]);
 
           if (userticketIds.length < 1) {
@@ -186,19 +199,17 @@ function SectionB({ keys }) {
           }
 
           // user has a ticket
-
           userticketIds.forEach(async (e, i) => {
-            const view = await coinSinoContract.viewRewardsForTicketId(
-              previousLotteryId,
-              e,
-              0
-            );
+            const view = await coinSinoContract.methods
+              .viewRewardsForTicketId(previousLotteryId, e, 0)
+              .call();
 
             const rewards = ethers.utils.formatEther(view);
 
             if (!Number(rewards)) {
               setRewardMessage("sorry you did not win this time!");
               setunClaimedUserRewards(null);
+
               return;
             }
 
@@ -233,6 +244,7 @@ function SectionB({ keys }) {
             });
           });
         }
+        setisloading(false)
       }
     } catch (error) {
       Toast(error.reason);
@@ -392,7 +404,7 @@ function SectionB({ keys }) {
 
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
+      const operatorSigner = new ethers.Wallet(keys, operatorProvider);
       const operatorcoinSinoContract = new ethers.Contract(
         coinSinoContractAddress,
         Sinoabi,
@@ -484,7 +496,7 @@ function SectionB({ keys }) {
 
   useEffect(() => {
     fetchRoundDetails();
-  }, [roundCount, userTickets.length, lotteryStatus]);
+  }, [roundCount, userTickets.length, lotteryStatus, currentAccount]);
 
   const previousDraws = async () => {
     if (roundCount > 1) {
@@ -627,7 +639,7 @@ function SectionB({ keys }) {
                       <span>{lastDrawTime.antePost}</span> {""}
                     </div>
                   ) : (
-                    <div className="waiting"></div>
+                    <div className="waiting w-40 md:w-80"></div>
                   )}
                 </div>
                 <PlayIcon
@@ -679,7 +691,7 @@ function SectionB({ keys }) {
                       <span>{lastDrawTime.antePost}</span> {""}
                     </div>
                   ) : (
-                    <div className="waiting"></div>
+                    <div className="waiting w-40 md:w-80"></div>
                   )}
                   <span className="">{userTickets.length}</span>
                 </div>

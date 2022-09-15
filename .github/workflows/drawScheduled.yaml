@@ -1,13 +1,13 @@
-name: 5 mintues drawLottery cron job
-on:
-  schedule:
-    - cron: '*/5 * * * *'
-jobs:
-  cron:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 5 mintues drawLottery cron job
-        run: |
-          curl --request POST \
-          --url 'https://sino-realrufans.vercel.app/api/drawlottery' \
-          --header 'Authorization: Bearer ${{ secrets.ACTION_KEY }}'
+# name: 12 mintues drawLottery cron job
+# on:
+#   schedule:
+#     - cron: "*/12 * * * *"
+# jobs:
+#   cron:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 12 mintues drawLottery cron job
+#         run: |
+#           curl --request POST \
+#           --url 'https://sino-realrufans.vercel.app/api/drawlottery' \
+#           --header 'Authorization:  ${{ secrets.startLottery_Key }}'
