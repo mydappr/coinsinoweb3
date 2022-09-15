@@ -72,7 +72,7 @@ export default async function handler(req, res) {
         message: ` LotteryId started with id ${latestLotteryId} `,
       });
     } else {
-      return res.status(400).json({
+      return res.status(405).json({
         message: ` lottery not ready to be started`,
       });
     }
