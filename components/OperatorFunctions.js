@@ -52,8 +52,7 @@ function OperatorFunctions(rngData) {
 
   const startLottery = async () => {
     console.log("starting");
-    
-  
+
     try {
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
@@ -71,7 +70,7 @@ function OperatorFunctions(rngData) {
         managedSigner
       );
       const lottryDuration = await convertInput("1 hour");
-       console.log('lottery time', lottryDuration)
+
       // start a lottery
       const startLottery = await operatorcoinSinoContract.startLottery(
         lottryDuration,
@@ -83,7 +82,7 @@ function OperatorFunctions(rngData) {
 
       await startLottery;
 
-      console.log( "lottery started");
+      console.log("lottery started");
       // get current lottery id
     } catch (error) {
       console.log("Error minting character", error);
@@ -92,7 +91,6 @@ function OperatorFunctions(rngData) {
   };
 
   const closeLottery = async () => {
-   
     try {
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // operator signer and contract
@@ -135,8 +133,6 @@ function OperatorFunctions(rngData) {
   // draw lottery
   const drawLottery = async () => {
     try {
-    
-
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // operator signer and contract

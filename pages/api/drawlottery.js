@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const drandres = await fetch("https://randomnumber.willdera.repl.co/fetch");
+    const drandres = await fetch("https://drandapi.herokuapp.com/fetch");
     const rngData = await drandres.json();
     const { startLottery, closeLottery, drawLottery } =
       OperatorFunctions(rngData);
@@ -61,7 +61,9 @@ export default async function handler(req, res) {
     const { status } = getLotterystatus;
     if (status !== 2) {
       console.log("status is not 2");
-      return;
+      return res.status(405).json({
+        message: `Lottery not ready to be drawn!  }`,
+      });
     }
 
     await drawLottery();
