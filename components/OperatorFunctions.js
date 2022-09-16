@@ -62,7 +62,7 @@ function OperatorFunctions() {
   );
 
   const startLottery = async () => {
-    console.log("starting");
+    console.log("starting from operatorfuncs");
 
     try {
       // signers wallet get smartcontract
@@ -90,6 +90,7 @@ function OperatorFunctions() {
         [500, 960, 1430, 1910, 2390, 2810],
         1000
       );
+      console.log("asigned start");
 
       await startLottery;
 
@@ -103,6 +104,7 @@ function OperatorFunctions() {
 
   const closeLottery = async (rngData, latestLotteryId) => {
     try {
+      console.log("closing lottery from operafunc");
       // const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // // operator signer and contract
       // const operatorSigner = new ethers.Wallet(
@@ -134,7 +136,7 @@ function OperatorFunctions() {
         latestLotteryId,
         rngData.round
       );
-      console.log("rng round", rngData.round);
+
       console.log("lottery closed");
     } catch (error) {
       console.log("", error);
@@ -144,6 +146,7 @@ function OperatorFunctions() {
   // draw lottery
   const drawLottery = async (rngData, latestLotteryId) => {
     try {
+      console.log('closing from operator funcs')
       // // signers wallet get smartcontract
       // const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // // operator signer and contract
@@ -164,11 +167,12 @@ function OperatorFunctions() {
         Rngabi,
         managedSigner
       );
+      console.log('got rng conract')
       // set random value
 
       // const lastround = await RNGContract.getLastRound();
       if (!rngData.round) return;
-      console.log(" before setting", rngData.round);
+    
 
       await RNGContract.setRandomValue(
         rngData.round,
@@ -176,13 +180,12 @@ function OperatorFunctions() {
         rngData.signature,
         rngData.previous_signature
       );
-      console.log(" after setting", rngData.round);
-
+       
+      console.log('rngcontract called')
       // // current lotteryid
       // const latestLotteryId = Number(
       //   await operatorcoinSinoContract.viewCurrentLotteryId()
       // );
-     
 
       const drawFinalNumberAndMakeLotteryClaimable =
         await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
@@ -190,7 +193,9 @@ function OperatorFunctions() {
           false,
           rngData.round
         );
-      console.log("about to draw");
+
+        console.log('asigned drafinal')
+ 
       await drawFinalNumberAndMakeLotteryClaimable.wait();
       console.log("lottery drawn");
     } catch (error) {

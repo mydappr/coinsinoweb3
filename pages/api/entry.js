@@ -19,6 +19,8 @@ export default async function handler(req, res) {
     const docRef = doc(database, "authorization", authorization_key);
     const docSnap = await getDoc(docRef);
 
+    console.log("passed authorization check");
+
     // console.log(docSnap.exists());
 
     // check if key exists move to next process
@@ -43,25 +45,28 @@ export default async function handler(req, res) {
     const operatorProvider = new ethers.providers.JsonRpcProvider(
       "https://testnet.telos.net/evm"
     );
+    console.log("got provider");
 
     // operator signer and contract
     const operatorSigner = new ethers.Wallet(
       process.env.opkey,
       operatorProvider
     );
+
+    console.log("got signer");
     const managedSigner = new NonceManager(operatorSigner);
     const operatorcoinSinoContract = new ethers.Contract(
       coinSinoContractAddress,
       Sinoabi,
       managedSigner
     );
-
-    console.log("before lotteryid");
+    console.log("got signer");
 
     // current lotteryid
     latestLotteryId = Number(
       await operatorcoinSinoContract.viewCurrentLotteryId()
     );
+    console.log("got id");
     // current lottery details
     const getLotterystatus = await operatorcoinSinoContract.viewLottery(
       latestLotteryId
@@ -69,12 +74,13 @@ export default async function handler(req, res) {
 
     // current lottery status
     lotteryStatus = getLotterystatus.status;
-
+    console.log("got status");
     if (lotteryStatus === 1 || lotteryStatus === 2) {
       try {
         const drandres = await fetch("https://drandapi.herokuapp.com/fetch");
         const dranddata = await drandres.json();
         rngData = dranddata;
+        console.log('got drandata')
       } catch (error) {
         return res.status(400).json({ error });
       }
