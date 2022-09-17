@@ -57,27 +57,50 @@ const closed = 2;
 const claimable = 3;
 
 // // serverside
-// export const getServerSideProps = async () => {
-//   try {
-//     let baseUrl;
-//     const env = process.env.NODE_ENV;
-//     if (env == "development") {
-//       baseUrl = "http://localhost:3000";
-//     } else if (env == "production") {
-//       baseUrl = "https://sino-realrufans.vercel.app";
-//     }
-//     const a = await fetch(`${baseUrl}/api/hello`);
-//     const keys = await a.json();
+export const getServerSideProps = async () => {
+  // operator provider,and signer
+  const operatorProvider = new ethers.providers.JsonRpcProvider(
+    "https://testnet.telos.net/evm"
+  );
+  // operator signer and contract
+  const operatorSigner = new ethers.Wallet(process.env.opkey, operatorProvider);
 
-//     // fetch initial status for lottery
+  const operatorcoinSinoContract = new ethers.Contract(
+    coinSinoContractAddress,
+    Sinoabi,
+    operatorSigner
+  );
 
-//     return {
-//       props: { keys },
-//     };
-//   } catch (error) {}
-// };
+  const latestLotteryId = Number(
+    await operatorcoinSinoContract.viewCurrentLotteryId()
+  );
+  // set lottyied
 
-export default function Home() {
+  // current lottery details
+  const getLotterystatus = await operatorcoinSinoContract.viewLottery(
+    latestLotteryId
+  );
+
+  // current lottery status
+  const { status, endTime, amountCollectedInTelos } = getLotterystatus;
+  const _endTime = Number(endTime);
+  const _lotteryid = Number(latestLotteryId);
+  const _status = Number(status);
+  const _amountCollectedInTelos = amountCollectedInTelos.toString();
+
+  // fetch initial status for lottery
+  console.log("server things");
+  return {
+    props: { _endTime, _lotteryid, _status, _amountCollectedInTelos },
+  };
+};
+
+export default function Home({
+  _endTime,
+  _lotteryid,
+  _status,
+  _amountCollectedInTelos,
+}) {
   const opkey = process.env.opkey;
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
   const [rewardMessage, setRewardMessage] = useState("");
@@ -142,6 +165,15 @@ export default function Home() {
   // }, [rngData]);
 
   const getLatestLotteryInfo = async () => {
+    if (!endTime || !lotteryStatus || !currentLotteryId) {
+      console.log("initial setting");
+      setEndTime(_endTime);
+      setlotteryStatus(_status);
+      setCurrentLotteryId(_lotteryid);
+      setTotalLotteryDeposit(
+        ethers.utils.formatEther(_amountCollectedInTelos, "ether")
+      );
+    }
     try {
       const rpcUrl = "https://testnet.telos.net/evm";
       // signers wallet get smartcontract
@@ -165,8 +197,6 @@ export default function Home() {
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
         currentLotteryId
       );
-
-      console.log(getLotterystatus);
 
       // current lottery status
       const {
@@ -222,16 +252,13 @@ export default function Home() {
     }
   };
 
-  console.log('current tick', userCurrentTickets)
-
   // fetch tickets on launch
   const fetchTickets = async () => {
     const { ethereum } = window;
 
     if (ethereum) {
       try {
-       
-// deal with userCurrentTickets
+        // deal with userCurrentTickets
 
         if (ethereum) {
           // user contract
@@ -247,7 +274,6 @@ export default function Home() {
             signer
           );
 
-       
           const latestLotteryId = await convertHexToInt(
             await coinSinoContract.viewCurrentLotteryId()
           );
@@ -258,7 +284,7 @@ export default function Home() {
             0,
             100
           );
-          console.log(currentAccount)
+          console.log(currentAccount);
 
           const userticketIds = [];
           for (let i = 0; i < userInfo[0].length; i++) {
@@ -284,7 +310,7 @@ export default function Home() {
   }, [currentLotteryId, currentAccount]);
 
   useEffect(() => {
-    let intervalId = setInterval(getLatestLotteryInfo, 10000);
+    let intervalId = setInterval(getLatestLotteryInfo, 1000);
     return () => clearInterval(intervalId);
   }, [currentLotteryId, endTime, lotteryStatus]);
 
