@@ -11,7 +11,7 @@ import {
   endLotteryTime,
 } from "../atoms/atoms";
 import { NonceManager } from "@ethersproject/experimental";
-import DrandFetch from "./DrandFetch";
+ 
 import { useEffect, useState } from "react";
 const Pending = 0;
 const Open = 1;
@@ -45,9 +45,9 @@ function OperatorFunctions() {
 
   const pricePerTicket = "3";
   // coinsino contract address
-  const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
+  const coinSinoContractAddress = "0x3BBc0cEf7d7c5B2846D30DcA5B5342549fEc6381";
   // rng contract address
-  const rngContractaddress = "0x2C5c6A061ceD5435A547ad8219f7a7A48C5AF672";
+  const rngContractaddress = "0xf3810BC3AB08d0782B531581B5b3F82D64E7bD02";
   const rpcUrl = "https://testnet.telos.net/evm";
 
   // operator provider, signer and coinsino contract instance

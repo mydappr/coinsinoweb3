@@ -374,7 +374,7 @@ function SectionA({ keys }) {
               )}
             </>
           ) : (
-            ""
+            "Lottery is Starting soon!"
           )}
         </div>
 

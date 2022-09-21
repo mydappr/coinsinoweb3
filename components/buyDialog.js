@@ -9,6 +9,7 @@ import {
   editModal,
   errMessage,
   latestLotteryId,
+  rpcaddress,
   sinoAddress,
   tlosPrice,
 } from "../atoms/atoms";

@@ -630,7 +630,7 @@ function SectionB({ keys }) {
                       #{roundCount}
                     </p>
                   </div>{" "}
-                  {lastDrawTime.month ? (
+                  {endTime ? (
                     <div className="my-5 text-coinSinoTextColor2 ">
                       <span>{lastDrawTime.month}</span> {""}
                       <span>{lastDrawTime.date}</span> {""}
