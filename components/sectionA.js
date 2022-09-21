@@ -39,15 +39,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
 import { async } from "@firebase/util";
 
-// coinsino contract address
-const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 const Pending = 0;
 const Open = 1;
 const closed = 2;
 const claimable = 3;
 
 function SectionA({ keys }) {
-  const { startLottery, closeLottery, drawLottery } = OperatorFunctions(keys);
   const [buyModalStat, setbuyModalStat] = useRecoilState(buyModal);
   const [countDown, setCoundown] = useRecoilState(timeCountDown);
   const [nextDayDraw, setNextDayDraw] = useState({});

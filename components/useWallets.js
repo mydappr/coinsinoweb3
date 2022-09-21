@@ -2,7 +2,12 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import Web3 from "web3";
-import { activeAccount, connectorType, usewalletModal } from "../atoms/atoms";
+import {
+  activeAccount,
+  connectorType,
+  rpcaddress,
+  usewalletModal,
+} from "../atoms/atoms";
 import UseToaster from "./UseToaster";
 
 function useWallets() {
@@ -12,6 +17,8 @@ function useWallets() {
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
   const { Toast } = UseToaster();
+
+  const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
 
   // Checks if wallet is connected
   const checkIfWalletIsConnected = async () => {
@@ -35,7 +42,7 @@ function useWallets() {
                 {
                   chainId: "0x29",
                   chainName: "Telos Testnet",
-                  rpcUrls: ["https://testnet.telos.net/evm"] /* ... */,
+                  rpcUrls: rpcUrl /* ... */,
                 },
               ],
             });
@@ -63,7 +70,7 @@ function useWallets() {
   const connectWalletConnect = async () => {
     const p = new WalletConnectProvider({
       rpc: {
-        41: "https://testnet.telos.net/evm",
+        41: rpcUrl,
       },
     });
     //  Enable session (triggers QR Code modal)
@@ -128,7 +135,7 @@ function useWallets() {
       if (!ethereum) {
         const p = new WalletConnectProvider({
           rpc: {
-            41: "https://testnet.telos.net/evm",
+            41: rpcUrl,
           },
         });
 

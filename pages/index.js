@@ -27,28 +27,13 @@ import {
   endLotteryTime,
   drandData,
   activeAccount,
+  sinoAddress,
+  rngAddress,
+  rpcaddress,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import { Toast } from "flowbite-react";
 import UseToaster from "../components/UseToaster";
-
-// coinsino contract address
-const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
-// rng contract address
-const rngContractaddress = "0x2C5c6A061ceD5435A547ad8219f7a7A48C5AF672";
-// helper hex converter
-async function convertHexToInt(hex) {
-  return parseInt(hex, 16);
-}
-// time helper funciton
-async function convertInput(date) {
-  const splitDate = date.split(" ");
-  const value = parseInt(splitDate[0]);
-  const interval = splitDate[1];
-  const epoch = moment(new Date()).add(value, interval).toDate();
-  const _epoch = moment(epoch).unix();
-  return _epoch;
-}
 
 // Lottery status
 const Pending = 0;
@@ -58,10 +43,12 @@ const claimable = 3;
 
 // // serverside
 export const getServerSideProps = async () => {
+  // conract address
+  const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
+  // node url
+  const rpcUrl = "https://testnet.telos.net/evm";
   // operator provider,and signer
-  const operatorProvider = new ethers.providers.JsonRpcProvider(
-    "https://testnet.telos.net/evm"
-  );
+  const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
   // operator signer and contract
   const operatorSigner = new ethers.Wallet(process.env.opkey, operatorProvider);
 
@@ -126,7 +113,11 @@ export default function Home({
   const [userCurrentTickets, setUserCurrentTickets] = useState(0);
   const scrollTargetElementRef = useRef(null);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
-
+  const [coinSinoContractAddress, setcoinSinoContractAddress] =
+    useRecoilState(sinoAddress);
+  const [rngContractaddress, setrngContractaddress] =
+    useRecoilState(rngAddress);
+  const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
   const splittedWinningValues = Array.from(String(winningNo));
 
   const pricePerTicket = "3";

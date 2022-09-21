@@ -10,9 +10,9 @@ function WalletModal() {
   const { connectMetaMask, connectWalletConnect } = useWallets();
   const [providerConnector, setProviderConnector] =
     useRecoilState(connectorType);
+
   const [userBalance, setuserBalance] = useState(0);
 
-  
   // edit ticket functions
   function closeWalletModals() {
     setwalletModal(false);

@@ -9,6 +9,7 @@ import {
   editModal,
   errMessage,
   latestLotteryId,
+  sinoAddress,
   tlosPrice,
 } from "../atoms/atoms";
 import Sinoabi from "../utils/Coinsino.json";
@@ -17,10 +18,6 @@ import UseToaster from "./UseToaster";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3 from "web3";
 import UseLoadingSpinner from "./UseLoadingSpinner";
-
-// coinsino contract address
-const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
-const rpcUrl = "https://testnet.telos.net/evm";
 
 export default function BuyDialog() {
   const [isOpen, setIsOpen] = useRecoilState(buyModal);
@@ -39,6 +36,9 @@ export default function BuyDialog() {
   const inputRef = useRef(null);
   const { Toast } = UseToaster();
   const [isloading, setisloading] = useState(false);
+  const [coinSinoContractAddress, setcoinSinoContractAddress] =
+    useRecoilState(sinoAddress);
+  const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
   const { Loading } = UseLoadingSpinner(isloading);
 
   const getTelosPrice = async () => {
@@ -206,7 +206,7 @@ export default function BuyDialog() {
         if (providerConnector === "walletConnect") {
           provider = new WalletConnectProvider({
             rpc: {
-              [41]: "https://testnet.telos.net/evm",
+              [41]: rpcUrl,
             },
           });
         } else if (providerConnector === "metaMask") {
@@ -313,7 +313,7 @@ export default function BuyDialog() {
                     </div>
                     <div className=" relative">
                       <textarea
-                      disabled={isloading}
+                        disabled={isloading}
                         value={noOfTickets}
                         onChange={async (e) => {
                           let invalidChars = /[^0-9]/gi;

@@ -16,6 +16,8 @@ import {
   wonSize,
   usewalletModal,
   connectorType,
+  sinoAddress,
+  rpcaddress,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import Sinoabi from "../utils/Coinsino.json";
@@ -27,9 +29,6 @@ import UseToaster from "./UseToaster";
 import UseLoadingSpinner from "./UseLoadingSpinner";
 import Web3 from "web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-
-// coinsino contract address
-const coinSinoContractAddress = "0xdC9d2bBb598169b370F12e45D97258dd34ba19C0";
 
 function SectionB({ keys }) {
   const [lastDrawTime, setLastDrawTime] = useState({});
@@ -54,6 +53,10 @@ function SectionB({ keys }) {
   const [isloading, setisloading] = useState(false);
   const { Toast } = UseToaster();
   const { Loading } = UseLoadingSpinner(isloading);
+  const [coinSinoContractAddress, setcoinSinoContractAddress] =
+    useRecoilState(sinoAddress);
+
+  const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
 
   useEffect(() => {
     if (currentLotteryId) {
@@ -132,7 +135,7 @@ function SectionB({ keys }) {
         if (providerConnector === "walletConnect") {
           provider = new WalletConnectProvider({
             rpc: {
-              [41]: "https://testnet.telos.net/evm",
+              [41]: rpcUrl,
             },
           });
         } else if (providerConnector === "metaMask") {
@@ -244,7 +247,7 @@ function SectionB({ keys }) {
             });
           });
         }
-        setisloading(false)
+        setisloading(false);
       }
     } catch (error) {
       Toast(error.reason);
@@ -400,8 +403,6 @@ function SectionB({ keys }) {
 
   const fetchRoundDetails = async () => {
     try {
-      const rpcUrl = "https://testnet.telos.net/evm";
-
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       const operatorSigner = new ethers.Wallet(keys, operatorProvider);

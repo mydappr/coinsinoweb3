@@ -36,7 +36,7 @@ export const startLotteryTime = atom({
 });
 export const endLotteryTime = atom({
   key: "endLotteryTime", // all the atoms in recoil have their unique key
-  default: null, // this is the default value of an atom
+  default: 0, // this is the default value of an atom
 });
 
 export const buyModal = atom({
@@ -135,4 +135,19 @@ export const timeCountDown = atom({
     minutes: 0,
     seconds: 0,
   },
+});
+
+export const sinoAddress = atom({
+  key: "sinoAddress",
+  default: "0x3BBc0cEf7d7c5B2846D30DcA5B5342549fEc6381",
+});
+
+export const rngAddress = atom({
+  key: "rngAddress",
+  default: "0xf3810BC3AB08d0782B531581B5b3F82D64E7bD02",
+});
+
+export const rpcaddress = atom({
+  key: "rpcAddress",
+  default: "https://testnet.telos.net/evm",
 });
