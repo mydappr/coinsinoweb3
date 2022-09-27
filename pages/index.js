@@ -44,7 +44,7 @@ const claimable = 3;
 // // serverside
 export const getServerSideProps = async () => {
   // conract address
-  const coinSinoContractAddress = "0x3BBc0cEf7d7c5B2846D30DcA5B5342549fEc6381";
+  const coinSinoContractAddress = "0xf3c8A667B80b2113f05829a8fff28323C88e9B10";
   // node url
   const rpcUrl = "https://testnet.telos.net/evm";
   // operator provider,and signer
@@ -67,8 +67,6 @@ export const getServerSideProps = async () => {
   const getLotterystatus = await operatorcoinSinoContract.viewLottery(
     latestLotteryId
   );
-
-  
 
   // current lottery status
   const { status, endTime, amountCollectedInTelos } = getLotterystatus;
@@ -272,13 +270,14 @@ export default function Home({
             await coinSinoContract.viewCurrentLotteryId()
           );
 
+          if (!currentAccount) return;
+
           const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
             currentAccount,
             latestLotteryId,
             0,
             100
           );
-          console.log(currentAccount);
 
           const userticketIds = [];
           for (let i = 0; i < userInfo[0].length; i++) {

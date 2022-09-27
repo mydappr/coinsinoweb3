@@ -6,7 +6,7 @@ import Sinoabi from "../../utils/Coinsino.json";
 import jwt from "jsonwebtoken";
 import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
-const coinSinoContractAddress = "0x3BBc0cEf7d7c5B2846D30DcA5B5342549fEc6381";
+const coinSinoContractAddress = "0xf3c8A667B80b2113f05829a8fff28323C88e9B10";
 
 const { startLottery, closeLottery, drawLottery } = OperatorFunctions();
 
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
         const drandres = await fetch("https://drandapi.herokuapp.com/fetch");
         const dranddata = await drandres.json();
         rngData = dranddata;
-        console.log('got drandata')
+        console.log("got drandata");
       } catch (error) {
         return res.status(400).json({ error });
       }
@@ -111,9 +111,9 @@ export default async function handler(req, res) {
       await startLottery();
       res.status(200).json({ Status: "Ok" });
       break;
-    default:
-      console.log(
-        "Lottery is pending, no lottery has been created, create the first lottery"
-      );
+    case 0:
+      console.log("Started lottery");
+      await startLottery();
+      res.status(200).json({ Status: "Ok" });
   }
 }

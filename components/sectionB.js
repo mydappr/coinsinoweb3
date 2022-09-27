@@ -177,9 +177,21 @@ function SectionB({ keys }) {
         const { status } = getLotterystatus;
 
         if (Number(status) === claimable) {
+          const uuu = await coinSinoContract.methods.viewMaxRewardsForTicketId(
+            currentAccount,
+            previousLotteryId,
+            0,
+            100
+          );
+
+          console.log(uuu);
+
+          return;
           const userInfo = await coinSinoContract.methods
             .viewUserInfoForLotteryId(currentAccount, previousLotteryId, 0, 100)
             .call();
+
+          console.log("this is user info", userInfo[0]);
 
           const userticketIds = [];
           for (let i = 0; i < userInfo[0].length; i++) {
@@ -627,10 +639,10 @@ function SectionB({ keys }) {
                   <div className="mx-auto my-2 w-fit space-y-2 text-center">
                     <h2 className="font-bold text-coinSinoTextColor ">Round</h2>
                     <p className="bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
-                      #{roundCount}
+                      {roundCount > 0 && <p> #{roundCount} </p>}
                     </p>
                   </div>{" "}
-                  {endTime ? (
+                  {roundCount > 0 ? (
                     <div className="my-5 text-coinSinoTextColor2 ">
                       <span>{lastDrawTime.month}</span> {""}
                       <span>{lastDrawTime.date}</span> {""}

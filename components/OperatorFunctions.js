@@ -11,7 +11,7 @@ import {
   endLotteryTime,
 } from "../atoms/atoms";
 import { NonceManager } from "@ethersproject/experimental";
- 
+
 import { useEffect, useState } from "react";
 const Pending = 0;
 const Open = 1;
@@ -45,9 +45,9 @@ function OperatorFunctions() {
 
   const pricePerTicket = "3";
   // coinsino contract address
-  const coinSinoContractAddress = "0x3BBc0cEf7d7c5B2846D30DcA5B5342549fEc6381";
+  const coinSinoContractAddress = "0xf3c8A667B80b2113f05829a8fff28323C88e9B10";
   // rng contract address
-  const rngContractaddress = "0xf3810BC3AB08d0782B531581B5b3F82D64E7bD02";
+  const rngContractaddress = "0x24Ed7F81Fca828250635895DE8f14ab598fFf565";
   const rpcUrl = "https://testnet.telos.net/evm";
 
   // operator provider, signer and coinsino contract instance
@@ -186,6 +186,8 @@ function OperatorFunctions() {
       const latestLotteryId = Number(
         await operatorcoinSinoContract.viewCurrentLotteryId()
       );
+
+      console.log('got id')
 
       const drawFinalNumberAndMakeLotteryClaimable =
         await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(

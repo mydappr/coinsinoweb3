@@ -30,6 +30,8 @@ import {
   usewalletModal,
   timeCountDown,
   drandData,
+  sinoAddress,
+  rpcaddress,
 } from "../atoms/atoms";
 import BuyDialog from "./buyDialog";
 import { providers } from "ethers";
@@ -38,6 +40,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
 import { async } from "@firebase/util";
+import { NonceManager } from "@ethersproject/experimental";
 
 const Pending = 0;
 const Open = 1;
@@ -69,6 +72,78 @@ function SectionA({ keys }) {
   const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
   const [timeElasped, setTimeElapsed] = useState(false);
   const [rngData, setrngData] = useRecoilState(drandData);
+  const [currentUserTicket, setCurrentUserTicket] = useState([]);
+  const [coinSinoContractAddress, setcoinSinoContractAddress] =
+    useRecoilState(sinoAddress);
+  const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
+
+  // get operator signer
+  const operatorSignerFn = async () => {
+    // get lottery ID and status
+    // operator provider,and signer
+    const operatorProvider = new ethers.providers.JsonRpcProvider(
+      "https://testnet.telos.net/evm"
+    );
+    console.log("got provider");
+
+    // operator signer and contract
+    const operatorSigner = new ethers.Wallet(
+      process.env.opkey,
+      operatorProvider
+    );
+
+    console.log("got signer");
+
+    const managedSigner = new NonceManager(operatorSigner);
+    return new ethers.Contract(coinSinoContractAddress, Sinoabi, managedSigner);
+  };
+
+  // secA updater
+  const updater = async () => {
+    try {
+      const operator = await operatorSignerFn();
+
+      let chainId = await operator.signer.getChainId();
+
+      // check if network is metamask
+      if (Number(chainId) !== 41) return;
+
+      // current lotteryid
+      const latestLotteryId = Number(await operator.viewCurrentLotteryId());
+
+      // current lottery details
+      const getLotterystatus = await operator.viewLottery(currentLotteryId);
+
+      // current lottery status
+      const { status } = getLotterystatus;
+
+      const userInfo = await operator.viewUserInfoForLotteryId(
+        currentAccount,
+        latestLotteryId,
+        0,
+        100
+      );
+      console.log(userInfo, "findo me");
+
+      const userticketIds = [];
+      for (let i = 0; i < userInfo[0].length; i++) {
+        const ticketId = Number(userInfo[0][i]);
+        userticketIds.push(ticketId);
+      }
+
+      // list of user's tickets
+      const list = await operator.viewNumbersAndStatusesForTicketIds(
+        userticketIds
+      );
+      setCurrentUserTicket(list[0]);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    updater();
+  }, [totalLotteryDeposit, currentAccount, currentLotteryId]);
+
+  // next draw function
   const nextDraw = () => {
     // today
     if (!endTime) return;
@@ -141,26 +216,26 @@ function SectionA({ keys }) {
     return _epoch;
   }
 
-  const initialStartTime = async () => {
-    const initialTime = await convertInput("5 minutes");
+  // const initialStartTime = async () => {
+  //   const initialTime = await convertInput("5 minutes");
 
-    if (lotteryStatus === 0 && !endTime) {
-      return initialTime;
-    } else {
-      return null;
-    }
-  };
+  //   if (lotteryStatus === 0 && !endTime) {
+  //     return initialTime;
+  //   } else {
+  //     return null;
+  //   }
+  // };
 
-  useEffect(() => {
-    let intervalId = setInterval(initialStartTime, 1000);
+  // useEffect(() => {
+  //   let intervalId = setInterval(initialStartTime, 1000);
 
-    return () => clearInterval(intervalId);
-  }, [lotteryStatus, endTime]);
+  //   return () => clearInterval(intervalId);
+  // }, [lotteryStatus, endTime]);
 
   async function countdown() {
-    const initalT = await initialStartTime();
-
-    let Time = moment.unix(endTime ? endTime : initalT).format();
+    // const initalT = await initialStartTime();
+    if (!endTime) return;
+    let Time = moment.unix(endTime).format();
 
     const dateString = moment(Time);
     const now = moment();
@@ -350,7 +425,7 @@ function SectionA({ keys }) {
                 )}
               </div>
             </>
-          ) : timeElasped ? (
+          ) : (
             <>
               {lotteryStatus === claimable ? (
                 <div>
@@ -373,8 +448,6 @@ function SectionA({ keys }) {
                 </div>
               )}
             </>
-          ) : (
-            "Lottery is Starting soon!"
           )}
         </div>
 
@@ -429,7 +502,7 @@ function SectionA({ keys }) {
                   <span>
                     You have{" "}
                     <strong className=" text-lg text-coinSinoGreen">
-                      {userTickets.length}
+                      {currentUserTicket.length}
                     </strong>{" "}
                     ticket for this round
                   </span>

@@ -97,18 +97,8 @@ export default function BuyDialog() {
     userBalance < totalTicketsPrice || noOfTickets < 1 || errorMessage !== "";
 
   // random generator
-  async function generateRandom(min = 0, max = 100) {
-    // find diff
-    const difference = max - min;
-
-    // generate random number
-    let rand = Math.random();
-
-    // multiply with difference
-    rand = Math.floor(rand * difference);
-
-    // add with min value
-    rand = rand + min;
+  async function generateRandom() {
+    const rand = Math.floor(Math.random() * 899999 + 100000);
 
     return rand;
   }
@@ -116,12 +106,20 @@ export default function BuyDialog() {
   async function generateTicketNumbers(numberOfTickets) {
     const numbers = [];
     for (let i = 0; i < numberOfTickets; i++) {
-      const ticket = await generateRandom(100000, 999999);
+      const ticket = await generateRandom();
+      const ticketNumberLen = String(ticket).length;
+
+      if (ticketNumberLen < 6) {
+        const loss = 6 - ticketNumberLen;
+        const min = loss;
+        const max = 10 ** min - min;
+        const padding = Math.floor(Math.random() * min + max);
+        numbers.push(Number(ticket + padding));
+      }
       numbers.push(ticket);
     }
     return numbers;
   }
-
   // modal functions
   function closeBuyModals() {
     setisloading(false);
@@ -193,6 +191,20 @@ export default function BuyDialog() {
   // buy tickets
   // console.log(listOfTicketsToBuy);
 
+  // handleEdit
+  const handleEdit = async (e) => {
+    let invalidChars = /[^0-9]/gi;
+    if (invalidChars.test(e.target.value)) {
+      e.target.value = e.target.value.replace(invalidChars, "");
+    }
+    if (e.target.value > 100) {
+      e.target.value = e.target.value.replace(e.target.value, 100);
+    }
+    setNoOfTickets(e.target.value);
+    const Tickets = await generateTicketNumbers(e.target.value);
+    setlistOfTicketsToBuy(Tickets);
+  };
+
   const buyTicket = async () => {
     if (disablebtn) {
       return;
@@ -256,6 +268,7 @@ export default function BuyDialog() {
         await buyTicket;
         Toast("Ticket bought");
         closeBuyModals();
+        closeEditModals();
       }
     } catch (error) {
       setisloading(false);
@@ -316,26 +329,7 @@ export default function BuyDialog() {
                       <textarea
                         disabled={isloading}
                         value={noOfTickets}
-                        onChange={async (e) => {
-                          let invalidChars = /[^0-9]/gi;
-                          if (invalidChars.test(e.target.value)) {
-                            e.target.value = e.target.value.replace(
-                              invalidChars,
-                              ""
-                            );
-                          }
-                          if (e.target.value > 100) {
-                            e.target.value = e.target.value.replace(
-                              e.target.value,
-                              100
-                            );
-                          }
-                          setNoOfTickets(e.target.value);
-                          const Tickets = await generateTicketNumbers(
-                            e.target.value
-                          );
-                          setlistOfTicketsToBuy(Tickets);
-                        }}
+                        onChange={handleEdit}
                         className={`min-h-10 w-full resize-none rounded-2xl border-none bg-coinSinoPurpleNav text-end  ${
                           noOfTickets > 0 && "text-white"
                         } outline-none`}
