@@ -156,7 +156,7 @@ function SectionB({ keys }) {
 
         if (chainId !== 41) {
           setisloading(false);
-          Toast("You are no t connected to the Telos Netowrk!");
+          Toast("You are not connected to the Telos Netowrk!");
           return;
         }
 
@@ -168,6 +168,18 @@ function SectionB({ keys }) {
         const previousLotteryId =
           latestLotteryId === 1 ? latestLotteryId : latestLotteryId - 1;
 
+        const a = await coinSinoContract.methods
+          .viewMaxRewardsForTicketId(
+            currentAccount,
+            previousLotteryId,
+            0,
+            userTickets.length
+          )
+          .call();
+        console.log(a, "be");
+
+        setisloading(false);
+        return;
         // current lottery details
         const getLotterystatus = await coinSinoContract.methods
           .viewLottery(previousLotteryId)

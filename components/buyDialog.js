@@ -107,16 +107,16 @@ export default function BuyDialog() {
     const numbers = [];
     for (let i = 0; i < numberOfTickets; i++) {
       const ticket = await generateRandom();
-      const ticketNumberLen = String(ticket).length;
+      const ticketString = String(ticket);
+      const lastValue = Number(ticketString[ticketString.length - 1]);
 
-      if (ticketNumberLen < 6) {
-        const loss = 6 - ticketNumberLen;
-        const min = loss;
-        const max = 10 ** min - min;
-        const padding = Math.floor(Math.random() * min + max);
-        numbers.push(Number(ticket + padding));
+      if (lastValue === 0) {
+        const padding = Math.floor(Math.random() * 8 + 1);
+        const final = ticket + padding;
+        numbers.push(final);
+      } else {
+        numbers.push(ticket);
       }
-      numbers.push(ticket);
     }
     return numbers;
   }
