@@ -177,7 +177,7 @@ function OperatorFunctions() {
 
       await RNGContract.setRandomValue(
         rngData.round,
-        transformer(rngData.randomness),
+        transformer(rngData),
         rngData.signature,
         rngData.previous_signature
       );

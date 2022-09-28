@@ -164,7 +164,7 @@ export default function BuyDialog() {
     if ((i == 0 && value == "0") || (i == 5 && value == "0")) {
       // value = placeholder;
       setErrorMessage(
-        "Sorry, tickets with leading zero isn`t accepted as Winning Number also can`t have a leading zero!"
+        "Sorry, tickets with leading/ending with zero isn`t accepted as Winning Number also can`t have leading/ending zero!"
       );
 
       if (inputRef.current) {

@@ -96,24 +96,24 @@ export default async function handler(req, res) {
       // lottery status is open, therefore close the lottery
       console.log("Closed lottery");
       await closeLottery(rngData, latestLotteryId);
-      res.status(200).json({ Status: "Ok" });
+      res.status(200).json({ Status: "lottery closed!" });
       break;
 
     case 2:
       // lottery status is closed, therefore draw winning number and make lottery claimable
       console.log("Make lottery claimable");
       await drawLottery(rngData, latestLotteryId);
-      res.status(200).json({ Status: "Ok" });
+      res.status(200).json({ Status: "lottery drawn" });
       break;
     case 3:
       // lottery status is claimable, therefore start a new lottery
       console.log("Started lottery");
       await startLottery();
-      res.status(200).json({ Status: "Ok" });
+      res.status(200).json({ Status: "lottery started!" });
       break;
     case 0:
       console.log("Started lottery");
       await startLottery();
-      res.status(200).json({ Status: "Ok" });
+      res.status(200).json({ Status: "lottery started!" });
   }
 }
