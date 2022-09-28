@@ -13,6 +13,7 @@ import {
 import { NonceManager } from "@ethersproject/experimental";
 
 import { useEffect, useState } from "react";
+import transformer from "../utils/Helper/helper";
 const Pending = 0;
 const Open = 1;
 const closed = 2;
@@ -176,7 +177,7 @@ function OperatorFunctions() {
 
       await RNGContract.setRandomValue(
         rngData.round,
-        rngData.randomness,
+        transformer(rngData.randomness),
         rngData.signature,
         rngData.previous_signature
       );
@@ -187,7 +188,7 @@ function OperatorFunctions() {
         await operatorcoinSinoContract.viewCurrentLotteryId()
       );
 
-      console.log('got id')
+      console.log("got id");
 
       const drawFinalNumberAndMakeLotteryClaimable =
         await operatorcoinSinoContract.drawFinalNumberAndMakeLotteryClaimable(
