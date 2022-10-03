@@ -267,12 +267,15 @@ export default function BuyDialog() {
 
         await buyTicket;
         Toast("Ticket bought");
+        setisloading(false);
         closeBuyModals();
         closeEditModals();
       }
     } catch (error) {
+      Toast(error.reason);
       setisloading(false);
-      console.log(error);
+      closeBuyModals();
+      closeEditModals();
     }
   };
 

@@ -44,7 +44,7 @@ const claimable = 3;
 // // serverside
 export const getServerSideProps = async () => {
   // conract address
-  const coinSinoContractAddress = "0xf3c8A667B80b2113f05829a8fff28323C88e9B10";
+  const coinSinoContractAddress = "0x24eBA6D67036Ca5b736550e8298db011d7FCaFAF";
   // node url
   const rpcUrl = "https://testnet.telos.net/evm";
   // operator provider,and signer
@@ -188,7 +188,6 @@ export default function Home({
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
         currentLotteryId
       );
-      console.log(getLotterystatus);
 
       // current lottery status
       const {
@@ -305,7 +304,7 @@ export default function Home({
   useEffect(() => {
     let intervalId = setInterval(getLatestLotteryInfo, 1000);
     return () => clearInterval(intervalId);
-  }, [currentLotteryId, endTime, lotteryStatus]);
+  }, [currentLotteryId, endTime, lotteryStatus,totalLotteryDeposit]);
 
   // const info = async () => {
   //   try {

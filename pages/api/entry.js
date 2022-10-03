@@ -6,7 +6,7 @@ import Sinoabi from "../../utils/Coinsino.json";
 import jwt from "jsonwebtoken";
 import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
-const coinSinoContractAddress = "0xf3c8A667B80b2113f05829a8fff28323C88e9B10";
+const coinSinoContractAddress = "0x24eBA6D67036Ca5b736550e8298db011d7FCaFAF";
 
 const { startLottery, closeLottery, drawLottery } = OperatorFunctions();
 

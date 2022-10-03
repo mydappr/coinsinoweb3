@@ -139,15 +139,24 @@ export const timeCountDown = atom({
 
 export const sinoAddress = atom({
   key: "sinoAddress",
-  default: "0xf3c8A667B80b2113f05829a8fff28323C88e9B10",
+  default: "0x24eBA6D67036Ca5b736550e8298db011d7FCaFAF",
 });
 
 export const rngAddress = atom({
   key: "rngAddress",
-  default: "0x24Ed7F81Fca828250635895DE8f14ab598fFf565",
+  default: "0xb4b2a838520F8222770A84a1616b84d2ea81fD7A",
 });
 
 export const rpcaddress = atom({
   key: "rpcAddress",
   default: "https://testnet.telos.net/evm",
+});
+
+export const wonPoolLength = atom({
+  key: "wonPoolLength",
+  default: [],
+});
+export const wonid = atom({
+  key: "wonid",
+  default: [],
 });

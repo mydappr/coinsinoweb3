@@ -1,11 +1,12 @@
 import { Tabs } from "flowbite-react";
 import CountUp from "react-countup";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
 import Sinoabi from "../utils/Coinsino.json";
 import moment from "moment";
 import { useRecoilState } from "recoil";
+import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
 
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
@@ -41,7 +42,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
 import { async } from "@firebase/util";
 import { NonceManager } from "@ethersproject/experimental";
-
+import { Dialog, Transition } from "@headlessui/react";
 const Pending = 0;
 const Open = 1;
 const closed = 2;
@@ -76,7 +77,11 @@ function SectionA({ keys }) {
   const [coinSinoContractAddress, setcoinSinoContractAddress] =
     useRecoilState(sinoAddress);
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
+  const [showCurrentTickets, setShowCurrentTickets] = useState(false);
 
+  function closeViewTickets() {
+    setShowCurrentTickets(false);
+  }
   // get operator signer
   const operatorSignerFn = async () => {
     // get lottery ID and status
@@ -247,7 +252,16 @@ function SectionA({ keys }) {
     const s = dateString.seconds();
 
     let maxTime = moment();
-    maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
+
+    maxTime.set({
+      year: y,
+      month: mo,
+      date: d,
+      hour: h,
+      minute: m,
+      second: s,
+      millisecond: 0,
+    });
 
     if (now > maxTime) {
       if (!endTime) return;
@@ -433,7 +447,8 @@ function SectionA({ keys }) {
                   <h2>Lottery Drawn!</h2>
                   <h2>A new Lottery Starting Soon!</h2>
                 </div>
-              ) : (
+              ) : lotteryStatus === closed ||
+                (lotteryStatus === Open && timeElasped) ? (
                 <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
                   <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
                     <p>
@@ -446,6 +461,8 @@ function SectionA({ keys }) {
                     </div>
                   </div>
                 </div>
+              ) : (
+                <h2>Fiest Lottery Starting soon!</h2>
               )}
             </>
           )}
@@ -501,14 +518,116 @@ function SectionA({ keys }) {
                   <span>Your pool ticket:</span>{" "}
                   <span>
                     You have{" "}
-                    <strong className=" text-lg text-coinSinoGreen">
+                    <strong
+                      onClick={() => setShowCurrentTickets(true)}
+                      className=" cursor-pointer text-lg text-coinSinoGreen  hover:bg-coinSinoPurple hover:text-coinSinoGreen"
+                    >
                       {currentUserTicket.length}
                     </strong>{" "}
-                    ticket for this round
+                    ticket for the current round
                   </span>
                 </p>
               )}
             </div>
+
+            {/* view ticket */}
+            <div>
+              <Transition appear show={showCurrentTickets} as={Fragment}>
+                <Dialog
+                  as="div"
+                  className="relative z-10 "
+                  open={showCurrentTickets}
+                  onClose={closeViewTickets}
+                >
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <div className="fixed inset-0   bg-white bg-opacity-25" />
+                  </Transition.Child>
+
+                  <div className="fixed inset-0 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                      >
+                        <Dialog.Panel className="w-full min-w-[300px] max-w-[350px] transform space-y-5 overflow-hidden rounded-2xl bg-coinSinoPurple  p-6 text-left align-middle text-white shadow-xl transition-all">
+                          <Dialog.Title
+                            as="h3"
+                            className="flex  justify-between text-lg font-extrabold leading-6 "
+                          >
+                            Round {currentLotteryId}
+                            <XIcon
+                              className="h-7 cursor-pointer p-1 text-coinSinoGreen"
+                              onClick={() => {
+                                closeViewTickets();
+                              }}
+                            />
+                          </Dialog.Title>
+
+                          {/* <div className=" text-md space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
+                    <h2 className="my-5 font-bold text-coinSinoTextColor">
+                      Winning Number
+                    </h2>
+                    <RandomImage />
+                  </div> */}
+                          <p className="flex justify-between">
+                            <span className=" text-xs text-white">
+                              Total tickets
+                            </span>{" "}
+                            <span className="">{currentUserTicket.length}</span>
+                          </p>
+
+                          {/* <p className="flex justify-between">
+                    <span className=" text-xs text-white">Winning tickets</span>{" "}
+                    <span className="">{wonTicketSize}</span>
+                  </p> */}
+
+                          {/* <p className="text-sm">
+                    You matched the following number(s) in pink
+                  </p> */}
+
+                          <div className="mt-2">
+                            <div className="text-sm ">
+                              {currentUserTicket.map((e, i) => {
+                                const split = Array.from(String(e));
+                                return (
+                                  <div
+                                    key={i}
+                                    className="my-2 flex w-full items-center justify-between  rounded-2xl  border-[1px] bg-coinSinoPurpleNav p-2 font-bold"
+                                  >
+                                    {split.map((ee, ii) => (
+                                      <p
+                                        className={` flex items-center  p-2 text-lg    `}
+                                        key={i}
+                                      >
+                                        {ee}
+                                      </p>
+                                    ))}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </Dialog.Panel>
+                      </Transition.Child>
+                    </div>
+                  </div>
+                </Dialog>
+              </Transition>
+            </div>
+            {/* end of view ticket */}
 
             <img
               className="  mt-5 max-h-[300px] w-[300px]  object-contain   sm:max-h-[20%] sm:max-w-[20%]"

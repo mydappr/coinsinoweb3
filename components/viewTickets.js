@@ -4,6 +4,9 @@ import {
   viewTicket,
   userTickets as accountTicket,
   wonSize,
+  wonPoolLength,
+  wonid,
+  winningNumbers,
 } from "../atoms/atoms";
 import { Dialog, Transition } from "@headlessui/react";
 import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
@@ -20,6 +23,12 @@ function ViewTickets() {
   const [roundCount, setRoundCount] = useRecoilState(rouncount);
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
   const [wonTicketSize, setWonTicketSize] = useRecoilState(wonSize);
+  const [claimpoolLength, setclaimpoolLength] = useRecoilState(wonPoolLength);
+  const [wwonid, setwonId] = useRecoilState(wonid);
+
+  const [winningNo, setWinningNO] = useRecoilState(winningNumbers);
+  const splittedWinningValues = Array.from(String(winningNo));
+
   function closeViewTickets() {
     setviewTicketOpen(false);
   }
@@ -27,8 +36,6 @@ function ViewTickets() {
   function openViewTickets() {
     setviewTicketOpen(true);
   }
-
-  //
 
   return (
     <div>
@@ -77,21 +84,25 @@ function ViewTickets() {
                     />
                   </Dialog.Title>
 
-                  <div className=" text-md space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
+                  {/* <div className=" text-md space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
                     <h2 className="my-5 font-bold text-coinSinoTextColor">
                       Winning Number
                     </h2>
                     <RandomImage />
-                  </div>
+                  </div> */}
                   <p className="flex justify-between">
                     <span className=" text-xs text-white">Total tickets</span>{" "}
                     <span className="">{userTickets.length}</span>
                   </p>
 
-                  <p className="flex justify-between">
+                  {/* <p className="flex justify-between">
                     <span className=" text-xs text-white">Winning tickets</span>{" "}
                     <span className="">{wonTicketSize}</span>
-                  </p>
+                  </p> */}
+
+                  {/* <p className="text-sm">
+                    You matched the following number(s) in pink
+                  </p> */}
 
                   <div className="mt-2">
                     <div className="text-sm ">
@@ -102,8 +113,13 @@ function ViewTickets() {
                             key={i}
                             className="my-2 flex w-full items-center justify-between  rounded-2xl  border-[1px] bg-coinSinoPurpleNav p-2 font-bold"
                           >
-                            {split.map((ee, i) => (
-                              <p key={i}>{ee}</p>
+                            {split.map((ee, ii) => (
+                              <p
+                                className={` flex items-center  p-2 text-lg    `}
+                                key={i}
+                              >
+                                {ee}
+                              </p>
                             ))}
                           </div>
                         );
