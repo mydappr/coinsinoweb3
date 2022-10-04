@@ -378,6 +378,15 @@ function SectionA({ keys }) {
         </div>
 
         {/* gets your ticket now Time is running */}
+        <div className="flex space-x-2">
+          {" "}
+          <div className="h-14 w-14 rounded-full bg-cyan-300"></div>
+          <div className="h-14 w-14 rounded-full bg-yellow-300"></div>
+          <div className="h-14 w-14 rounded-full bg-green-300"></div>
+          <div className="h-14 w-14 rounded-full bg-pink-500"></div>
+          <div className="h-14 w-14 rounded-full bg-blue-500"></div>
+          <div className="h-14 w-14 rounded-full bg-yellow-500"></div>
+        </div>
 
         <div className=" mt-20 p-2 text-center ">
           {!timeElasped ? (

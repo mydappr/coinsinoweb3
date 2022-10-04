@@ -29,17 +29,69 @@ function RandomImage() {
   const splittedWinningValues = Array.from(String(winningNo));
 
   return (
-    <div className="my-2  flex justify-between  md:justify-center md:space-x-5">
-      {splittedWinningValues.length > 5 ? (
-        splittedWinningValues.map((e, i) => (
-          <div key={i} className="mx-[1.5px] md:mx-0">
-            <Image height={70} width={70} src={`/images/${e}.png`} />{" "}
-          </div>
-        ))
+    <>
+      {splittedWinningValues.length > 0 ? (
+        <div className="mx-auto  mt-0 flex w-[]   max-w-lg  items-center justify-between  ">
+          {splittedWinningValues.map((e, i) => {
+            const balls =
+              i === 0
+                ? "blueball"
+                : i === 1
+                ? "brownball"
+                : i === 2
+                ? "deepgreenball"
+                : i == 3
+                ? "pinkball"
+                : i === 4
+                ? "greenball"
+                : "yellowball";
+            const negetiveAngle = i % 2 !== 0 ? "-" : "";
+
+            return (
+              <div
+                className={`relative  h-[50px] w-[80%]   items-center   rounded-full  bg-center sm:h-[68px]  ${negetiveAngle}rotate-12  bg-[url('/images/${balls}.svg')] bg-no-repeat `}
+              >
+                {" "}
+                <div className="shadow-[2px]  absolute right-0 left-0 top-2 bottom-0 text-center  text-[21px]   font-bold   blur-[0.8px] sm:text-[35px] ">
+                  {e}
+                </div>
+                <div className="shadow-[2px] absolute right-0 left-0 top-2  text-[20px]    font-bold text-black sm:text-[34px]">
+                  {e}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* <div className="h-14 w-14 rounded-full bg-[url('/images/yellowball.svg')] bg-no-repeat">
+          <p className="  font-bold text-white  shadow-black    drop-shadow">
+            {splittedWinningValues[2]}
+          </p>
+        </div>
+        <div className="h-14 w-14 rounded-full bg-[url('/images/deepgreenball.svg')]  bg-no-repeat">
+          <p className="  font-bold text-white  shadow-black    drop-shadow">
+            {splittedWinningValues[2]}
+          </p>
+        </div>
+        <div className="h-14 w-14 rounded-full bg-[url('/images/brownball.svg')]  bg-no-repeat">
+          <p className="  font-bold text-white  shadow-black    drop-shadow">
+            {splittedWinningValues[2]}
+          </p>
+        </div>
+        <div className="h-14 w-14 rounded-full bg-[url('/images/pinkball.svg')]   bg-no-repeat">
+          <p className="  font-bold text-white  shadow-black    drop-shadow">
+            {splittedWinningValues[2]}
+          </p>
+        </div>
+        <div className="h-14 w-14 rounded-full bg-[url('/images/greenball.svg')]   bg-no-repeat">
+          <p className="  font-bold text-white  shadow-black    drop-shadow">
+            {splittedWinningValues[2]}
+          </p>
+        </div> */}
+        </div>
       ) : (
         <div className="waiting"></div>
       )}
-    </div>
+    </>
   );
 }
 

@@ -626,8 +626,10 @@ function SectionB({ keys }) {
     if (roundCount > 1) {
       setRoundCount((prev) => prev - 1);
       setRewardMessage("");
+      setWinningNO([]);
       setisloading(false);
       setUserTickets([]);
+      setLastDrawTime([]);
     }
   };
   const nextDraws = async () => {
@@ -635,8 +637,10 @@ function SectionB({ keys }) {
     if (roundCount < currentLotteryId - 1) {
       setRoundCount((prev) => prev + 1);
       setRewardMessage("");
+      setWinningNO([]);
       setisloading(false);
       setUserTickets([]);
+      setLastDrawTime([]);
     }
   };
 
@@ -848,7 +852,7 @@ function SectionB({ keys }) {
                       {roundCount > 0 && <p> #{roundCount} </p>}
                     </p>
                   </div>{" "}
-                  {roundCount > 0 ? (
+                  {lastDrawTime.antePost ? (
                     <div className="my-5 text-coinSinoTextColor2 ">
                       <span>{lastDrawTime.month}</span> {""}
                       <span>{lastDrawTime.date}</span> {""}
