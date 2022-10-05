@@ -28,7 +28,7 @@ function RandomImage() {
   // convert winning number to array
   const splittedWinningValues = Array.from(String(winningNo));
 
-  console.log('this is', splittedWinningValues)
+  console.log("this is", splittedWinningValues);
 
   return (
     <>
@@ -51,6 +51,7 @@ function RandomImage() {
 
             return (
               <div
+                key={i}
                 className={`relative  h-[45px] w-[80%]    items-center   rounded-full  bg-center sm:h-[68px]  ${negetiveAngle}rotate-12  bg-[url('/images/${balls}.svg')] bg-no-repeat `}
               >
                 {" "}
