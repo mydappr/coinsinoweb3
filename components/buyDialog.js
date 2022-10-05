@@ -48,7 +48,7 @@ export default function BuyDialog() {
       const res = await get.json();
       const price = res.market_data.current_price.usd;
       setTelosPrice(price);
-      console.log("price", price);
+     
     } catch (error) {
       console.log(error);
     }
@@ -68,16 +68,18 @@ export default function BuyDialog() {
           "ethers"
         )
       ).toFixed(3);
-      console.log(currentAccount);
+   
+      
       setuserBalance(balance);
-      console.log("current  balance", balance);
+   
+      
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
     currentBalance();
-  }, [currentAccount, userBalance]);
+  }, [currentAccount, userBalance, noOfTickets]);
 
   const discountDivisor = 2000;
 
@@ -185,7 +187,8 @@ export default function BuyDialog() {
     });
 
     listOfTicketsToBuy[li] = Number(numberelements.join(""));
-    console.log(listOfTicketsToBuy);
+  
+    
   };
   // console.log(listOfTicketsToBuy);
   // buy tickets

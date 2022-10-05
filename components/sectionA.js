@@ -78,6 +78,9 @@ function SectionA({ keys }) {
     useRecoilState(sinoAddress);
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
   const [showCurrentTickets, setShowCurrentTickets] = useState(false);
+  const [telosPool, setTelosPool] = useState(true);
+  const [ethPool, setEthPool] = useState(false);
+  const [bnbPool, setBnbPool] = useState(false);
 
   function closeViewTickets() {
     setShowCurrentTickets(false);
@@ -89,7 +92,7 @@ function SectionA({ keys }) {
     const operatorProvider = new ethers.providers.JsonRpcProvider(
       "https://testnet.telos.net/evm"
     );
-    console.log("got provider");
+    
 
     // operator signer and contract
     const operatorSigner = new ethers.Wallet(
@@ -97,7 +100,8 @@ function SectionA({ keys }) {
       operatorProvider
     );
 
-    console.log("got signer");
+
+    
 
     const managedSigner = new NonceManager(operatorSigner);
     return new ethers.Contract(coinSinoContractAddress, Sinoabi, managedSigner);
@@ -128,7 +132,8 @@ function SectionA({ keys }) {
         0,
         100
       );
-      console.log(userInfo, "findo me");
+
+      
 
       const userticketIds = [];
       for (let i = 0; i < userInfo[0].length; i++) {
@@ -156,7 +161,8 @@ function SectionA({ keys }) {
     todaydraw.toISOString();
     todaydraw.format();
     let tomorrow = moment(todaydraw.add(1, "days").local());
-    console.log(tomorrow);
+  
+    
 
     const date = tomorrow.date();
     const month = tomorrow.format("MMM");
@@ -378,15 +384,6 @@ function SectionA({ keys }) {
         </div>
 
         {/* gets your ticket now Time is running */}
-        <div className="flex space-x-2">
-          {" "}
-          <div className="h-14 w-14 rounded-full bg-cyan-300"></div>
-          <div className="h-14 w-14 rounded-full bg-yellow-300"></div>
-          <div className="h-14 w-14 rounded-full bg-green-300"></div>
-          <div className="h-14 w-14 rounded-full bg-pink-500"></div>
-          <div className="h-14 w-14 rounded-full bg-blue-500"></div>
-          <div className="h-14 w-14 rounded-full bg-yellow-500"></div>
-        </div>
 
         <div className=" mt-20 p-2 text-center ">
           {!timeElasped ? (
@@ -717,199 +714,282 @@ function SectionA({ keys }) {
             Current prizes for grabs
           </p>
 
-          {/* winninn numbers */}
+          {/* pools */}
+          <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+            <ul
+              className="-mb-px flex flex-wrap text-center text-sm font-medium"
+              id="myTab"
+              data-tabs-toggle="#myTabContent"
+              role="tablist"
+            >
+              <li className="mr-2" role="presentation">
+                <button
+                  className={`inline-block rounded-t-lg border-b-2  p-4 text-coinSinoTextColor2 outline-none ${
+                    telosPool &&
+                    " border-blue-600  text-blue-600 hover:text-blue-600"
+                  }`}
+                  onClick={() => {
+                    setEthPool(false);
+                    setTelosPool(true);
+                    setBnbPool(false);
+                  }}
+                >
+                  Tlos pool
+                </button>
+              </li>
+              <li className="mr-2" role="presentation">
+                <button
+                  disabled={true}
+                  className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
+                    bnbPool &&
+                    " border-blue-600  text-blue-600 hover:text-blue-600"
+                  }`}
+                  id="dashboard-tab"
+                  data-tabs-target="#dashboard"
+                  type="button"
+                  role="tab"
+                  aria-controls="dashboard"
+                  aria-selected="false"
+                  onClick={() => {
+                    setEthPool(false);
+                    setTelosPool(false);
+                    setBnbPool(true);
+                  }}
+                >
+                  Bnb Pool(Inactive)
+                </button>
+              </li>
+
+              <li className="mr-2" role="presentation">
+                <button
+                  disabled={true}
+                  className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
+                    bnbPool &&
+                    " border-blue-600  text-blue-600 hover:text-blue-600"
+                  }`}
+                  id="dashboard-tab"
+                  data-tabs-target="#dashboard"
+                  type="button"
+                  role="tab"
+                  aria-controls="dashboard"
+                  aria-selected="false"
+                  onClick={() => {
+                    setEthPool(true);
+                    setTelosPool(false);
+                    setBnbPool(false);
+                  }}
+                >
+                  Eth Pool(Inactive)
+                </button>
+              </li>
+            </ul>
+          </div>
 
           <div className=" mx-auto my-0    max-w-[700px]">
-            <Tabs.Group aria-label="Tabs with underline" style="underline">
-              <Tabs.Item active={true} title="Tlos">
-                <div className="flex   flex-wrap justify-start gap-2 sm:justify-start">
-                  <div className=" poolBar">
-                    <h2 className="text-base  font-bold  text-coinSinoTextColor">
-                      March first 1
-                    </h2>
-                    <strong className="text-lg font-bold  text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={firstPoolFunds}
-                      />
-                      TLOS
-                    </strong>
-                    <p className=" text-center   font-bold text-coinSinoTextColor2">
-                      ~${" "}
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * firstPoolFunds}
-                      />
-                    </p>
-                  </div>
-                  <div className="poolBar">
-                    <h2 className="text-base font-bold  text-coinSinoTextColor">
-                      March first 2
-                    </h2>
-                    <strong className="text-lg font-bold text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={secondPoolFunds}
-                      />
-                      TLOS
-                    </strong>
-                    <p className=" text-center   text-coinSinoTextColor2">
-                      ~$
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * secondPoolFunds}
-                      />
-                    </p>
-                  </div>
-                  <div className="poolBar">
-                    <h2 className="text-lg font-bold  text-coinSinoTextColor">
-                      March first 3
-                    </h2>
-                    <strong className="text-lg font-bold text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={thirdPoolFunds}
-                      />{" "}
-                      TLOS
-                    </strong>
-                    <p className=" text-center   text-coinSinoTextColor2">
-                      ~${" "}
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * thirdPoolFunds}
-                      />
-                    </p>
-                  </div>
-                  <div className="poolBar">
-                    <h2 className="text-lg font-bold  text-coinSinoTextColor">
-                      March first 4
-                    </h2>
-                    <strong className="text-lg font-bold text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={fourthPoolFunds}
-                      />{" "}
-                      TLOS
-                    </strong>
-                    <p className=" text-center   text-coinSinoTextColor2">
-                      ~${" "}
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * fourthPoolFunds}
-                      />
-                    </p>
-                  </div>
-                  <div className="poolBar">
-                    <h2 className="text-lg font-bold  text-coinSinoTextColor">
-                      March first 5
-                    </h2>
-                    <strong className="text-lg font-bold text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={fifthPoolFunds}
-                      />{" "}
-                      TLOS
-                    </strong>
-                    <p className=" text-center   text-coinSinoTextColor2">
-                      ~${" "}
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * fifthPoolFunds}
-                      />
-                    </p>
-                  </div>
-                  <div className="poolBar">
-                    <h2 className="text-lg font-bold  text-coinSinoTextColor">
-                      March first 6
-                    </h2>
-                    <strong className="text-lg font-bold text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={sixthPoolFunds}
-                      />{" "}
-                      TLOS
-                    </strong>
-                    <p className=" text-center   text-coinSinoTextColor2">
-                      ~${" "}
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * sixthPoolFunds}
-                      />
-                    </p>
-                  </div>
-
-                  <div className="poolBar">
-                    <h2 className="text-lg font-bold  text-coinSinoTextColor">
-                      Platform fee
-                    </h2>
-                    <strong className="text-lg font-bold text-coinSinoGreen">
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={platFormFee}
-                      />{" "}
-                      TLOS
-                    </strong>
-                    <p className=" text-center   text-coinSinoTextColor2">
-                      ~$
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={3}
-                        decimal="."
-                        end={telosPrice * platFormFee}
-                      />
-                    </p>
-                  </div>
+            {telosPool && (
+              <div className="flex   flex-wrap justify-start gap-2 sm:justify-start">
+                <div className=" poolBar">
+                  <h2 className="text-base  font-bold  text-coinSinoTextColor">
+                    March first 1
+                  </h2>
+                  <strong className="text-lg font-bold  text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={firstPoolFunds}
+                    />
+                    TLOS
+                  </strong>
+                  <p className=" text-center   font-bold text-coinSinoTextColor2">
+                    ~${" "}
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * firstPoolFunds}
+                    />
+                  </p>
                 </div>
-              </Tabs.Item>
+                <div className="poolBar">
+                  <h2 className="text-base font-bold  text-coinSinoTextColor">
+                    March first 2
+                  </h2>
+                  <strong className="text-lg font-bold text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={secondPoolFunds}
+                    />
+                    TLOS
+                  </strong>
+                  <p className=" text-center   text-coinSinoTextColor2">
+                    ~$
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * secondPoolFunds}
+                    />
+                  </p>
+                </div>
+                <div className="poolBar">
+                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                    March first 3
+                  </h2>
+                  <strong className="text-lg font-bold text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={thirdPoolFunds}
+                    />{" "}
+                    TLOS
+                  </strong>
+                  <p className=" text-center   text-coinSinoTextColor2">
+                    ~${" "}
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * thirdPoolFunds}
+                    />
+                  </p>
+                </div>
+                <div className="poolBar">
+                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                    March first 4
+                  </h2>
+                  <strong className="text-lg font-bold text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={fourthPoolFunds}
+                    />{" "}
+                    TLOS
+                  </strong>
+                  <p className=" text-center   text-coinSinoTextColor2">
+                    ~${" "}
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * fourthPoolFunds}
+                    />
+                  </p>
+                </div>
+                <div className="poolBar">
+                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                    March first 5
+                  </h2>
+                  <strong className="text-lg font-bold text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={fifthPoolFunds}
+                    />{" "}
+                    TLOS
+                  </strong>
+                  <p className=" text-center   text-coinSinoTextColor2">
+                    ~${" "}
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * fifthPoolFunds}
+                    />
+                  </p>
+                </div>
+                <div className="poolBar">
+                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                    March first 6
+                  </h2>
+                  <strong className="text-lg font-bold text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={sixthPoolFunds}
+                    />{" "}
+                    TLOS
+                  </strong>
+                  <p className=" text-center   text-coinSinoTextColor2">
+                    ~${" "}
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * sixthPoolFunds}
+                    />
+                  </p>
+                </div>
 
-              <Tabs.Item disabled={true} title="BNB(Inactive)" />
-              <Tabs.Item disabled={true} title="ETH(Inactive)">
-                Settings content
-              </Tabs.Item>
-              {/* <Tabs.Item disabled={true} title="SOL(Inactive)">
-          Contacts content
-        </Tabs.Item> */}
-            </Tabs.Group>
+                <div className="poolBar">
+                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                    Platform fee
+                  </h2>
+                  <strong className="text-lg font-bold text-coinSinoGreen">
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={platFormFee}
+                    />{" "}
+                    TLOS
+                  </strong>
+                  <p className=" text-center   text-coinSinoTextColor2">
+                    ~$
+                    <CountUp
+                      duration={3}
+                      separator=" "
+                      decimals={3}
+                      decimal="."
+                      end={telosPrice * platFormFee}
+                    />
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* <button
+                        onClick={() => {
+                          setBnbPool(true);
+                          setTelosPool(false);
+                          setEthPool(false);
+                        }}
+                        className="text-coinSinoTextColor2"
+                      >
+                        BNB(Inactive)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setBnbPool(false);
+                          setTelosPool(false);
+                          setEthPool(true);
+                        }}
+                        className="text-coinSinoTextColor2"
+                      >
+                        ETH(Inactive)
+                      </button> */}
+            {/* <Tabs.Item disabled={true} title="SOL(Inactive)">
+                    Contacts content
+                  </Tabs.Item> */}
           </div>
         </div>
       </section>

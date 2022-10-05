@@ -66,6 +66,8 @@ function SectionB({ keys }) {
   const [viewWinningTickets, setVieWinningTickets] = useState(false);
   const [wonCliamId, setWonCliamId] = useState([]);
   const [isready, setisReady] = useState(false);
+  const [allHistory, setAllHistory] = useState(true);
+  const [yourHistory, setYourHistory] = useState(false);
 
   function closeViewTickets() {
     setVieWinningTickets(false);
@@ -81,7 +83,8 @@ function SectionB({ keys }) {
   async function convertHexToInt(hex) {
     return parseInt(hex, 16);
   }
-  console.log(winningNo);
+
+  
 
   // retuns won tickets and won pool Ids
   const wonTicketArr = [];
@@ -178,17 +181,16 @@ function SectionB({ keys }) {
           await coinSinoContract.methods.viewCurrentLotteryId().call()
         );
 
-        console.log(userTickets.length, "hhsdkh");
+ 
         const viewMaxRewardsForTicketId = await coinSinoContract.methods
           .viewMaxRewardsForTicketId(
             currentAccount,
             roundCount,
             0,
-            userTickets.length
+           22
           )
           .call();
-
-        console.log(viewMaxRewardsForTicketId);
+  
         const _ticketIds = viewMaxRewardsForTicketId[0];
         const _tickets = viewMaxRewardsForTicketId[1];
         const _rewards = viewMaxRewardsForTicketId[2];
@@ -223,11 +225,13 @@ function SectionB({ keys }) {
           .viewLottery(roundCount)
           .call();
 
-        console.log("passed");
+
+          
 
         // current lottery status
         const { status } = getLotterystatus;
-        console.log("ash");
+  
+        
         if (Number(status) === claimable) {
           // const uuu = await coinSinoContract.methods.viewMaxRewardsForTicketId(
           //   currentAccount,
@@ -261,7 +265,8 @@ function SectionB({ keys }) {
           if (_ticketIds.length < 1) {
             setRewardMessage("Sorry, you have no ticket for this round");
             setunClaimedUserRewards(null);
-            console.log("but I have ticket na", _ticketIds);
+
+            
             return;
           }
 
@@ -279,7 +284,8 @@ function SectionB({ keys }) {
             "ethers"
           );
           setunClaimedUserRewards(totalrewards);
-          console.log(totalrewards);
+       
+          
           setisloading(false);
 
           // claim now
@@ -360,7 +366,8 @@ function SectionB({ keys }) {
           Sinoabi,
           coinSinoContractAddress
         );
-        console.log("is is sis ", claimming);
+     
+        
         // check if network is tlos
         // check if network is metamask
         let chainId = await web3.eth.getChainId();
@@ -487,10 +494,12 @@ function SectionB({ keys }) {
           // Claim now
 
           const userbalanceBefore = await web3.eth.getBalance(currentAccount);
-          console.log("b4", userbalanceBefore);
+        
+          
 
           const getGasPrice = await web3.eth.getGasPrice();
-          console.log(getGasPrice);
+          
+          
           const claimTickets = await coinSinoContract.methods
             .claimTickets(roundCount, wonCliamId, claimpoolLength)
             .send({ from: currentAccount });
@@ -500,7 +509,8 @@ function SectionB({ keys }) {
 
           // console.log("climed");
           const userbalanceafter = await web3.eth.getBalance(currentAccount);
-          console.log("after", userbalanceafter);
+         
+          
         }
       }
     } catch (error) {
@@ -538,7 +548,6 @@ function SectionB({ keys }) {
         amountCollectedInTelos,
         rewardsBreakdown,
       } = getLotterystatus;
-      setWinningNO(finalNumber);
 
       const prevDrawDate = moment.unix(Number(endTime));
       prevDrawDate.toISOString();
@@ -583,7 +592,8 @@ function SectionB({ keys }) {
             userticketIds
           );
 
-        console.log(list[0]);
+      
+          
         setUserTickets(list[0]);
 
         const viewMaxRewardsForTicketId =
@@ -610,7 +620,8 @@ function SectionB({ keys }) {
         // setWonTicketSize(won_tickets.length);
         setisReady(true);
 
-        console.log(isready, userTickets);
+    
+        
       }
     } catch (error) {
       console.log(error.reason);
@@ -619,14 +630,28 @@ function SectionB({ keys }) {
 
   useEffect(() => {
     fetchRoundDetails();
-  }, [roundCount, userTickets.length, lotteryStatus, currentAccount]);
+  }, [
+    roundCount,
+    userTickets.length,
+    lotteryStatus,
+    currentAccount,
+    winningNo,
+  ]);
+
+  console.log(
+    roundCount,
+    userTickets.length,
+    lotteryStatus,
+    currentAccount,
+    "sdhsjdjlsjdl"
+  );
 
   const previousDraws = async () => {
     setisReady(false);
     if (roundCount > 1) {
       setRoundCount((prev) => prev - 1);
       setRewardMessage("");
-      setWinningNO([]);
+      setWinningNO(null);
       setisloading(false);
       setUserTickets([]);
       setLastDrawTime([]);
@@ -637,7 +662,7 @@ function SectionB({ keys }) {
     if (roundCount < currentLotteryId - 1) {
       setRoundCount((prev) => prev + 1);
       setRewardMessage("");
-      setWinningNO([]);
+      setWinningNO(null);
       setisloading(false);
       setUserTickets([]);
       setLastDrawTime([]);
@@ -645,7 +670,7 @@ function SectionB({ keys }) {
   };
 
   return (
-    <section className="   my-0  mx-auto mt-10 mb-20 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
+    <section className="   my-0  mx-auto mt-10 mb-40 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
       <h2 className=" text-center text-lg font-bold text-coinSinoGreen">
         Finished Rounds
       </h2>
@@ -834,10 +859,62 @@ function SectionB({ keys }) {
           </div>
         )}
       </div>
-      <div>
-        <Tabs.Group aria-label="finished rounds" style="underline">
-          <Tabs.Item active={true} title="All History">
+
+      {/* jsodjsjd */}
+
+      <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+        <ul
+          className="-mb-px flex flex-wrap text-center text-sm font-medium"
+          id="myTab"
+          data-tabs-toggle="#myTabContent"
+          role="tablist"
+        >
+          <li className="mr-2" role="presentation">
+            <button
+              className={`inline-block rounded-t-lg border-b-2  p-4 text-coinSinoTextColor2 outline-none ${
+                allHistory &&
+                " border-blue-600  text-blue-600 hover:text-blue-600"
+              }`}
+              onClick={() => {
+                setAllHistory(true);
+                setYourHistory(false);
+              }}
+            >
+              All History
+            </button>
+          </li>
+          <li className="mr-2" role="presentation">
+            <button
+              className={`inline-block rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
+                yourHistory &&
+                " border-blue-600  text-blue-600 hover:text-blue-600"
+              }`}
+              id="dashboard-tab"
+              data-tabs-target="#dashboard"
+              type="button"
+              role="tab"
+              aria-controls="dashboard"
+              aria-selected="false"
+              onClick={() => {
+                setAllHistory(false);
+                setYourHistory(true);
+              }}
+            >
+              Your History
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div id="myTabContent">
+        {allHistory && (
+          <div
+            className="rounded-lg  p-4 dark:bg-gray-800"
+            id="profile"
+            role="tabpanel"
+            aria-labelledby="profile-tab"
+          >
             {/* all history content */}
+
             <div>
               <div className="flex justify-between p-3">
                 <PlayIcon
@@ -853,7 +930,7 @@ function SectionB({ keys }) {
                     </p>
                   </div>{" "}
                   {lastDrawTime.antePost ? (
-                    <div className="my-5 text-coinSinoTextColor2 ">
+                    <div className="my-5 max-h-2 text-coinSinoTextColor2 ">
                       <span>{lastDrawTime.month}</span> {""}
                       <span>{lastDrawTime.date}</span> {""}
                       <span>{lastDrawTime.year}</span> {""}
@@ -870,7 +947,7 @@ function SectionB({ keys }) {
                   className=" h-10  cursor-pointer rounded-full bg-white text-coinSinoPurple"
                 />
               </div>
-              <div className=" text-md space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
+              <div className=" text-md mb-20 max-h-2 space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
                 <h2 className="my-5 font-bold text-coinSinoTextColor">
                   Winning Number
                 </h2>
@@ -892,8 +969,15 @@ function SectionB({ keys }) {
                 )}
               </div>
             </div>
-          </Tabs.Item>
-          <Tabs.Item title="Your History">
+          </div>
+        )}
+        {yourHistory && (
+          <div
+            className=" rounded-lg  p-4 dark:bg-gray-800"
+            id="dashboard"
+            role="tabpanel"
+            aria-labelledby="dashboard-tab"
+          >
             {currentAccount ? (
               <>
                 {" "}
@@ -904,7 +988,7 @@ function SectionB({ keys }) {
                 </div>{" "}
                 <div className="my-4  flex max-h-10 items-center justify-between  text-xs font-bold text-coinSinoTextColor2">
                   <span>{roundCount}</span>
-                  {lastDrawTime.month ? (
+                  {userTickets ? (
                     <div className="my-5 text-coinSinoTextColor2 ">
                       <span>{lastDrawTime.month}</span> {""}
                       <span>{lastDrawTime.date}</span> {""}
@@ -933,9 +1017,11 @@ function SectionB({ keys }) {
                 </p>
               </div>
             )}
-          </Tabs.Item>
-        </Tabs.Group>
+          </div>
+        )}
       </div>
+
+      {/* jsldjlsjd */}
 
       <ViewTickets />
     </section>

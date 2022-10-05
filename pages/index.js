@@ -76,7 +76,7 @@ export const getServerSideProps = async () => {
   const _amountCollectedInTelos = amountCollectedInTelos.toString();
 
   // fetch initial status for lottery
-  console.log("server things");
+  
   return {
     props: { _endTime, _lotteryid, _status, _amountCollectedInTelos },
   };
@@ -157,7 +157,7 @@ export default function Home({
 
   const getLatestLotteryInfo = async () => {
     if (!endTime || !lotteryStatus || !currentLotteryId) {
-      console.log("initial setting");
+       
       setEndTime(_endTime);
       setlotteryStatus(_status);
       setCurrentLotteryId(_lotteryid);
