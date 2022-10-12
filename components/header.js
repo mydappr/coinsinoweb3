@@ -1,12 +1,21 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { activeAccount, usewalletModal } from "../atoms/atoms";
 import WalletModal from "./connectWalletModal";
 import useWallets from "./useWallets";
+
 import {
+  ArrowCircleDownIcon,
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowSmDownIcon,
+  ArrowSmRightIcon,
+  AtSymbolIcon,
+  CheckCircleIcon,
+  ChevronDownIcon,
   LightningBoltIcon,
   PresentationChartLineIcon,
   QuestionMarkCircleIcon,
@@ -22,6 +31,24 @@ function Header() {
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
   const { disConnectWallet } = useWallets();
+  const [disConnectModal, setDisconnectModal] = useState(false);
+  const disconnectRef = useRef(null);
+
+  // truncate from the middle
+  const truncateFromMiddle = (fullStr = "", strLen, middleStr = "...") => {
+    if (fullStr.length <= strLen) return fullStr;
+    const midLen = middleStr.length;
+    const charsToShow = strLen - midLen;
+    const frontChars = Math.ceil(charsToShow / 2);
+    const backChars = Math.floor(charsToShow / 2);
+    return (
+      fullStr.substr(0, frontChars) +
+      middleStr +
+      fullStr.substr(fullStr.length - backChars)
+    );
+  };
+
+  const truncatedAddress = truncateFromMiddle(currentAccount, 10);
 
   const naveStyle = (page) => {
     return `${router.pathname == `/${page}` ? "activeNave" : "inActiveNave"}`;
@@ -29,7 +56,7 @@ function Header() {
   return (
     <div className=" mx-auto  w-full border-b-[0.095rem]     border-coinSinoTextColor2  bg-coinSinoPurpleNav  ">
       {" "}
-      <header className="sticky top-0 z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
+      <header className="sticky  z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
         <Link href={"/"}>
           <a>
             {" "}
@@ -38,26 +65,64 @@ function Header() {
         </Link>
 
         <WalletModal />
-
-        {/* connect button */}
-        <div
+        {/* <div
           onClick={() =>
             !currentAccount ? setwalletModal(true) : disConnectWallet()
           }
-          className="group relative order-1 inline-block cursor-pointer text-lg"
+        ></div> */}
+
+        {/* connect button */}
+        <div
+          className=" order-1  cursor-pointer "
+          // onClick={() =>
+          //   !currentAccount ? setwalletModal(true) : disConnectWallet()
+          // }
         >
-          <span className="relative z-10 block overflow-hidden rounded-lg border-2 border-gray-900 px-5 py-3 font-medium leading-tight  transition-colors duration-300 ease-out group-hover:text-white">
-            <span className="absolute inset-0 h-full w-full rounded-lg bg-coinSinoPurpleNav border-coinSinoTextColor2 border-2 text-coinSinoTextColor px-5 py-3"></span>
-            <span className="ease absolute left-0 -ml-2 h-48 w-48 origin-top-right -translate-x-full translate-y-12 -rotate-90 bg-coinSinoPurple transition-all duration-300 group-hover:-rotate-180"></span>
-            <span className="relative">
-              {!currentAccount ? "Connect" : "Disconnect"}
-            </span>
-          </span>
-          <span
-            className="absolute bottom-0 right-0 -mb-1 -mr-1 h-12 w-full rounded-lg bg-gray-900 transition-all duration-200 ease-linear group-hover:mb-0 group-hover:mr-0"
-            data-rounded="rounded-lg"
-          ></span>
+          {!currentAccount ? (
+            <div
+              className="  w-32 cursor-pointer items-center space-x-1 rounded-2xl   border-2 border-white/30 bg-coinSinoGreen/10  p-1  text-center  hover:bg-coinSinoPurpleNav sm:max-w-sm"
+              onClick={() => setwalletModal(true)}
+            >
+              <p>Connect</p>
+            </div>
+          ) : (
+            <div
+              className={` group relative flex cursor-pointer items-center space-x-1   rounded-2xl border-2 border-white/30  bg-coinSinoGreen/10  p-1  hover:bg-coinSinoPurpleNav sm:max-w-sm  `}
+            >
+              <div className=" mx-auto mt-0 h-6 w-6  rounded-full border-2 border-coinSinoGreen bg-[url('/images/walletIcon.svg')] bg-no-repeat text-white  hover:text-coinSinoPurpleNav  "></div>
+
+              <div> {truncatedAddress}</div>
+              <div className="">
+                <ChevronDownIcon className="h-6" />
+              </div>
+              <div className=" absolute top-9 -right-4  hidden  h-80 w-64  space-y-3    border-[2px]  border-white/50 bg-coinSinoPurpleNav text-center  text-coinSinoTextColor2     hover:inline-block hover:text-coinSinoPink group-hover:inline-block sm:w-80">
+                {[2].map((e) => (
+                  <div
+                    onClick={disConnectWallet}
+                    className="flex items-center justify-between border-b-[1px] border-coinSinoTextColor2  p-2 hover:bg-coinSinoTextColor2/20"
+                  >
+                    <p className="p-2 text-lg font-semibold">Disconnect</p>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                      />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+        {/* logout modal */}
 
         <ul className="fixed  bottom-0 left-0 z-10 flex h-16 w-full items-center  justify-between rounded-xl border border-coinSinoTextColor2 bg-coinSinoPurpleNav p-2  text-center text-xs font-bold text-white/80     sm:static  sm:top-0      sm:float-right  sm:w-fit  sm:space-x-3 sm:border-none sm:text-base ">
           {/* how to play */}

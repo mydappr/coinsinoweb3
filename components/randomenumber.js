@@ -28,7 +28,7 @@ function RandomImage() {
   // convert winning number to array
   const splittedWinningValues = Array.from(String(winningNo));
 
-  console.log("this is", splittedWinningValues);
+ 
 
   return (
     <>

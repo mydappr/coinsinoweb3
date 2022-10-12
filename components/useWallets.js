@@ -52,7 +52,11 @@ function useWallets() {
         }
         // handle other "switch" errors
       }
-
+      let chainId = await ethereum.request({ method: "eth_chainId" });
+        if (chainId !== "0x29") {
+          Toast("You are not connected to the Telos network!");
+          return;
+        }
       const accounts = await ethereum.request({ method: "eth_accounts" });
       if (accounts.length !== 0) {
         setCurrentAccount(accounts[0]);

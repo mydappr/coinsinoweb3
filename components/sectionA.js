@@ -86,67 +86,39 @@ function SectionA({ keys }) {
     setShowCurrentTickets(false);
   }
   // get operator signer
-  const operatorSignerFn = async () => {
-    // get lottery ID and status
-    // operator provider,and signer
-    const operatorProvider = new ethers.providers.JsonRpcProvider(
-      "https://testnet.telos.net/evm"
-    );
-    
-
-    // operator signer and contract
-    const operatorSigner = new ethers.Wallet(
-      process.env.opkey,
-      operatorProvider
-    );
-
-
-    
-
+  const operatorSignerAndContract = async () => {
+    // signers wallet get smartcontract
+    const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const operatorSigner = new ethers.Wallet(keys, operatorProvider);
     const managedSigner = new NonceManager(operatorSigner);
-    return new ethers.Contract(coinSinoContractAddress, Sinoabi, managedSigner);
+    const operatorcoinSinoContract = new ethers.Contract(
+      coinSinoContractAddress,
+      Sinoabi,
+      managedSigner
+    );
+    return operatorcoinSinoContract;
   };
 
   // secA updater
   const updater = async () => {
     try {
-      const operator = await operatorSignerFn();
+      const contract = await operatorSignerAndContract();
 
-      let chainId = await operator.signer.getChainId();
+      let chainId = await contract.signer.getChainId();
 
-      // check if network is metamask
-      if (Number(chainId) !== 41) return;
+   
 
-      // current lotteryid
-      const latestLotteryId = Number(await operator.viewCurrentLotteryId());
+      if (!currentAccount || Number(chainId) !== 41) return;
 
-      // current lottery details
-      const getLotterystatus = await operator.viewLottery(currentLotteryId);
-
-      // current lottery status
-      const { status } = getLotterystatus;
-
-      const userInfo = await operator.viewUserInfoForLotteryId(
+      const userInfo = await contract.viewUserInfoForLotteryId(
         currentAccount,
-        latestLotteryId,
-        0,
-        100
+        currentLotteryId
       );
 
-      
-
-      const userticketIds = [];
-      for (let i = 0; i < userInfo[0].length; i++) {
-        const ticketId = Number(userInfo[0][i]);
-        userticketIds.push(ticketId);
-      }
-
-      // list of user's tickets
-      const list = await operator.viewNumbersAndStatusesForTicketIds(
-        userticketIds
-      );
-      setCurrentUserTicket(list[0]);
-    } catch (error) {}
+      setCurrentUserTicket(userInfo[1]);
+    } catch (error) {
+      setCurrentUserTicket([]);
+    }
   };
 
   useEffect(() => {
@@ -161,8 +133,6 @@ function SectionA({ keys }) {
     todaydraw.toISOString();
     todaydraw.format();
     let tomorrow = moment(todaydraw.add(1, "days").local());
-  
-    
 
     const date = tomorrow.date();
     const month = tomorrow.format("MMM");
@@ -343,7 +313,7 @@ function SectionA({ keys }) {
             <div className="    ">
               <p>Total price:</p>
               {totalLotteryDeposit ? (
-                <h2 className="mx-auto mt-1 w-60 rounded-lg  border-2 border-coinSinoGreen  bg-coinSinoGreen px-5 py-3 text-2xl font-bold  antialiased md:px-10 lg:text-3xl">
+                <h2 className="mx-auto mt-1 w-60 rounded-lg border-2  border-coinSinoGreen bg-coinSinoGreen  px-5 py-2 text-2xl  font-bold  antialiased  md:px-10 lg:w-full lg:text-3xl">
                   <CountUp
                     duration={2}
                     separator=" "
@@ -360,9 +330,10 @@ function SectionA({ keys }) {
 
             {currentAccount ? (
               <button
-                disabled={timeElasped}
+                disabled={timeElasped || lotteryStatus !== Open}
                 className={`w-[200px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-3   font-bold text-coinSinoTextColor sm:mb-5 ${
-                  timeElasped && "cursor-not-allowed bg-gray-600"
+                  (timeElasped || lotteryStatus !== Open) &&
+                  "cursor-not-allowed bg-gray-600"
                 }`}
                 onClick={() => {
                   setbuyModalStat(true);
@@ -657,7 +628,7 @@ function SectionA({ keys }) {
                     setbuyModalStat(true);
                   }}
                 >
-                  Join Tlos pool
+                  Join TLOS pool
                 </button>
               ) : (
                 <p

@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useRef } from "react";
 import { Tabs } from "flowbite-react";
 import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
 import RandomImage from "./randomenumber";
@@ -34,6 +34,7 @@ import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
 
 import Web3 from "web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { NonceManager } from "@ethersproject/experimental";
 
 function SectionB({ keys }) {
   const [lastDrawTime, setLastDrawTime] = useState({});
@@ -69,79 +70,139 @@ function SectionB({ keys }) {
   const [allHistory, setAllHistory] = useState(true);
   const [yourHistory, setYourHistory] = useState(false);
 
+  //  get operatorSigner
+  const getOperatorSigner = () => {
+    // signers wallet get smartcontract
+    const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const operatorSigner = new ethers.Wallet(keys, operatorProvider);
+    const managedSigner = new NonceManager(operatorSigner);
+    const operatorcoinSinoContract = new ethers.Contract(
+      coinSinoContractAddress,
+      Sinoabi,
+      managedSigner
+    );
+    return operatorcoinSinoContract;
+  };
+
+  // to close view ticketModal
   function closeViewTickets() {
     setVieWinningTickets(false);
   }
 
+  // it sets lastRound on launch and on currentlotteryId chaange
   useEffect(() => {
     if (currentLotteryId) {
       setRoundCount(currentLotteryId - 1);
     }
   }, [currentLotteryId]);
 
-  // convert hex to int
-  async function convertHexToInt(hex) {
-    return parseInt(hex, 16);
-  }
-
-  
-
-  // retuns won tickets and won pool Ids
-  const wonTicketArr = [];
-  const pools = [];
-
-  let i = 0;
-  function wonPools(arr1, arr2) {
-    while (i < arr1.length) {
-      if (arr1[i] === arr2[i]) {
-        // return single array if there duplicate
-        pools.push(i);
-        wonTicketArr.push(arr1);
-        i++;
-      } else {
-        return;
-      }
-    }
-  }
-
-  // Lottery status
+  // Lottery statuses
   const Pending = 0;
   const Open = 1;
   const closed = 2;
   const claimable = 3;
 
-  // useEffect(() => {
-  //   const now = new Date();
-  //   const hr = 12;
-  //   const drawUtc = new Date(
-  //     Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12)
-  //   );
+  console.log(winningNo);
 
-  //   console.log(drawUtc);
+  // reward Calculator
 
-  //   const month = drawUtc.toLocaleString("default", { month: "short" });
-  //   const date = drawUtc.getDate();
-  //   const year = drawUtc.getFullYear();
-  //   const hour = drawUtc.getHours();
-  //   const lastDraw = { month, date, year, hour };
-  //   setLastDrawTime(lastDraw);
-  // }, []);
-  // last
-  // const lastTimeDraw = (date = new Date()) => {
-  //   const pastDraw = new Date(date.getTime());
-  //   pastDraw.setUTCDate(date.getDate() - 1);
-  //   return pastDraw;
-  // };
-  // // nextfrom Last
-  // const nextDay = (date = new Date()) => {
-  //   const nextDay = new Date(date.getTime());
-  //   nextDay.setUTCDate(date.getDate() + 1);
-  //   return nextDay;
-  // };
+  let _ticketIds;
+  let _tickets;
+  let _rewards;
+  let _rewardpools;
+  let won_ticketids = [];
+  let won_tickets = [];
+  let won_rewards = [];
+  let won_rewardpool = [];
+  const wonId = [];
 
-  const Check = async () => {
+  const rewardCalculator = async (
+    _ticketIds,
+    Tickets,
+    _rewards,
+    _rewardpools
+  ) => {
     let provider;
+    if (
+      providerConnector === "metaMask" ||
+      providerConnector === "walletConnect"
+    ) {
+      if (providerConnector === "walletConnect") {
+        provider = new WalletConnectProvider({
+          rpc: {
+            [41]: rpcUrl,
+          },
+        });
+      } else if (providerConnector === "metaMask") {
+        provider = window.ethereum;
+      }
+
+      await provider.enable();
+
+      const web3 = new Web3(provider);
+
+      const coinSinoContract = new web3.eth.Contract(
+        Sinoabi,
+        coinSinoContractAddress
+      );
+
+      _rewards.map((e, i) => {
+        if (Number(e) > 0) {
+          wonId.push(i);
+          won_rewards.push(Number(e));
+          won_rewardpool.push(Number(_rewardpools[i]));
+          won_ticketids.push(Number(_ticketIds[i]));
+          won_tickets.push(Number(_tickets[i]));
+        }
+      });
+
+      console.log(won_rewardpool);
+
+      setWonTicketSize(won_tickets.length);
+      setclaimpoolLength(won_rewardpool);
+      setwonId(wonId);
+      setWonCliamId(won_ticketids);
+
+      // current lottery details
+      const getLotterystatus = await coinSinoContract.methods
+        .viewLottery(roundCount)
+        .call();
+
+      // current lottery status
+      const { status } = getLotterystatus;
+
+      if (Number(status) === claimable) {
+        if (_ticketIds.length < 1) {
+          setRewardMessage("Sorry, you have no ticket for this round");
+          setunClaimedUserRewards(null);
+
+          return;
+        }
+
+        if (won_rewards.length < 1) {
+          setRewardMessage("sorry you did not win this time!");
+          setunClaimedUserRewards(null);
+          return;
+        }
+
+        //  user won from this lottery
+        setRewardMessage("Congratulations");
+
+        const totalrewards = ethers.utils.formatEther(
+          `${won_rewards.reduce((a, b) => a + b, 0)}`,
+          "ethers"
+        );
+        setunClaimedUserRewards(totalrewards);
+
+        setisloading(false);
+      }
+    }
+  };
+  // check ticket
+  let Check = async () => {
     try {
+      let provider;
+
       setisloading(true);
 
       if (
@@ -176,169 +237,84 @@ function SectionB({ keys }) {
           return;
         }
 
-        // current lotteryid
-        const latestLotteryId = Number(
-          await coinSinoContract.methods.viewCurrentLotteryId().call()
-        );
+        if (!userTickets.length) {
+          setRewardMessage("Sorry, you have no ticket for this round");
+          setunClaimedUserRewards(null);
+          setisloading(false);
+          return;
+        }
 
- 
+        let _slicedTicketIds = [];
+        let _slicedTickets = [];
+        let _slicedTewards = [];
+        let _slicedTewardpools = [];
+        let count = 0;
+        let cursor = 0;
+        const arrayOfTen = Array(10);
+
+        if (userTickets.length >= 10) {
+          console.log(userTickets.length);
+
+          while (count < userTickets.length) {
+            if (count === cursor) {
+              const size =
+                userTickets.length - cursor < 10
+                  ? userTickets.length - cursor
+                  : 10;
+
+              const viewMaxRewardsForTicketId = await coinSinoContract.methods
+                .viewMaxRewardsForTicketId(
+                  currentAccount,
+                  roundCount,
+                  cursor,
+                  size
+                )
+                .call();
+              _slicedTicketIds.push(viewMaxRewardsForTicketId[0]);
+              _slicedTickets.push(viewMaxRewardsForTicketId[1]);
+              _slicedTewards.push(viewMaxRewardsForTicketId[2]);
+              _slicedTewardpools.push(viewMaxRewardsForTicketId[3]);
+
+              cursor = size < 10 ? cursor + size : cursor + 10;
+              // if (userTickets.length === cursor) break;
+            }
+
+            count++;
+          }
+
+          _ticketIds = _slicedTicketIds.flat();
+          _tickets = _slicedTickets.flat();
+          _rewards = _slicedTewards.flat();
+          _rewardpools = _slicedTewardpools.flat();
+
+          rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
+        }
+      } else {
         const viewMaxRewardsForTicketId = await coinSinoContract.methods
           .viewMaxRewardsForTicketId(
             currentAccount,
             roundCount,
             0,
-           22
+            userTickets.length
           )
           .call();
-  
-        const _ticketIds = viewMaxRewardsForTicketId[0];
-        const _tickets = viewMaxRewardsForTicketId[1];
-        const _rewards = viewMaxRewardsForTicketId[2];
-        const _rewardpools = viewMaxRewardsForTicketId[3];
 
-        const a = _tickets.map((e) => Number(e));
-        setUserTickets(a);
+        _ticketIds = viewMaxRewardsForTicketId[0];
+        _tickets = viewMaxRewardsForTicketId[1];
+        _rewards = viewMaxRewardsForTicketId[2];
+        _rewardpools = viewMaxRewardsForTicketId[3];
 
-        let won_ticketids = [];
-        let won_tickets = [];
-        let won_rewards = [];
-        let won_rewardpool = [];
-        const wonId = [];
+        // const userTickets = _tickets.map((e) => Number(e));
+        // setUserTickets(userTickets);
 
-        _rewards.map((e, i) => {
-          if (Number(e) > 0) {
-            wonId.push(i);
-            won_rewards.push(Number(e));
-            won_rewardpool.push(Number(_rewardpools[i]));
-            won_ticketids.push(Number(_ticketIds[i]));
-            won_tickets.push(Number(_tickets[i]));
-          }
-        });
-
-        setWonTicketSize(won_tickets.length);
-        setclaimpoolLength(won_rewardpool);
-        setwonId(wonId);
-        setWonCliamId(won_ticketids);
-
-        // current lottery details
-        const getLotterystatus = await coinSinoContract.methods
-          .viewLottery(roundCount)
-          .call();
-
-
-          
-
-        // current lottery status
-        const { status } = getLotterystatus;
-  
-        
-        if (Number(status) === claimable) {
-          // const uuu = await coinSinoContract.methods.viewMaxRewardsForTicketId(
-          //   currentAccount,
-          //   previousLotteryId,
-          //   0,
-          //   100
-          // );
-
-          // console.log(uuu);
-
-          // const userInfo = await coinSinoContract.methods
-          //   .viewUserInfoForLotteryId(currentAccount, previousLotteryId, 0, 100)
-          //   .call();
-
-          // console.log("this is user info", userInfo[0]);
-
-          // const userticketIds = [];
-          // for (let i = 0; i < userInfo[0].length; i++) {
-          //   const ticketId = Number(userInfo[0][i]);
-          //   userticketIds.push(ticketId);
-          // }
-
-          // list of user's tickets
-          // const list = await coinSinoContract.methods
-          //   .viewNumbersAndStatusesForTicketIds(userticketIds)
-          //   .call();
-          // console.log(list[0]);
-          // setisloading(false);
-          // setUserTickets(list[0]);
-
-          if (_ticketIds.length < 1) {
-            setRewardMessage("Sorry, you have no ticket for this round");
-            setunClaimedUserRewards(null);
-
-            
-            return;
-          }
-
-          if (won_rewards.length < 1) {
-            setRewardMessage("sorry you did not win this time!");
-            setunClaimedUserRewards(null);
-            return;
-          }
-
-          //  user won from this lottery
-          setRewardMessage("Congratulations");
-
-          const totalrewards = ethers.utils.formatEther(
-            `${won_rewards.reduce((a, b) => a + b, 0)}`,
-            "ethers"
-          );
-          setunClaimedUserRewards(totalrewards);
-       
-          
-          setisloading(false);
-
-          // claim now
-
-          // const userbalanceb4 = Number(
-          //   ethers.utils.formatEther(
-          //     await provider.getBalance(currentAccount)
-          //   )
-          // );
-          // console.log("befr claim", userbalanceb4);
-          // const claimTickets = await coinSinoContract.methods
-          //   .claimTickets(previousLotteryId, ticketids, rewardpool)
-          //   .send({ from: currentAccount });
-
-          // await claimTickets.wait();
-
-          // console.log("climed");
-          // const userbalanceafter = Number(
-          //   ethers.utils.formatEther(
-          //     await provider.getBalance(currentAccount)
-          //   )
-          // );
-          // console.log("after claim", userbalanceafter);
-
-          // // user has a ticket
-          // userticketIds.forEach(async (e, i) => {
-          //   const view = await coinSinoContract.methods
-          //     .viewRewardsForTicketId(previousLotteryId, e, 0)
-          //     .call();
-
-          //   const rewards = ethers.utils.formatEther(view);
-
-          // const wonTickets = [];
-          // userTickets.map(async (e) => {
-          //   const split = Array.from(String(e));
-
-          //   wonPools(split, splittedWinningValues);
-
-          //   // won pools
-          //   setclaimpoolLength(pools);
-          //   setisloading(false);
-
-          // });
-        }
+        rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
       }
     } catch (error) {
-      Toast(error.reason);
-      setisloading(false);
+      console.log(error);
     }
   };
 
-  // claim now
-
+  // claim ticket
   const Claim = async () => {
     let provider;
     try {
@@ -366,10 +342,8 @@ function SectionB({ keys }) {
           Sinoabi,
           coinSinoContractAddress
         );
-     
-        
+
         // check if network is tlos
-        // check if network is metamask
         let chainId = await web3.eth.getChainId();
 
         if (chainId !== 41) {
@@ -380,16 +354,6 @@ function SectionB({ keys }) {
 
         if (lotteryStatus === Pending) return;
 
-        // current lotteryid
-        // const latestLotteryId = Number(
-        //   await coinSinoContract.viewCurrentLotteryId()
-        // );
-
-        // const previousLotteryId =
-        //   latestLotteryId === 1 ? latestLotteryId : latestLotteryId - 1;
-
-        // current lottery details
-
         const getLotterystatus = await coinSinoContract.methods
           .viewLottery(roundCount)
           .call();
@@ -398,157 +362,48 @@ function SectionB({ keys }) {
         const { status } = getLotterystatus;
 
         if (Number(status) === claimable) {
-          // const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
-          //   accounts[0],
-          //   previousLotteryId,
-          //   0,
-          //   100
-          // );
-
-          // const userticketIds = [];
-          // for (let i = 0; i < userInfo[0].length; i++) {
-          //   const ticketId = Number(userInfo[0][i]);
-          //   userticketIds.push(ticketId);
-          // }
-
-          // list of user's tickets
-          // const list =
-          //   await coinSinoContract.viewNumbersAndStatusesForTicketIds(
-          //     userticketIds
-          //   );
-
-          // setUserTickets(list[0]);
-
-          // user has a ticket
-
-          // userticketIds.forEach(async (e, i) => {
-          //   const view = await coinSinoContract.viewRewardsForTicketId(
-          //     previousLotteryId,
-          //     e,
-          //     0
-          //   );
-
-          //   const rewards = ethers.utils.formatEther(view);
-
-          //   if (!Number(rewards)) {
-          //     setRewardMessage("sorry you did not win this time");
-          //     setunClaimedUserRewards(null);
-          //     return;
-          //   }
-
-          //   //  user won from this lottery
-          //   setRewardMessage("congratulations, you won!");
-          //   setunClaimedUserRewards(Number(rewards));
-
-          //   const wonTickets = [];
-          //   userTickets.map(async (e) => {
-          //     const split = Array.from(String(e));
-
-          //     wonPools(split, splittedWinningValues);
-
-          //     // won pools
-
-          //     //  remove duplicate tickets from won tickets
-          //     const wonTicketArrSet = new Set(wonTicketArr.map((e) => e));
-
-          //     const _wonticketNumbers = Array.from(wonTicketArrSet).map(
-          //       (e, i, arr) => parseInt(arr[i].join(""))
-          //     );
-
-          //     // const poisibleTicketIds = await generatePossibleTicketIds(2);
-          //     // const allAvailableTickets =
-          //     //   await coinSinoContract.viewNumbersAndStatusesForTicketIds(
-          //     //     poisibleTicketIds
-          //     //   );
-
-          //     const wonTickIds = [];
-          //     _wonticketNumbers.map((won) => {
-          //       return userTickets.map((ticket, i) => {
-          //         if (won === ticket) {
-          //           wonTickIds.push(i);
-          //         }
-          //       });
-          //     });
-
-          //     // Claim now
-          //     const userbalanceBefore = Number(
-          //       ethers.utils.formatEther(await provider.getBalance(accounts[0]))
-          //     );
-          //     console.log("b4", userbalanceBefore);
-
-          //     const claimTickets = await coinSinoContract.claimTickets(
-          //       previousLotteryId,
-          //       wonTickIds,
-          //       claimpoolLength
-          //     );
-
-          //     await claimTickets.wait();
-
-          //     // console.log("climed");
-          //     const userbalanceafter = Number(
-          //       ethers.utils.formatEther(await provider.getBalance(accounts[0]))
-          //     );
-          //     // console.log("b4", userbalanceafter);
-          //   });
-          // });
           // Claim now
 
           const userbalanceBefore = await web3.eth.getBalance(currentAccount);
-        
-          
 
           const getGasPrice = await web3.eth.getGasPrice();
-          
-          
+
+          console.log(roundCount, wonCliamId, claimpoolLength);
+
           const claimTickets = await coinSinoContract.methods
             .claimTickets(roundCount, wonCliamId, claimpoolLength)
             .send({ from: currentAccount });
 
           await claimTickets.wait();
           setClaiming(false);
+          setRewardMessage("Reward Claimed!");
 
           // console.log("climed");
           const userbalanceafter = await web3.eth.getBalance(currentAccount);
-         
-          
         }
       }
     } catch (error) {
       Toast(error);
       console.log(error);
       setClaiming(false);
+      setRewardMessage("Reward Claimed!");
     }
   };
 
   const fetchRoundDetails = async () => {
     try {
-      // signers wallet get smartcontract
-      const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      const operatorSigner = new ethers.Wallet(keys, operatorProvider);
-      const operatorcoinSinoContract = new ethers.Contract(
-        coinSinoContractAddress,
-        Sinoabi,
-        operatorSigner
-      );
+      const operatorcoinSinoContract = getOperatorSigner();
+      if (!roundCount || roundCount >= currentLotteryId) return;
 
-      // current lottery details
+      // previous lottery detÇails
       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
         roundCount
       );
 
-      // console.log(getLotterystatus);
-
       // current lottery status
-      const {
-        status,
-        finalNumber,
-        startTime,
-        endTime,
-        treasuryFee,
-        amountCollectedInTelos,
-        rewardsBreakdown,
-      } = getLotterystatus;
+      const { finalNumber, endTime } = getLotterystatus;
 
+      // convert endTime to real date with mommentjs
       const prevDrawDate = moment.unix(Number(endTime));
       prevDrawDate.toISOString();
       prevDrawDate.format();
@@ -559,6 +414,8 @@ function SectionB({ keys }) {
       const minute = prevDrawDate.format("mm");
       const antePost = prevDrawDate.format("A");
 
+      // fetch user's ticket for the round
+      setWinningNO(finalNumber);
       setLastDrawTime({
         year,
         hour,
@@ -568,61 +425,85 @@ function SectionB({ keys }) {
         minute,
         antePost,
       });
-      setWinningNO(finalNumber);
-
-      // fetch user's ticket for the round
       if (currentAccount) {
-        const userInfo =
-          await operatorcoinSinoContract.viewUserInfoForLotteryId(
-            currentAccount,
-            roundCount,
-            0,
-            100
-          );
+        try {
+          const viewUserTicketLength =
+            await operatorcoinSinoContract.viewUserTicketLength(
+              currentAccount,
+              roundCount
+            );
 
-        const userticketIds = [];
-        for (let i = 0; i < userInfo[0].length; i++) {
-          const ticketId = Number(userInfo[0][i]);
-          userticketIds.push(ticketId);
+          const userInfo =
+            await operatorcoinSinoContract.viewUserInfoForLotteryId(
+              currentAccount,
+              roundCount,
+              0,
+              viewUserTicketLength
+            );
+
+          setUserTickets(userInfo[1]);
+
+          setisReady(true);
+        } catch (error) {
+          if ((error.reason = "User has no tickets for this lottery")) {
+            setUserTickets([]);
+            setWinningNO(finalNumber);
+            setLastDrawTime({
+              year,
+              hour,
+              date,
+              month,
+              hour,
+              minute,
+              antePost,
+            });
+            // setUserTickets([0]);
+
+            setisReady(true);
+          }
         }
 
-        // list of user's tickets
-        const list =
-          await operatorcoinSinoContract.viewNumbersAndStatusesForTicketIds(
-            userticketIds
-          );
+        // const userticketIds = [];
+        // for (let i = 0; i < userInfo[0].length; i++) {
+        //   const ticketId = Number(userInfo[0][i]);
+        //   userticketIds.push(ticketId);
+        // }
 
-      
-          
-        setUserTickets(list[0]);
+        //   const userInfo =
+        //   await operatorcoinSinoContract.viewUserInfoForLotteryId(
+        //     currentAccount,
+        //     roundCount,
+        //     0,
+        //     100
+        //   );
 
-        const viewMaxRewardsForTicketId =
-          await operatorcoinSinoContract.viewMaxRewardsForTicketId(
-            currentAccount,
-            roundCount,
-            0,
-            userTickets.length
-          );
+        // const userticketIds = [];
+        // for (let i = 0; i < userInfo[0].length; i++) {
+        //   const ticketId = Number(userInfo[0][i]);
+        //   userticketIds.push(ticketId);
+        // }
 
-        const _ticketIds = viewMaxRewardsForTicketId[0];
-        const _tickets = viewMaxRewardsForTicketId[1];
-        const _rewards = viewMaxRewardsForTicketId[2];
-        const _rewardpools = viewMaxRewardsForTicketId[3];
+        // // list of user's tickets
+        // const list =
+        //   await operatorcoinSinoContract.viewNumbersAndStatusesForTicketIds(
+        //     userticketIds
+        //   );
 
-        let won_tickets = [];
-
-        _rewards.map((e, i) => {
-          if (Number(e) > 0) {
-            won_tickets.push(Number(_tickets[i]));
-          }
-        });
-
-        // setWonTicketSize(won_tickets.length);
-        setisReady(true);
-
-    
-        
+        // setUserTickets(list[0]);
       }
+
+      // setWinningNO(finalNumber);
+      // setLastDrawTime({
+      //   year,
+      //   hour,
+      //   date,
+      //   month,
+      //   hour,
+      //   minute,
+      //   antePost,
+      // });
+
+      // setisReady(true);
     } catch (error) {
       console.log(error.reason);
     }
@@ -630,25 +511,11 @@ function SectionB({ keys }) {
 
   useEffect(() => {
     fetchRoundDetails();
-  }, [
-    roundCount,
-    userTickets.length,
-    lotteryStatus,
-    currentAccount,
-    winningNo,
-  ]);
+  }, [currentLotteryId, currentAccount, roundCount]);
 
-  console.log(
-    roundCount,
-    userTickets.length,
-    lotteryStatus,
-    currentAccount,
-    "sdhsjdjlsjdl"
-  );
-
-  const previousDraws = async () => {
-    setisReady(false);
+  const previousDraws = async (e) => {
     if (roundCount > 1) {
+      setisReady(false);
       setRoundCount((prev) => prev - 1);
       setRewardMessage("");
       setWinningNO(null);
@@ -657,9 +524,10 @@ function SectionB({ keys }) {
       setLastDrawTime([]);
     }
   };
+
   const nextDraws = async () => {
-    setisReady(false);
     if (roundCount < currentLotteryId - 1) {
+      setisReady(false);
       setRoundCount((prev) => prev + 1);
       setRewardMessage("");
       setWinningNO(null);
@@ -714,14 +582,14 @@ function SectionB({ keys }) {
               {rewardMessage}
             </p>
 
-            {unClaimedUserRewards > 0 && (
+            {unClaimedUserRewards > 0 && rewardMessage != "Reward Claimed!" && (
               <img
                 src="./images/congratulations.gif"
                 className="  mx-auto mt-0 w-80 "
               />
             )}
 
-            {unClaimedUserRewards > 0 && (
+            {unClaimedUserRewards > 0 && rewardMessage != "Reward Claimed!" && (
               <h1>
                 You have a total of{" "}
                 <strong className="text-coinSinoGreen">
@@ -730,7 +598,7 @@ function SectionB({ keys }) {
                 Tlos to be claimed.
               </h1>
             )}
-            {userTickets.length > 0 && (
+            {userTickets.length > 0 && rewardMessage != "Reward Claimed!" && (
               <button
                 onClick={() => setVieWinningTickets(true)}
                 className="joinBtn bg-coinSinoPink "
@@ -847,13 +715,13 @@ function SectionB({ keys }) {
 
             {unClaimedUserRewards > 0 && (
               <div className=" mx-auto w-full max-w-[200px] space-y-5 p-2">
-                {claimming ? (
-                  Loading()
-                ) : (
-                  <button onClick={Claim} className=" joinBtn w-full">
-                    Claim Now
-                  </button>
-                )}
+                {claimming
+                  ? Loading()
+                  : rewardMessage != "Reward Claimed!" && (
+                      <button onClick={Claim} className=" joinBtn w-full">
+                        Claim Now
+                      </button>
+                    )}
               </div>
             )}
           </div>
@@ -906,7 +774,7 @@ function SectionB({ keys }) {
         </ul>
       </div>
       <div id="myTabContent">
-        {allHistory && (
+        {allHistory && currentLotteryId > 1 ? (
           <div
             className="rounded-lg  p-4 dark:bg-gray-800"
             id="profile"
@@ -916,17 +784,49 @@ function SectionB({ keys }) {
             {/* all history content */}
 
             <div>
-              <div className="flex justify-between p-3">
-                <PlayIcon
-                  onClick={previousDraws}
-                  className=" h-10  rotate-180  cursor-pointer rounded-full  bg-white text-coinSinoPurple "
-                />
+              <div className="flex items-center justify-between p-3">
+                <button onClick={previousDraws}>
+                  <PlayIcon
+                    className={`h-10 rotate-180   rounded-full bg-white  text-coinSinoPurple hover:bg-coinSinoGreen `}
+                  />
+                </button>
 
                 <div className=" ">
                   <div className="mx-auto my-2 w-fit space-y-2 text-center">
                     <h2 className="font-bold text-coinSinoTextColor ">Round</h2>
-                    <p className="bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
-                      {roundCount > 0 && <p> #{roundCount} </p>}
+                    <p className="flex items-center rounded-lg bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
+                      <p>#</p>
+                      {roundCount > 0 && (
+                        <textarea
+                          type="Number"
+                          className=" h-10 w-10 text-center  resize-none overflow-hidden  rounded-full border-none bg-transparent outline-none  active:outline-none"
+                          defaultValue={roundCount}
+                          onChange={(e) => {
+                            e.preventDefault();
+                            let invalidChars = /[^0-9]/gi;
+                            if (invalidChars.test(e.target.value)) {
+                              e.target.value = e.target.value.replace(invalidChars, "");
+                            }
+                            if (e.target.value.trim()) {
+                              if (e.target.value >= currentLotteryId) {
+                                e.target.value = e.target.value.replace(
+                                  e.target.value,
+                                  currentLotteryId - 1
+                                );
+                                setRoundCount(currentLotteryId - 1);
+                              }
+                              setRoundCount(e.target.value);
+                            } else if (e.target.value == "" ) {
+                              setRewardMessage("");
+                              setWinningNO(null);
+                              setisloading(false);
+                              setUserTickets([]);
+                              setLastDrawTime([]);
+                              setisloading(false);
+                            } 
+                          }}
+                        />
+                      )}
                     </p>
                   </div>{" "}
                   {lastDrawTime.antePost ? (
@@ -943,8 +843,8 @@ function SectionB({ keys }) {
                   )}
                 </div>
                 <PlayIcon
-                  onClick={nextDraws}
-                  className=" h-10  cursor-pointer rounded-full bg-white text-coinSinoPurple"
+                  onClick={async () => await nextDraws()}
+                  className=" h-10  cursor-pointer  rounded-full bg-white text-coinSinoPurple hover:bg-coinSinoGreen"
                 />
               </div>
               <div className=" text-md mb-20 max-h-2 space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
@@ -956,7 +856,7 @@ function SectionB({ keys }) {
                   <p>
                     You had{" "}
                     <strong className="textlg font-bold text-coinSinoGreen">
-                      {userTickets.length}
+                      {isready && userTickets.length}
                     </strong>{" "}
                     ticket for this round.{" "}
                     <span
@@ -970,8 +870,15 @@ function SectionB({ keys }) {
               </div>
             </div>
           </div>
+        ) : (
+          allHistory && (
+            <div className="text-center text-lg text-coinSinoTextColor2">
+              <div>There are no concluded Lottery.</div>
+              <p>Please wait for the current lottery to end.</p>{" "}
+            </div>
+          )
         )}
-        {yourHistory && (
+        {yourHistory && currentLotteryId > 1 ? (
           <div
             className=" rounded-lg  p-4 dark:bg-gray-800"
             id="dashboard"
@@ -988,7 +895,7 @@ function SectionB({ keys }) {
                 </div>{" "}
                 <div className="my-4  flex max-h-10 items-center justify-between  text-xs font-bold text-coinSinoTextColor2">
                   <span>{roundCount}</span>
-                  {userTickets ? (
+                  {currentLotteryId > 1 ? (
                     <div className="my-5 text-coinSinoTextColor2 ">
                       <span>{lastDrawTime.month}</span> {""}
                       <span>{lastDrawTime.date}</span> {""}
@@ -1018,6 +925,14 @@ function SectionB({ keys }) {
               </div>
             )}
           </div>
+        ) : (
+          yourHistory && (
+            <div className="text-center text-lg text-coinSinoTextColor2">
+              <p>
+                Please wait for the current lottery to end to view your history.
+              </p>{" "}
+            </div>
+          )
         )}
       </div>
 

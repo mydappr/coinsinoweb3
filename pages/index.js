@@ -44,7 +44,7 @@ const claimable = 3;
 // // serverside
 export const getServerSideProps = async () => {
   // conract address
-  const coinSinoContractAddress = "0x24eBA6D67036Ca5b736550e8298db011d7FCaFAF";
+  const coinSinoContractAddress = "0x7040d32de6f003c9A9BFBEadE10Ce85B911F0F1c";
   // node url
   const rpcUrl = "https://testnet.telos.net/evm";
   // operator provider,and signer
@@ -76,7 +76,7 @@ export const getServerSideProps = async () => {
   const _amountCollectedInTelos = amountCollectedInTelos.toString();
 
   // fetch initial status for lottery
-  
+
   return {
     props: { _endTime, _lotteryid, _status, _amountCollectedInTelos },
   };
@@ -157,7 +157,6 @@ export default function Home({
 
   const getLatestLotteryInfo = async () => {
     if (!endTime || !lotteryStatus || !currentLotteryId) {
-       
       setEndTime(_endTime);
       setlotteryStatus(_status);
       setCurrentLotteryId(_lotteryid);
@@ -269,27 +268,36 @@ export default function Home({
             await coinSinoContract.viewCurrentLotteryId()
           );
 
-          if (!currentAccount) return;
+          if (!currentAccount || !latestLotteryId) return;
+          console.log(currentAccount, latestLotteryId);
 
-          const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
-            currentAccount,
-            latestLotteryId,
-            0,
-            100
-          );
-
-          const userticketIds = [];
-          for (let i = 0; i < userInfo[0].length; i++) {
-            const ticketId = Number(userInfo[0][i]);
-            userticketIds.push(ticketId);
-          }
-
-          // list of user's tickets
-          const list =
-            await coinSinoContract.viewNumbersAndStatusesForTicketIds(
-              userticketIds
+          try {
+            const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
+              currentAccount,
+              latestLotteryId
             );
-          setUserCurrentTickets(list[0]);
+
+            setUserCurrentTickets(userInfo[1]);
+
+            // console.log("hello man", userInfo);
+
+            // // ticketids, ticketNumber, ticketStatus, number of ticket
+
+            // const userticketIds = [];
+            // for (let i = 0; i < userInfo[0].length; i++) {
+            //   const ticketId = Number(userInfo[0][i]);
+            //   userticketIds.push(ticketId);
+            // }
+
+            // // list of user's tickets
+            // const list =
+            //   await coinSinoContract.viewNumbersAndStatusesForTicketIds(
+            //     userticketIds
+            //   );
+            setUserCurrentTickets(list[0]);
+          } catch (error) {
+            console.log(error);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -304,7 +312,7 @@ export default function Home({
   useEffect(() => {
     let intervalId = setInterval(getLatestLotteryInfo, 1000);
     return () => clearInterval(intervalId);
-  }, [currentLotteryId, endTime, lotteryStatus,totalLotteryDeposit]);
+  }, [currentLotteryId, endTime, lotteryStatus, totalLotteryDeposit]);
 
   // const info = async () => {
   //   try {

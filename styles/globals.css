@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply overflow-y-scroll bg-[#20094d] scrollbar-hide;
+    @apply overflow-y-scroll bg-[#20094d] scrollbar-hide ;
   }
 }
 
@@ -38,3 +38,5 @@
     -webkit-appearance: none !important;
     margin: 0 !important;
 }
+
+ 

@@ -139,12 +139,12 @@ export const timeCountDown = atom({
 
 export const sinoAddress = atom({
   key: "sinoAddress",
-  default: "0x24eBA6D67036Ca5b736550e8298db011d7FCaFAF",
+  default: "0x7040d32de6f003c9A9BFBEadE10Ce85B911F0F1c",
 });
 
 export const rngAddress = atom({
   key: "rngAddress",
-  default: "0xb4b2a838520F8222770A84a1616b84d2ea81fD7A",
+  default: "0xB7a02D612Dfd4AFbC52571645a152F15eB9e5868",
 });
 
 export const rpcaddress = atom({
