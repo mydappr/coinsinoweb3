@@ -48,7 +48,6 @@ export default function BuyDialog() {
       const res = await get.json();
       const price = res.market_data.current_price.usd;
       setTelosPrice(price);
-     
     } catch (error) {
       console.log(error);
     }
@@ -68,11 +67,8 @@ export default function BuyDialog() {
           "ethers"
         )
       ).toFixed(3);
-   
-      
+
       setuserBalance(balance);
-   
-      
     } catch (error) {
       console.log(error);
     }
@@ -187,8 +183,6 @@ export default function BuyDialog() {
     });
 
     listOfTicketsToBuy[li] = Number(numberelements.join(""));
-  
-    
   };
   // console.log(listOfTicketsToBuy);
   // buy tickets
@@ -200,8 +194,8 @@ export default function BuyDialog() {
     if (invalidChars.test(e.target.value)) {
       e.target.value = e.target.value.replace(invalidChars, "");
     }
-    if (e.target.value > 100) {
-      e.target.value = e.target.value.replace(e.target.value, 100);
+    if (e.target.value > 50) {
+      e.target.value = e.target.value.replace(e.target.value, 50);
     }
     setNoOfTickets(e.target.value);
     const Tickets = await generateTicketNumbers(e.target.value);
@@ -270,12 +264,14 @@ export default function BuyDialog() {
 
         await buyTicket;
         Toast("Ticket bought");
+        setNoOfTickets(0);
         setisloading(false);
         closeBuyModals();
         closeEditModals();
       }
     } catch (error) {
       Toast(error.reason);
+      setNoOfTickets(0);
       setisloading(false);
       closeBuyModals();
       closeEditModals();

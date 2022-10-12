@@ -442,7 +442,7 @@ function SectionB({ keys }) {
             );
 
           setUserTickets(userInfo[1]);
-
+          setRewardMessage("");
           setisReady(true);
         } catch (error) {
           if ((error.reason = "User has no tickets for this lottery")) {
@@ -799,13 +799,16 @@ function SectionB({ keys }) {
                       {roundCount > 0 && (
                         <textarea
                           type="Number"
-                          className=" h-10 w-10 text-center  resize-none overflow-hidden  rounded-full border-none bg-transparent outline-none  active:outline-none"
+                          className=" h-10 w-10 resize-none  overflow-hidden rounded-full  border-none bg-transparent text-center outline-none  active:outline-none"
                           defaultValue={roundCount}
                           onChange={(e) => {
                             e.preventDefault();
                             let invalidChars = /[^0-9]/gi;
                             if (invalidChars.test(e.target.value)) {
-                              e.target.value = e.target.value.replace(invalidChars, "");
+                              e.target.value = e.target.value.replace(
+                                invalidChars,
+                                ""
+                              );
                             }
                             if (e.target.value.trim()) {
                               if (e.target.value >= currentLotteryId) {
@@ -816,14 +819,14 @@ function SectionB({ keys }) {
                                 setRoundCount(currentLotteryId - 1);
                               }
                               setRoundCount(e.target.value);
-                            } else if (e.target.value == "" ) {
+                            } else if (e.target.value == "") {
                               setRewardMessage("");
                               setWinningNO(null);
                               setisloading(false);
                               setUserTickets([]);
                               setLastDrawTime([]);
                               setisloading(false);
-                            } 
+                            }
                           }}
                         />
                       )}

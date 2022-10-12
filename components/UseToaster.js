@@ -10,7 +10,7 @@ function UseToaster() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      color: "#000000",
+      color: "#232232",
     });
   };
 
