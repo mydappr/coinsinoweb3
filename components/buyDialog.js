@@ -35,7 +35,7 @@ export default function BuyDialog() {
   const [providerConnector, setProviderConnector] =
     useRecoilState(connectorType);
   const inputRef = useRef(null);
-  const { Toast } = UseToaster();
+  const { successToast } = UseToaster();
   const [isloading, setisloading] = useState(false);
   const [coinSinoContractAddress, setcoinSinoContractAddress] =
     useRecoilState(sinoAddress);
@@ -263,14 +263,14 @@ export default function BuyDialog() {
           });
 
         await buyTicket;
-        Toast("Ticket bought");
+        successToast("Ticket bought");
         setNoOfTickets(0);
         setisloading(false);
         closeBuyModals();
         closeEditModals();
       }
     } catch (error) {
-      Toast(error.reason);
+      successToast(error.reason);
       setNoOfTickets(0);
       setisloading(false);
       closeBuyModals();

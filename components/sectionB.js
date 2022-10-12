@@ -794,12 +794,12 @@ function SectionB({ keys }) {
                 <div className=" ">
                   <div className="mx-auto my-2 w-fit space-y-2 text-center">
                     <h2 className="font-bold text-coinSinoTextColor ">Round</h2>
-                    <p className="flex items-center rounded-lg bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
-                      <p>#</p>
+                    <p className="flex justify-center items-center rounded-lg bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
+                      <p className="">#</p>
                       {roundCount > 0 && (
                         <textarea
                           type="Number"
-                          className=" h-10 w-10 resize-none  overflow-hidden rounded-full  border-none bg-transparent text-center outline-none  active:outline-none"
+                          className=" h-10 w-20 resize-none  overflow-hidden rounded-full  border-none bg-transparent text-center outline-none  active:outline-none"
                           defaultValue={roundCount}
                           onChange={(e) => {
                             e.preventDefault();
