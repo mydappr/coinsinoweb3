@@ -106,13 +106,18 @@ function SectionA({ keys }) {
 
       let chainId = await contract.signer.getChainId();
 
-   
-
       if (!currentAccount || Number(chainId) !== 41) return;
+
+      const viewUserTicketLength = await contract.viewUserTicketLength(
+        currentAccount,
+        currentLotteryId
+      );
 
       const userInfo = await contract.viewUserInfoForLotteryId(
         currentAccount,
-        currentLotteryId
+        currentLotteryId,
+        0,
+        viewUserTicketLength
       );
 
       setCurrentUserTicket(userInfo[1]);

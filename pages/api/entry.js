@@ -108,8 +108,13 @@ export default async function handler(req, res) {
     case 3:
       // lottery status is claimable, therefore start a new lottery
       console.log("Started lottery");
-      await startLottery();
-      res.status(200).json({ Status: "lottery started!" });
+      try {
+        await startLottery();
+        res.status(200).json({ Status: "lottery started!" });
+      } catch (error) {
+        res.status(400).json({ Status: error });
+      }
+
       break;
     case 0:
       console.log("Started lottery");
