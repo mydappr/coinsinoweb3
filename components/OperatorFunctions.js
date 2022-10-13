@@ -85,7 +85,7 @@ function OperatorFunctions() {
       //   Sinoabi,
       //   managedSigner
       // );
-      const lottryDuration = await convertInput("8 hours");
+      const lottryDuration = await convertInput("478 mintues");
 
       // start a lottery
       const startLottery = await operatorcoinSinoContract.startLottery(
