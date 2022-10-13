@@ -575,7 +575,7 @@ function SectionA({ keys }) {
                             </p>
                           ) : (
                             <div className=" space-y-2 mx-auto mt-auto text-center">
-                              <p> Sorry, you don't have a ticket. </p>
+                              <p> Sorry, you do not have any ticket. </p>
                               <button
                                 disabled={timeElasped || lotteryStatus !== Open}
                                 className={`w-[100px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-2   font-bold text-coinSinoTextColor sm:mb-5 ${
