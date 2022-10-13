@@ -69,6 +69,7 @@ function SectionB({ keys }) {
   const [isready, setisReady] = useState(false);
   const [allHistory, setAllHistory] = useState(true);
   const [yourHistory, setYourHistory] = useState(false);
+  const setRoundValueRef = useRef();
 
   //  get operatorSigner
   const getOperatorSigner = () => {
@@ -517,6 +518,7 @@ function SectionB({ keys }) {
     if (roundCount > 1) {
       setisReady(false);
       setRoundCount((prev) => prev - 1);
+      setRoundValueRef.current.value = roundCount - 1;
       setRewardMessage("");
       setWinningNO(null);
       setisloading(false);
@@ -529,6 +531,7 @@ function SectionB({ keys }) {
     if (roundCount < currentLotteryId - 1) {
       setisReady(false);
       setRoundCount((prev) => prev + 1);
+      setRoundValueRef.current.value = roundCount + 1;
       setRewardMessage("");
       setWinningNO(null);
       setisloading(false);
@@ -794,10 +797,11 @@ function SectionB({ keys }) {
                 <div className=" ">
                   <div className="mx-auto my-2 w-fit space-y-2 text-center">
                     <h2 className="font-bold text-coinSinoTextColor ">Round</h2>
-                    <p className="flex justify-center items-center rounded-lg bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
+                    <p className="flex items-center justify-center rounded-lg bg-coinSinoPurple p-2 text-xl font-bold text-coinSinoGreen ">
                       <p className="">#</p>
                       {roundCount > 0 && (
                         <textarea
+                          ref={setRoundValueRef}
                           type="Number"
                           className=" h-10 w-20 resize-none  overflow-hidden rounded-full  border-none bg-transparent text-center outline-none  active:outline-none"
                           defaultValue={roundCount}
@@ -817,8 +821,14 @@ function SectionB({ keys }) {
                                   currentLotteryId - 1
                                 );
                                 setRoundCount(currentLotteryId - 1);
+                              } else if (e.target.value == '0') {
+                                e.target.value = e.target.value.replace(
+                                  e.target.value,
+                                  1
+                                );
+                                setRoundCount(1)
                               }
-                              setRoundCount(e.target.value);
+                              setRoundCount(Number(e.target.value));
                             } else if (e.target.value == "") {
                               setRewardMessage("");
                               setWinningNO(null);
