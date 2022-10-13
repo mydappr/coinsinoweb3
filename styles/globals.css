@@ -13,7 +13,7 @@
     @apply m-1 lg:m-2 lg:p-5;
   }
   .joinBtn {
-    @apply mt-5 w-fit cursor-pointer rounded-xl bg-coinSinoGreen  p-3 px-3 text-center font-bold;
+    @apply mt-5 w-fit cursor-pointer rounded-xl bg-coinSinoGreen  p-2  text-center font-semibold;
   }
   .timeStamp {
     @apply w-[60px] rounded-full bg-coinSinoPurple p-3 text-4xl font-bold;

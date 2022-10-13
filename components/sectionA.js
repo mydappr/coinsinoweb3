@@ -564,12 +564,32 @@ function SectionA({ keys }) {
                     </h2>
                     <RandomImage />
                   </div> */}
-                          <p className="flex justify-between">
-                            <span className=" text-xs text-white">
-                              Total tickets
-                            </span>{" "}
-                            <span className="">{currentUserTicket.length}</span>
-                          </p>
+                          {currentUserTicket.length > 0 ? (
+                            <p className="flex justify-between">
+                              <span className=" text-xs text-white">
+                                Total tickets
+                              </span>{" "}
+                              <span className="">
+                                {currentUserTicket.length}
+                              </span>
+                            </p>
+                          ) : (
+                            <div className=" space-y-2 mx-auto mt-auto text-center">
+                              <p> Sorry, you don't have a ticket. </p>
+                              <button
+                                disabled={timeElasped || lotteryStatus !== Open}
+                                className={`w-[100px] cursor-pointer self-center rounded-xl bg-coinSinoGreen p-2   font-bold text-coinSinoTextColor sm:mb-5 ${
+                                  (timeElasped || lotteryStatus !== Open) &&
+                                  "cursor-not-allowed bg-gray-600"
+                                }`}
+                                onClick={() => {
+                                  setbuyModalStat(true);
+                                }}
+                              >
+                                Buy now!
+                              </button>
+                            </div>
+                          )}
 
                           {/* <p className="flex justify-between">
                     <span className=" text-xs text-white">Winning tickets</span>{" "}
@@ -620,7 +640,7 @@ function SectionA({ keys }) {
           <BuyDialog />
 
           {/* list of pools */}
-          <div className=" my-5 flex flex-wrap justify-between  gap-2 p-2 sm:p-10">
+          <div className=" my-5 flex flex-wrap justify-between  gap-2 p-2   sm:p-10">
             <div>
               {currentAccount ? (
                 <button

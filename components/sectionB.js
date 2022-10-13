@@ -821,12 +821,12 @@ function SectionB({ keys }) {
                                   currentLotteryId - 1
                                 );
                                 setRoundCount(currentLotteryId - 1);
-                              } else if (e.target.value == '0') {
+                              } else if (e.target.value == "0") {
                                 e.target.value = e.target.value.replace(
                                   e.target.value,
                                   1
                                 );
-                                setRoundCount(1)
+                                setRoundCount(1);
                               }
                               setRoundCount(Number(e.target.value));
                             } else if (e.target.value == "") {
