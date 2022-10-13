@@ -95,17 +95,16 @@ function Header() {
               <div className="">
                 <ChevronDownIcon className="h-6" />
               </div>
-              <div className=" absolute top-9 -right-4  hidden  h-80 w-64  space-y-3    border-[2px]  border-white/50 bg-coinSinoPurpleNav text-center  text-coinSinoTextColor2     hover:inline-block hover:text-coinSinoPink group-hover:inline-block sm:w-80">
-                {[2].map((e,i) => (
+              <div className=" absolute top-9 -right-20  hidden  h-[20px] w-64 space-y-3  rounded-md     text-center  text-coinSinoTextColor2     hover:inline-block hover:text-coinSinoPink group-hover:inline-block sm:w-80">
+                {[2].map((e, i) => (
                   <div
-                  key={i}
+                    key={i}
                     onClick={disConnectWallet}
-                    className="flex items-center justify-between border-b-[1px] border-coinSinoTextColor2  p-2 hover:bg-coinSinoTextColor2/20"
+                    className="flex h-[80px] items-center justify-between rounded-3xl  border-b-[1px] border-coinSinoTextColor2  bg-coinSinoPurpleNav  p-2 hover:bg-coinSinoPurple"
                   >
                     <p className="p-2 text-lg font-semibold">Disconnect</p>
 
-                    <p className="   h-6 w-6   bg-[url('/images/logoutIcon.svg')] bg-no-repeat   ">
-                     </p>
+                    <p className="  h-6  w-6 bg-[url('/images/logoutIcon.svg')]   bg-no-repeat text-white"></p>
                   </div>
                 ))}
               </div>
