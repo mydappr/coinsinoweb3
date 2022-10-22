@@ -49,7 +49,7 @@ function OperatorFunctions() {
 
   const pricePerTicket = "3";
   // coinsino contract address
-  const coinSinoContractAddress = "0x7040d32de6f003c9A9BFBEadE10Ce85B911F0F1c";
+  const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
   // rng contract address
   const rngContractaddress = "0xB7a02D612Dfd4AFbC52571645a152F15eB9e5868";
   const rpcUrl = "https://testnet.telos.net/evm";
@@ -85,7 +85,7 @@ function OperatorFunctions() {
       //   Sinoabi,
       //   managedSigner
       // );
-      const lottryDuration = await convertInput("478 mintues");
+      const lottryDuration = await convertInput("60 minutes");
 
       // start a lottery
       const startLottery = await operatorcoinSinoContract.startLottery(
@@ -97,12 +97,12 @@ function OperatorFunctions() {
       );
       console.log("asigned start");
 
-      await startLottery;
+      await startLottery.wait();
 
       console.log("lottery started");
       // get current lottery id
     } catch (error) {
-      console.log("Error minting character", error);
+      console.log( error);
       // setTxError(error.message);
     }
   };
@@ -137,10 +137,12 @@ function OperatorFunctions() {
       // );
       // set lottyied
 
-      await operatorcoinSinoContract.closeLottery(
+      const closeLottery = await operatorcoinSinoContract.closeLottery(
         latestLotteryId,
         rngData.round
       );
+
+      await closeLottery.wait();
 
       console.log("lottery closed");
     } catch (error) {
@@ -177,15 +179,22 @@ function OperatorFunctions() {
 
       // const lastround = await RNGContract.getLastRound();
       if (!rngData.round) return;
-
-      await RNGContract.setRandomValue(
+      console.log(transformer(rngData));
+      const setRng = await RNGContract.setRandomValue(
         rngData.round,
         transformer(rngData),
         rngData.signature,
         rngData.previous_signature
       );
 
-      console.log("rngcontract called");
+      await setRng.wait();
+
+      console.log(
+        "from contract after setting it",
+        Number(await RNGContract.getLastRound())
+      );
+
+      console.log("from drandapi", rngData.round);
       // current lotteryid
       const latestLotteryId = Number(
         await operatorcoinSinoContract.viewCurrentLotteryId()

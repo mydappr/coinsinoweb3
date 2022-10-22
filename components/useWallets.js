@@ -1,3 +1,4 @@
+import { async } from "@firebase/util";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -5,6 +6,7 @@ import Web3 from "web3";
 import {
   activeAccount,
   connectorType,
+  networkID,
   rpcaddress,
   usewalletModal,
 } from "../atoms/atoms";
@@ -16,6 +18,8 @@ function useWallets() {
   const [userBalance, setuserBalance] = useState(0);
   const [walletModal, setwalletModal] = useRecoilState(usewalletModal);
   const [currentAccount, setCurrentAccount] = useRecoilState(activeAccount);
+  const [chainId, setChainId] = useRecoilState(networkID);
+  const chainIdInHex = "0x29";
   const { Toast } = UseToaster();
 
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
@@ -30,7 +34,7 @@ function useWallets() {
       try {
         await ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x29" }],
+          params: [{ chainId: chainIdInHex }],
         });
       } catch (switchError) {
         // This error code indicates that the chain has not been added to MetaMask.
@@ -40,7 +44,7 @@ function useWallets() {
               method: "wallet_addEthereumChain",
               params: [
                 {
-                  chainId: "0x29",
+                  chainId: chainIdInHex,
                   chainName: "Telos Testnet",
                   rpcUrls: rpcUrl /* ... */,
                 },
@@ -52,11 +56,12 @@ function useWallets() {
         }
         // handle other "switch" errors
       }
-      let chainId = await ethereum.request({ method: "eth_chainId" });
-        if (chainId !== "0x29") {
-          Toast("You are not connected to the Telos network!");
-          return;
-        }
+      let _networkId = await ethereum.request({ method: "eth_chainId" });
+ 
+
+      if (_networkId !== chainIdInHex) {
+        return;
+      }
       const accounts = await ethereum.request({ method: "eth_accounts" });
       if (accounts.length !== 0) {
         setCurrentAccount(accounts[0]);
@@ -67,21 +72,29 @@ function useWallets() {
   };
 
   useEffect(() => {
-    checkIfWalletIsConnected();
+    let isSubscribed = true;
+
+    (async () => {
+      if (isSubscribed) {
+        await checkIfWalletIsConnected();
+      }
+    })();
+
+    return () => (isSubscribed = false);
   }, []);
 
   // wallet Connect
   const connectWalletConnect = async () => {
     const p = new WalletConnectProvider({
       rpc: {
-        41: rpcUrl,
+        chainId: rpcUrl,
       },
     });
     //  Enable session (triggers QR Code modal)
     await p.enable();
     const web3 = new Web3(p);
-    const chainId = await web3.eth.getChainId();
-    if (chainId !== 41) {
+    const _networkId = await web3.eth.getChainId();
+    if (_networkId !== chainId) {
       Toast("You are not connected to the Telos network!");
       return;
     }
@@ -98,8 +111,9 @@ function useWallets() {
       const { ethereum } = window;
 
       if (ethereum) {
-        let chainId = await ethereum.request({ method: "eth_chainId" });
-        if (chainId !== "0x29") {
+        let _networkId = await ethereum.request({ method: "eth_chainId" });
+
+        if (Number(_networkId) !== chainId) {
           Toast("You are not connected to the Telos network!");
           return;
         }
@@ -139,7 +153,7 @@ function useWallets() {
       if (!ethereum) {
         const p = new WalletConnectProvider({
           rpc: {
-            41: rpcUrl,
+            chainId: rpcUrl,
           },
         });
 

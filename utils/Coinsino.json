@@ -793,24 +793,9 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256[6]",
-						"name": "rewardsBreakdown",
-						"type": "uint256[6]"
-					},
-					{
 						"internalType": "uint256",
 						"name": "treasuryFee",
 						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[6]",
-						"name": "telosPerPool",
-						"type": "uint256[6]"
-					},
-					{
-						"internalType": "uint256[6]",
-						"name": "countWinnersPerPool",
-						"type": "uint256[6]"
 					},
 					{
 						"internalType": "uint256",
@@ -826,6 +811,21 @@
 						"internalType": "uint256",
 						"name": "amountCollectedInTelos",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[6]",
+						"name": "rewardsBreakdown",
+						"type": "uint256[6]"
+					},
+					{
+						"internalType": "uint256[6]",
+						"name": "telosPerPool",
+						"type": "uint256[6]"
+					},
+					{
+						"internalType": "uint256[6]",
+						"name": "countWinnersPerPool",
+						"type": "uint256[6]"
 					},
 					{
 						"internalType": "uint32",

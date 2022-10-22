@@ -33,6 +33,7 @@ import {
   drandData,
   sinoAddress,
   rpcaddress,
+  networkID,
 } from "../atoms/atoms";
 import BuyDialog from "./buyDialog";
 import { providers } from "ethers";
@@ -77,6 +78,7 @@ function SectionA({ keys }) {
   const [coinSinoContractAddress, setcoinSinoContractAddress] =
     useRecoilState(sinoAddress);
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
+  const [chainId, setChainId] = useRecoilState(networkID);
   const [showCurrentTickets, setShowCurrentTickets] = useState(false);
   const [telosPool, setTelosPool] = useState(true);
   const [ethPool, setEthPool] = useState(false);
@@ -104,9 +106,9 @@ function SectionA({ keys }) {
     try {
       const contract = await operatorSignerAndContract();
 
-      let chainId = await contract.signer.getChainId();
+      let _networkId = await contract.signer.getChainId();
 
-      if (!currentAccount || Number(chainId) !== 41) return;
+      if (!currentAccount || Number(_networkId) !== chainId) return;
 
       const viewUserTicketLength = await contract.viewUserTicketLength(
         currentAccount,
@@ -127,7 +129,15 @@ function SectionA({ keys }) {
   };
 
   useEffect(() => {
-    updater();
+    let isSubscribed = true;
+
+    (async () => {
+      if (isSubscribed) {
+        await updater();
+      }
+    })();
+
+    return () => (isSubscribed = false);
   }, [totalLotteryDeposit, currentAccount, currentLotteryId]);
 
   // next draw function
@@ -158,7 +168,13 @@ function SectionA({ keys }) {
   };
 
   useEffect(() => {
-    nextDraw();
+    let isSubscribed = true;
+
+    if (isSubscribed) {
+      nextDraw();
+    }
+
+    return () => (isSubscribed = false);
   }, [endTime]);
 
   // const LotteryInfo = async () => {
@@ -186,7 +202,7 @@ function SectionA({ keys }) {
   //     );
 
   //   } catch (error) {
-  //     console.log(error.message);
+  //      (error.message);
   //   }
   // };
 
@@ -299,7 +315,7 @@ function SectionA({ keys }) {
   useEffect(() => {
     let intervalId = setInterval(countdown, 1000);
     return () => clearInterval(intervalId);
-  }, [endTime, countDown, rngData]);
+  }, [endTime, countDown, rngData, lotteryStatus]);
 
   return (
     <>
@@ -318,7 +334,7 @@ function SectionA({ keys }) {
             <div className="    ">
               <p>Total price:</p>
               {totalLotteryDeposit ? (
-                <h2 className="mx-auto mt-1 w-60 rounded-lg border-2  border-coinSinoGreen bg-coinSinoGreen  px-5 py-2 text-2xl  font-bold  antialiased  md:px-10 lg:w-full lg:text-3xl">
+                <h2 className="mx-auto mt-1 w-fit rounded-lg border-2  border-coinSinoGreen bg-coinSinoGreen  px-5 py-2 text-2xl  font-bold  antialiased  md:px-10 lg:w-full lg:text-3xl">
                   <CountUp
                     duration={2}
                     separator=" "
@@ -504,7 +520,13 @@ function SectionA({ keys }) {
                       onClick={() => setShowCurrentTickets(true)}
                       className=" cursor-pointer text-lg text-coinSinoGreen  hover:bg-coinSinoPurple hover:text-coinSinoGreen"
                     >
-                      {currentUserTicket.length}
+                      <CountUp
+                        duration={3}
+                        separator=" "
+                        decimals={0}
+                        decimal="."
+                        end={currentUserTicket.length}
+                      />{" "}
                     </strong>{" "}
                     ticket for the current round
                   </span>
@@ -574,7 +596,7 @@ function SectionA({ keys }) {
                               </span>
                             </p>
                           ) : (
-                            <div className=" space-y-2 mx-auto mt-auto text-center">
+                            <div className=" mx-auto mt-auto space-y-2 text-center">
                               <p> Sorry, you do not have any ticket. </p>
                               <button
                                 disabled={timeElasped || lotteryStatus !== Open}

@@ -6,7 +6,7 @@ import Sinoabi from "../../utils/Coinsino.json";
 import jwt from "jsonwebtoken";
 import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
-const coinSinoContractAddress = "0x7040d32de6f003c9A9BFBEadE10Ce85B911F0F1c";
+const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
 
 const { startLottery, closeLottery, drawLottery } = OperatorFunctions();
 
@@ -118,6 +118,7 @@ export default async function handler(req, res) {
     case 3:
       // lottery status is claimable, therefore start a new lottery
       console.log("Started lottery");
+
       try {
         await startLottery();
         res.status(200).json({ Status: "lottery started!" });

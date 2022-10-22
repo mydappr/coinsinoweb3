@@ -30,6 +30,7 @@ import {
   sinoAddress,
   rngAddress,
   rpcaddress,
+  networkID,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import { Toast } from "flowbite-react";
@@ -44,7 +45,7 @@ const claimable = 3;
 // // serverside
 export const getServerSideProps = async () => {
   // conract address
-  const coinSinoContractAddress = "0x7040d32de6f003c9A9BFBEadE10Ce85B911F0F1c";
+  const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
   // node url
   const rpcUrl = "https://testnet.telos.net/evm";
   // operator provider,and signer
@@ -117,6 +118,7 @@ export default function Home({
     useRecoilState(sinoAddress);
   const [rngContractaddress, setrngContractaddress] =
     useRecoilState(rngAddress);
+  const [chainId, setChainId] = useRecoilState(networkID);
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
   const splittedWinningValues = Array.from(String(winningNo));
 
@@ -176,9 +178,13 @@ export default function Home({
         operatorSigner
       );
       // current lotteryid
+      
       const latestLotteryId = Number(
         await operatorcoinSinoContract.viewCurrentLotteryId()
       );
+
+    
+
       // set lottyied
       setCurrentLotteryId(latestLotteryId);
 
@@ -253,9 +259,9 @@ export default function Home({
         if (ethereum) {
           // user contract
           const userProvider = new ethers.providers.Web3Provider(ethereum);
-          let chainId = await ethereum.request({ method: "eth_chainId" });
+          let _networkId = await ethereum.request({ method: "eth_chainId" });
 
-          if (Number(chainId) !== 41) return;
+          if (Number(_networkId) !== chainId) return;
 
           const signer = userProvider.getSigner();
           const coinSinoContract = new ethers.Contract(
@@ -263,6 +269,7 @@ export default function Home({
             Sinoabi,
             signer
           );
+          
 
           const latestLotteryId = Number(
             await coinSinoContract.viewCurrentLotteryId()
@@ -306,7 +313,15 @@ export default function Home({
   };
 
   useEffect(() => {
-    fetchTickets();
+    let isSubscribed = true;
+
+    (async () => {
+      if (isSubscribed) {
+        await fetchTickets();
+      }
+    })();
+
+    return () => (isSubscribed = false);
   }, [currentLotteryId, currentAccount]);
 
   useEffect(() => {

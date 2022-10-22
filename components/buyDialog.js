@@ -9,6 +9,7 @@ import {
   editModal,
   errMessage,
   latestLotteryId,
+  networkID,
   rpcaddress,
   sinoAddress,
   tlosPrice,
@@ -23,7 +24,7 @@ import UseLoadingSpinner from "./UseLoadingSpinner";
 export default function BuyDialog() {
   const [isOpen, setIsOpen] = useRecoilState(buyModal);
   const [isEditOpen, setIsEditOpen] = useRecoilState(editModal);
-  const [noOfTickets, setNoOfTickets] = useState(0);
+  const [noOfTickets, setNoOfTickets] = useState(null);
   let [listOfTicketsToBuy, setlistOfTicketsToBuy] = useState([]);
   const [ticketEdit, setticketEdit] = useState(null);
   const [currentLotteryId, setCurrentLotteryId] =
@@ -40,6 +41,7 @@ export default function BuyDialog() {
   const [coinSinoContractAddress, setcoinSinoContractAddress] =
     useRecoilState(sinoAddress);
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
+  const [chainId, setChainId] = useRecoilState(networkID);
   const { Loading } = UseLoadingSpinner(isloading);
 
   const getTelosPrice = async () => {
@@ -233,9 +235,9 @@ export default function BuyDialog() {
         );
 
         // check if network is metamask
-        let chainId = await web3.eth.getChainId();
+        let _networkId = await web3.eth.getChainId();
 
-        if (chainId !== 41) return;
+        if (_networkId !== chainId) return;
 
         // const accounts = await ethereum.request({
         //   method: "eth_requestAccounts",
@@ -255,6 +257,9 @@ export default function BuyDialog() {
         // const tickets = await generateTicketNumbers(noOfTickets);
         // console.log("user tickets", tickets);
 
+        // const gas_price = await web3.eth.getGasPrice();
+        // let block = await web3.eth.getBlock("latest");
+
         const buyTicket = await coinSinoContract.methods
           .buyTickets(currentLotteryId, listOfTicketsToBuy)
           .send({
@@ -264,14 +269,14 @@ export default function BuyDialog() {
 
         await buyTicket;
         successToast("Ticket bought");
-        setNoOfTickets(0);
+        setNoOfTickets(null);
         setisloading(false);
         closeBuyModals();
         closeEditModals();
       }
     } catch (error) {
       successToast(error.reason);
-      setNoOfTickets(0);
+      setNoOfTickets(null);
       setisloading(false);
       closeBuyModals();
       closeEditModals();

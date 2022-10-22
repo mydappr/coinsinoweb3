@@ -1,5 +1,6 @@
 import { useEffect, useState, Fragment, useRef } from "react";
 import { Tabs } from "flowbite-react";
+import CountUp from "react-countup";
 import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
 import RandomImage from "./randomenumber";
 import {
@@ -20,6 +21,7 @@ import {
   rpcaddress,
   wonPoolLength,
   wonid,
+  networkID,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
 import Sinoabi from "../utils/Coinsino.json";
@@ -64,6 +66,7 @@ function SectionB({ keys }) {
     useRecoilState(sinoAddress);
   const [wwonid, setwonId] = useRecoilState(wonid);
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
+  const [chainId, setChainId] = useRecoilState(networkID);
   const [viewWinningTickets, setVieWinningTickets] = useState(false);
   const [wonCliamId, setWonCliamId] = useState([]);
   const [isready, setisReady] = useState(false);
@@ -92,9 +95,13 @@ function SectionB({ keys }) {
 
   // it sets lastRound on launch and on currentlotteryId chaange
   useEffect(() => {
-    if (currentLotteryId) {
+    let isSubscribed = true;
+
+    if (currentLotteryId && isSubscribed) {
       setRoundCount(currentLotteryId - 1);
     }
+
+    return () => (isSubscribed = false);
   }, [currentLotteryId]);
 
   // Lottery statuses
@@ -230,9 +237,9 @@ function SectionB({ keys }) {
         );
 
         // check if network is metamask
-        let chainId = await web3.eth.getChainId();
+        let _networkId = await web3.eth.getChainId();
 
-        if (chainId !== 41) {
+        if (_networkId !== chainId) {
           setisloading(false);
           Toast("You are not connected to the Telos Netowrk!");
           return;
@@ -251,11 +258,8 @@ function SectionB({ keys }) {
         let _slicedTewardpools = [];
         let count = 0;
         let cursor = 0;
-        const arrayOfTen = Array(10);
 
         if (userTickets.length >= 10) {
-          console.log(userTickets.length);
-
           while (count < userTickets.length) {
             if (count === cursor) {
               const size =
@@ -289,26 +293,27 @@ function SectionB({ keys }) {
           _rewardpools = _slicedTewardpools.flat();
 
           rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
+        } else {
+          console.log("less ");
+          const viewMaxRewardsForTicketId = await coinSinoContract.methods
+            .viewMaxRewardsForTicketId(
+              currentAccount,
+              roundCount,
+              0,
+              userTickets.length
+            )
+            .call();
+
+          _ticketIds = viewMaxRewardsForTicketId[0];
+          _tickets = viewMaxRewardsForTicketId[1];
+          _rewards = viewMaxRewardsForTicketId[2];
+          _rewardpools = viewMaxRewardsForTicketId[3];
+
+          // const userTickets = _tickets.map((e) => Number(e));
+          // setUserTickets(userTickets);
+
+          rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
         }
-      } else {
-        const viewMaxRewardsForTicketId = await coinSinoContract.methods
-          .viewMaxRewardsForTicketId(
-            currentAccount,
-            roundCount,
-            0,
-            userTickets.length
-          )
-          .call();
-
-        _ticketIds = viewMaxRewardsForTicketId[0];
-        _tickets = viewMaxRewardsForTicketId[1];
-        _rewards = viewMaxRewardsForTicketId[2];
-        _rewardpools = viewMaxRewardsForTicketId[3];
-
-        // const userTickets = _tickets.map((e) => Number(e));
-        // setUserTickets(userTickets);
-
-        rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
       }
     } catch (error) {
       console.log(error);
@@ -345,9 +350,9 @@ function SectionB({ keys }) {
         );
 
         // check if network is tlos
-        let chainId = await web3.eth.getChainId();
+        let _networkId = await web3.eth.getChainId();
 
-        if (chainId !== 41) {
+        if (_networkId !== chainId) {
           setClaiming(false);
           Toast("You are not connected to the Telos Netowrk!");
           return;
@@ -375,7 +380,6 @@ function SectionB({ keys }) {
             .claimTickets(roundCount, wonCliamId, claimpoolLength)
             .send({ from: currentAccount });
 
-          await claimTickets.wait();
           setClaiming(false);
           setRewardMessage("Reward Claimed!");
 
@@ -387,7 +391,7 @@ function SectionB({ keys }) {
       Toast(error);
       console.log(error);
       setClaiming(false);
-      setRewardMessage("Reward Claimed!");
+      setRewardMessage("");
     }
   };
 
@@ -444,11 +448,13 @@ function SectionB({ keys }) {
 
           setUserTickets(userInfo[1]);
           setRewardMessage("");
+          setRoundValueRef.current.value = roundCount;
           setisReady(true);
         } catch (error) {
           if ((error.reason = "User has no tickets for this lottery")) {
             setUserTickets([]);
             setWinningNO(finalNumber);
+            setRoundValueRef.current.value = roundCount;
             setLastDrawTime({
               year,
               hour,
@@ -511,7 +517,15 @@ function SectionB({ keys }) {
   };
 
   useEffect(() => {
-    fetchRoundDetails();
+    let isSubscribed = true;
+
+    (async () => {
+      if (isSubscribed) {
+        await fetchRoundDetails();
+      }
+    })();
+
+    return () => (isSubscribed = false);
   }, [currentLotteryId, currentAccount, roundCount]);
 
   const previousDraws = async (e) => {
@@ -596,7 +610,13 @@ function SectionB({ keys }) {
               <h1>
                 You have a total of{" "}
                 <strong className="text-coinSinoGreen">
-                  {unClaimedUserRewards}
+                  <CountUp
+                    duration={3}
+                    separator=" "
+                    decimals={3}
+                    decimal="."
+                    end={unClaimedUserRewards}
+                  />{" "}
                 </strong>{" "}
                 Tlos to be claimed.
               </h1>
