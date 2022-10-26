@@ -49,10 +49,10 @@ function OperatorFunctions() {
 
   const pricePerTicket = "3";
   // coinsino contract address
-  const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
+  const coinSinoContractAddress = "0xd2635b5b12AeA2b5D8f04a9cdA82424206f50881";
   // rng contract address
   const rngContractaddress = "0xB7a02D612Dfd4AFbC52571645a152F15eB9e5868";
-  const rpcUrl = "https://testnet.telos.net/evm";
+  const rpcUrl = "https://rpc1.us.telos.net/evm";
 
   // operator provider, signer and coinsino contract instance
   const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);

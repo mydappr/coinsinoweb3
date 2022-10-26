@@ -1,5 +1,4 @@
 import Head from "next/head";
-
 import Header from "../components/header";
 import SectionA from "../components/sectionA";
 import SectionB from "../components/sectionB";
@@ -7,9 +6,7 @@ import Footer from "../components/footer";
 import { useEffect, useRef, useState } from "react";
 import ToTop from "../components/toTop";
 import Sinoabi from "../utils/Coinsino.json";
-import Rngabi from "../utils/RNGabi.json";
-import { ethers, BigNumber } from "ethers";
-import moment from "moment";
+import { ethers } from "ethers";
 import {
   latestLotteryId,
   lotteryStatus as Lstatus,
@@ -33,8 +30,6 @@ import {
   networkID,
 } from "../atoms/atoms";
 import { useRecoilState } from "recoil";
-import { Toast } from "flowbite-react";
-import UseToaster from "../components/UseToaster";
 
 // Lottery status
 const Pending = 0;
@@ -45,9 +40,9 @@ const claimable = 3;
 // // serverside
 export const getServerSideProps = async () => {
   // conract address
-  const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
+  const coinSinoContractAddress = "0xd2635b5b12AeA2b5D8f04a9cdA82424206f50881";
   // node url
-  const rpcUrl = "https://testnet.telos.net/evm";
+  const rpcUrl = "https://rpc1.us.telos.net/evm";
   // operator provider,and signer
   const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
   // operator signer and contract
@@ -91,7 +86,7 @@ export default function Home({
 }) {
   const opkey = process.env.opkey;
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
-  const [rewardMessage, setRewardMessage] = useState("");
+  
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
   const [winningNo, setWinningNO] = useRecoilState(winningNumbers);
   const [lotteryStatus, setlotteryStatus] = useRecoilState(Lstatus);
@@ -122,41 +117,7 @@ export default function Home({
   const [rpcUrl, setrpcUrl] = useRecoilState(rpcaddress);
   const splittedWinningValues = Array.from(String(winningNo));
 
-  const pricePerTicket = "3";
-
-  async function generateRandom(min = 0, max = 100) {
-    // find diff
-    const difference = max - min;
-
-    // generate random number
-    let rand = Math.random();
-
-    // multiply with difference
-    rand = Math.floor(rand * difference);
-
-    // add with min value
-    rand = rand + min;
-
-    return rand;
-  }
-
-  // // fetch latest drand data
-  // const DrandFetch = async () => {
-  //   const { Toast } = UseToaster();
-  //   try {
-  //     const res = await fetch("https://randomnumber.willdera.repl.co/fetch");
-  //     const rngData = await res.json();
-  //     setrngData(rngData);
-  //   } catch (error) {
-  //     // Toast(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   let fetchInterval = setInterval(async () => await DrandFetch(), 5000);
-  //   return () => clearInterval(fetchInterval);
-  // }, [rngData]);
-
+ 
   const getLatestLotteryInfo = async () => {
     if (!endTime || !lotteryStatus || !currentLotteryId) {
       setEndTime(_endTime);
@@ -167,7 +128,7 @@ export default function Home({
       );
     }
     try {
-      const rpcUrl = "https://testnet.telos.net/evm";
+      const rpcUrl = "https://rpc1.us.telos.net/evm";
       // signers wallet get smartcontract
       const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
       // operator signer and contract
@@ -178,12 +139,10 @@ export default function Home({
         operatorSigner
       );
       // current lotteryid
-      
+
       const latestLotteryId = Number(
         await operatorcoinSinoContract.viewCurrentLotteryId()
       );
-
-    
 
       // set lottyied
       setCurrentLotteryId(latestLotteryId);
@@ -269,7 +228,6 @@ export default function Home({
             Sinoabi,
             signer
           );
-          
 
           const latestLotteryId = Number(
             await coinSinoContract.viewCurrentLotteryId()
@@ -285,23 +243,6 @@ export default function Home({
             );
 
             setUserCurrentTickets(userInfo[1]);
-
-            // console.log("hello man", userInfo);
-
-            // // ticketids, ticketNumber, ticketStatus, number of ticket
-
-            // const userticketIds = [];
-            // for (let i = 0; i < userInfo[0].length; i++) {
-            //   const ticketId = Number(userInfo[0][i]);
-            //   userticketIds.push(ticketId);
-            // }
-
-            // // list of user's tickets
-            // const list =
-            //   await coinSinoContract.viewNumbersAndStatusesForTicketIds(
-            //     userticketIds
-            //   );
-            setUserCurrentTickets(list[0]);
           } catch (error) {
             console.log(error);
           }
@@ -329,209 +270,20 @@ export default function Home({
     return () => clearInterval(intervalId);
   }, [currentLotteryId, endTime, lotteryStatus, totalLotteryDeposit]);
 
-  // const info = async () => {
-  //   try {
-  //     const { ethereum } = window;
-  //     if (ethereum) {
-  //       // signers wallet get smartcontract
-  //       const provider = new ethers.providers.Web3Provider(ethereum);
-  //       // operator signer and contract
-  //       const operatorSigner = new ethers.Wallet(opkey, provider);
-  //       const operatorcoinSinoContract = new ethers.Contract(
-  //         coinSinoContractAddress,
-  //         Sinoabi,
-  //         operatorSigner
-  //       );
-
-  //       // const i = 1
-  //       // const percentage = 0.05
-
-  //       // const checkpercentage = ()=>{
-  //       //   if(nof)
-
-  //       // }
-
-  //       const getLotterystatus = await operatorcoinSinoContract.viewLottery(
-  //         currentLotteryId
-  //       );
-  //       const { discountDivisor, finalNumber, treasuryFee, rewardsBreakdown } =
-  //         getLotterystatus;
-
-  //       // rewardsBreakdown.map(async(e) => {
-  //       //   const poolPercentage=
-  //       //   console.log( Number(e), ': ');
-  //       // });
-
-  //       setWinningNO(finalNumber);
-
-  //       console.log("lottery info", getLotterystatus);
-  //       console.log("treasuryFee", Number(rewardsBreakdown[0]));
-
-  //       const { startTime, endTime } = getLotterystatus;
-
-  //       var dateString = moment(moment.unix(startTime).format("MM/DD/YYYY"));
-
-  //       const days = dateString.days();
-  //       const hours = dateString.hours();
-  //       const minutes = dateString.minutes();
-  //       const seconds = dateString.seconds();
-
-  //       setCoundown({
-  //         days,
-  //         hours,
-  //         minutes,
-  //         seconds,
-  //       });
-  //       return;
-
-  //       // random numbers
-  //       const RNGContract = new ethers.Contract(
-  //         rngContractaddress,
-  //         Rngabi,
-  //         operatorSigner
-  //       );
-
-  //       // user contract
-  //       const signer = provider.getSigner();
-  //       const coinSinoContract = new ethers.Contract(
-  //         coinSinoContractAddress,
-  //         Sinoabi,
-  //         signer
-  //       );
-
-  //       const accounts = await ethereum.request({
-  //         method: "eth_requestAccounts",
-  //       });
-
-  //       const userInfo = await coinSinoContract.viewUserInfoForLotteryId(
-  //         accounts[0],
-  //         currentLotteryId,
-  //         0,
-  //         100
-  //       );
-
-  //       // const claimedorNot = userInfo[2]
-  //       const userticketIds = [];
-  //       for (let i = 0; i < userInfo[0].length; i++) {
-  //         const ticketId = Number(userInfo[0][i]);
-  //         userticketIds.push(ticketId);
-  //       }
-
-  //       // list of user's tickets
-  //       const list = await coinSinoContract.viewNumbersAndStatusesForTicketIds(
-  //         userticketIds
-  //       );
-  //       // const clonedObj = JSON.parse(JSON.stringify(list[0]));
-  //       // clonedObj[1] = 258900;
-  //       setUserTickets(list[0]);
-
-  //       if (userticketIds.length < 1) {
-  //         setRewardMessage("Sorry, you have no ticket for this round");
-  //         setunClaimedUserRewards(null);
-  //         return;
-  //       }
-  //       userticketIds.forEach(async (e, i) => {
-  //         const view = await coinSinoContract.viewRewardsForTicketId(
-  //           currentLotteryId,
-  //           e,
-  //           0
-  //         );
-
-  //         const rewards = ethers.utils.formatEther(view);
-
-  //         if (!Number(rewards)) {
-  //           setRewardMessage("sorry you did not win this time");
-  //           setunClaimedUserRewards(null);
-  //           return;
-  //         }
-
-  //         console.log("you worn with this ticket");
-  //         setRewardMessage("congratulations, you won from a pool!");
-  //         setunClaimedUserRewards(Number(rewards));
-  //       });
-
-  //       // finished drawing... Did you win?
-  //       // check
-  //       // return if not
-  //       // else claim
-
-  //       // const claimTickets = await operatorcoinSinoContract.claimTickets(
-  //       //   currentLotteryId,
-  //       //   userticketIds,
-  //       //   pools
-  //       // );
-
-  //       // let possibleTicketArrays = [];
-  //       // for (let i = 0; i < 500; i++) {
-  //       //   possibleTicketArrays.push(i);
-  //       // }
-
-  //       // // availble tickets for the current pool
-  //       // const NumbersAndStatus =
-  //       //   await operatorcoinSinoContract.viewNumbersAndStatusesForTicketIds(
-  //       //     possibleTicketArrays
-  //       //   );
-  //       // const totalTickets = NumbersAndStatus[0].filter((e) => e > 0);
-  //       // console.log("totalTickets", totalTickets.length);
-  //       // console.log("NumbersAndStatus", NumbersAndStatus);
-
-  //       // console.log(totalTickets);
-
-  //       // //   check the rewards for ticket 0, in pool 0 and from current lottery ID.
-  //       // const viewRewardsForTicketId = await convertHexToInt(
-  //       //   await operatorcoinSinoContract.viewRewardsForTicketId(
-  //       //     currentLotteryId,
-  //       //     0,
-  //       //     3
-  //       //   )
-  //       // );
-  //     }
-  //   } catch (error) {
-  //     console.log("Error minting character", error);
-  //   }
-  // };
-
   return (
     <div ref={scrollTargetElementRef}>
       <Head>
         <title>CoinSino</title>
-        <meta name="description" content="Generated by create next app" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content="Coinsino on Blockchain" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
       <div
         id="top"
         className="bg-[url('/images/bg.png')] bg-center bg-no-repeat "
       >
-        <div className=" flex w-fit flex-col space-y-5 ">
-          {/* <button className=" bg-white  p-5" onClick={start}>
-            operator: start lottery
-          </button>
-          <button className=" bg-white  p-5" onClick={close}>
-            operator: close lottery
-          </button>
-
-          <button className=" bg-white  p-5" onClick={drawFinal}>
-            operator: Draw final
-          </button> */}
-          {/* <button className=" bg-white  p-5" onClick={info}>
-            operator: check Info
-          </button> */}
-
-          {/* {winningNo && (
-            <div className="my-10 text-white ">
-              <span className=" p-2 font-bold  text-white">{`
-                     Latest Winning No`}</span>
-              {splittedWinningValues.map((e) => {
-                return (
-                  <span className=" mx-3 rounded-2xl bg-green-600 p-2 font-bold  text-white">
-                    {e}
-                  </span>
-                );
-              })}
-            </div>
-          )} */}
-          {rewardMessage && (
+        {/* <div className=" flex w-fit flex-col space-y-5 ">
+          {!rewardMessage && (
             <div className="text-white">
               <h1 className=" text-2xl">Drawn! </h1>
               <p className="">{rewardMessage}</p>
@@ -569,12 +321,11 @@ export default function Home({
               })}
             </div>
           )}
-        </div>
+        </div> */}
         <ToTop scrollTargetElementRef={scrollTargetElementRef} />
         <Header />
         <SectionA keys={opkey} />
       </div>
-
       <SectionB keys={opkey} />
 
       <Footer scrollTargetElementRef={scrollTargetElementRef} />

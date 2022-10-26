@@ -22,10 +22,10 @@
     @apply my-2 block text-lg text-coinSinoTextColor2;
   }
   .activeNave {
-    @apply rounded-2xl border-2 border-coinSinoTextColor2 bg-coinSinoPurple p-2;
+    @apply rounded-2xl border-2  text-coinSinoGreen border-coinSinoTextColor2 bg-coinSinoPurple p-2;
   } 
   .inActiveNave {
-    @apply rounded-2xl p-3  hover:bg-coinSinoPurple hover:text-coinSinoTextColor;
+    @apply rounded-2xl  p-2 sm:p-3  hover:bg-coinSinoPurple hover:text-coinSinoTextColor;
   }
   
   .waiting{

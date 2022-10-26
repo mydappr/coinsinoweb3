@@ -6,7 +6,7 @@ import Sinoabi from "../../utils/Coinsino.json";
 import jwt from "jsonwebtoken";
 import { app, database } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
-const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
+const coinSinoContractAddress = "0xd2635b5b12AeA2b5D8f04a9cdA82424206f50881";
 
 const { startLottery, closeLottery, drawLottery } = OperatorFunctions();
 
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     // get lottery ID and status
     // operator provider,and signer
     const operatorProvider = new ethers.providers.JsonRpcProvider(
-      "https://testnet.telos.net/evm"
+      "https://rpc1.us.telos.net/evm"
     );
     console.log("got provider");
 
