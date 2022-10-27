@@ -251,10 +251,11 @@ export default function Home({
         console.log(error);
       }
     }
-  };
+  }; 
 
   useEffect(() => {
     let isSubscribed = true;
+    
 
     (async () => {
       if (isSubscribed) {
