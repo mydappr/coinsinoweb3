@@ -20,7 +20,7 @@ pipeline {
     stage('Build') {
       steps {
         echo 'This is the Build Stage'
-        sh 'sudo docker build -t sino .'
+        sh 'docker build -t sino .'
         echo 'Docker image built'
       }
     }
