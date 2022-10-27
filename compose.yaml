@@ -3,4 +3,18 @@ services:
     image: sino
     ports:
       - "3000:3000"
-    env_file: .env
+    environment:
+      treakey:  ${treakey}
+      injkey:  ${injkey}
+      opkey:  ${opkey}
+      apiKey:  ${apiKey}
+      authDomain:  ${authDomain}
+      projectId:  ${projectId}
+      storageBucket:  ${storageBucket}
+      messagingSenderId:  ${messagingSenderId}
+      appId:  ${appId}
+      measurementId:  ${measurementId}
+      jwt_secret:  ${jwt_secret}
+      startLotteryID:  ${startLotteryID}
+      closeLotteryID:  ${closeLotteryID}
+      drawLotteryID:  ${drawLotteryID}
