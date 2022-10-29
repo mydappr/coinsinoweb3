@@ -1,4 +1,0 @@
-services:
-  coinsino-frontend:
-    image: "sino"
-    
