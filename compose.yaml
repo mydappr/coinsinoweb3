@@ -1,6 +1,10 @@
 services:
   app:
     image: sino
+    networks:
+      - sino
+    volumes:
+      - .:/app
     ports:
       - "3000:3000"
     environment:
@@ -18,3 +22,8 @@ services:
       startLotteryID:  ${startLotteryID}
       closeLotteryID:  ${closeLotteryID}
       drawLotteryID:  ${drawLotteryID}
+
+networks:
+  sino:
+    name: sino
+    external: true
