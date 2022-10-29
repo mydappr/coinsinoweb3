@@ -1,9 +1,9 @@
-version: '3.7'
+version: "3.7"
 services:
   sino:
-    image: sino
+    image: "sino"
     networks:
-      - sino
+      - "sino"
     volumes:
       - .:/app
     ports:
