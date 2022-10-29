@@ -1,30 +1,6 @@
 version: "3.7"
-services:
-  sino:
-    image: "sino"
-    networks:
-      - "sino"
-    volumes:
-      - .:/app
-    ports:
-      - "3000:3000"
-    environment:
-      treakey: ${treakey}
-      injkey: ${injkey}
-      opkey: ${opkey}
-      apiKey: ${apiKey}
-      authDomain: ${authDomain}
-      projectId: ${projectId}
-      storageBucket: ${storageBucket}
-      messagingSenderId: ${messagingSenderId}
-      appId: ${appId}
-      measurementId: ${measurementId}
-      jwt_secret: ${jwt_secret}
-      startLotteryID: ${startLotteryID}
-      closeLotteryID: ${closeLotteryID}
-      drawLotteryID: ${drawLotteryID}
 
-networks:
-  sino:
-    name: sino
-    external: true
+services:
+  coinsino-frontend:
+    image: "sino"
+    
