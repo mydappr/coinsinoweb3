@@ -40,7 +40,7 @@ pipeline {
       steps {
         echo 'This is the Deploy Stage'
         sh 'docker stack rm sino'
-        sh 'envsubst < compose.yaml > compose.yaml'
+        sh 'envsubst < compose.yaml.example > compose.yaml'
         sh 'docker stack deploy -c compose.yaml sino'
         echo 'Deployment complete'
       }
