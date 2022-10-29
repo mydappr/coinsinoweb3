@@ -25,9 +25,11 @@ pipeline {
       }
     }
 
-    stage('Test') {
+    stage('Clean') {
       steps {
-        echo 'This is the Testing Stage'
+        echo 'This is the Cleaning Stage'
+        sh 'docker image prune -a -y'
+        echo 'Removed all unreferenced and dangling images'
       }
     }
 
