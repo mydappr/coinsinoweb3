@@ -24,5 +24,4 @@ services:
       - '3000:3000'
 networks:
   coinsino:
-    name: coinsino
     external: true
