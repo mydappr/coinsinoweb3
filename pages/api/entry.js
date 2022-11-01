@@ -13,8 +13,9 @@ export default async function handler(req, res) {
 
     console.log(process.env.entryKey);
 
-    if (authorization_key !== process.env.entryKey);
-    return res.status(401).json({ Error: "Unauthorized" });
+    if (authorization_key !== process.env.entryKey) {
+      return res.status(401).json({ Error: "Unauthorized" });
+    }
   } catch (error) {
     return res.status(400).json({ Error: "Not Authorized!" });
   }
