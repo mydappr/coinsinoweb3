@@ -54,7 +54,7 @@ function Header() {
     return `${router.pathname == `/${page}` ? "activeNave" : "inActiveNave"}`;
   };
   return (
-    <div className=" mx-auto  w-full border-b-[0.095rem]     border-coinSinoTextColor2  bg-coinSinoPurpleNav  ">
+    <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/images/bg.png')]  sm:bg-top sm:bg-cover  ">
       {" "}
       <header className="sticky  z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
         <Link href={"/"}>
@@ -95,7 +95,7 @@ function Header() {
               <div className="">
                 <ChevronDownIcon className="h-6" />
               </div>
-              <div className=" absolute top-9 -right-4 hidden  h-[20px]  w-64 space-y-3 rounded-md  text-center     text-coinSinoPink       hover:inline-block  group-hover:inline-block sm:-right-20 sm:w-80">
+              <div className=" absolute top-9 -right-4 hidden  h-[20px]  w-64 space-y-3 rounded-md  text-center     text-coinSinoPink       hover:inline-block  group-hover:inline-block sm:-right-30 sm:w-80">
                 {[2].map((e, i) => (
                   <div
                     key={i}

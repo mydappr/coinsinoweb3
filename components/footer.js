@@ -4,12 +4,12 @@ import { useRef } from "react";
 
 function Footer({ scrollTargetElementRef }) {
   function goToTop() {
-    scrollTargetElementRef.current?.scrollIntoView({ behavior: "smooth" });
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }
   return (
     <div className="w-full  bg-coinSinoPurple">
       <footer className="  mx-auto  flex flex-col items-center justify-between space-y-3  p-2 md:max-w-2xl md:flex-row lg:max-w-4xl xl:max-w-6xl ">
-        <div className="my-5 mt-10 mb-20 space-y-2 ">
+        <div className="my-5 mt-10 mb-28 space-y-2 ">
           {" "}
           <div className="w-25 hidden cursor-pointer md:inline">
             <Image height={30} width={120} src={"/images/logoForDarkBg.png"} />
@@ -104,7 +104,7 @@ function Footer({ scrollTargetElementRef }) {
 
       <button
         onClick={goToTop}
-        className=" z-90 bottom-8 right-8 hidden h-16  w-16  rounded-full border-0 bg-indigo-500 text-3xl font-bold text-white drop-shadow-md sm:fixed sm:block"
+        className=" z-90 fixed bottom-20 right-8 h-12 w-12 rounded-full  border-0  bg-indigo-500  text-3xl font-bold text-white outline-none drop-shadow-md sm:bottom-8 sm:block sm:h-14 sm:w-14 sm:text-5xl"
       >
         &uarr;
       </button>

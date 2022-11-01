@@ -1,15 +1,10 @@
-import { Tabs } from "flowbite-react";
 import CountUp from "react-countup";
 import { useEffect, useRef, useState, Fragment } from "react";
-import { useRouter } from "next/router";
 import { ethers } from "ethers";
 import Sinoabi from "../utils/Coinsino.json";
 import moment from "moment";
 import { useRecoilState } from "recoil";
-import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
-
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
+import { XIcon } from "@heroicons/react/solid";
 
 import {
   latestLotteryId,
@@ -50,7 +45,7 @@ const closed = 2;
 const claimable = 3;
 
 function SectionA({ keys }) {
-  const [buyModalStat, setbuyModalStat] = useRecoilState(buyModal);
+  const [buyModalStat, setbuyModalState] = useRecoilState(buyModal);
   const [countDown, setCoundown] = useRecoilState(timeCountDown);
   const [nextDayDraw, setNextDayDraw] = useState({});
   const [totalLotteryDeposit, setTotalLotteryDeposit] =
@@ -84,9 +79,11 @@ function SectionA({ keys }) {
   const [ethPool, setEthPool] = useState(false);
   const [bnbPool, setBnbPool] = useState(false);
 
+  // closeviewticket
   function closeViewTickets() {
     setShowCurrentTickets(false);
   }
+
   // get operator signer
   const operatorSignerAndContract = async () => {
     // signers wallet get smartcontract
@@ -101,7 +98,7 @@ function SectionA({ keys }) {
     return operatorcoinSinoContract;
   };
 
-  // secA updater
+  // section A updater
   const updater = async () => {
     try {
       const contract = await operatorSignerAndContract();
@@ -158,7 +155,7 @@ function SectionA({ keys }) {
     const antePost = tomorrow.format("A");
 
     setNextDayDraw({
-      hour,
+      year,
       date,
       month,
       hour,
@@ -177,68 +174,11 @@ function SectionA({ keys }) {
     return () => (isSubscribed = false);
   }, [endTime]);
 
-  // const LotteryInfo = async () => {
-  //   try {
-  //     // signers wallet get smartcontract
-  //     const rpcUrl = "https://testnet.telos.net/evm";
-
-  //     // signers wallet get smartcontract
-  //     const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-
-  //     // operator signer and contract
-  //     const operatorSigner = new ethers.Wallet(keys.opkey, operatorProvider);
-  //     const operatorcoinSinoContract = new ethers.Contract(
-  //       coinSinoContractAddress,
-  //       Sinoabi,
-  //       operatorSigner
-  //     );
-  //     // current lotteryid
-  //     const currentLotteryId = await convertHexToInt(
-  //       await operatorcoinSinoContract.viewCurrentLotteryId()
-  //     );
-
-  //     const getLotterystatus = await operatorcoinSinoContract.viewLottery(
-  //       currentLotteryId
-  //     );
-
-  //   } catch (error) {
-  //      (error.message);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   LotteryInfo();
-  // }, []);
-  async function convertInput(date) {
-    const splitDate = date.split(" ");
-    const value = parseInt(splitDate[0]);
-    const interval = splitDate[1];
-    const epoch = moment(new Date()).add(value, interval).toDate();
-    const _epoch = moment(epoch).unix();
-    return _epoch;
-  }
-
-  // const initialStartTime = async () => {
-  //   const initialTime = await convertInput("5 minutes");
-
-  //   if (lotteryStatus === 0 && !endTime) {
-  //     return initialTime;
-  //   } else {
-  //     return null;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   let intervalId = setInterval(initialStartTime, 1000);
-
-  //   return () => clearInterval(intervalId);
-  // }, [lotteryStatus, endTime]);
-
+  // lottrtery countdown timer
   async function countdown() {
     // const initalT = await initialStartTime();
     if (!endTime) return;
     let Time = moment.unix(endTime).format();
-
     const dateString = moment(Time);
     const now = moment();
     const y = dateString.year();
@@ -247,7 +187,6 @@ function SectionA({ keys }) {
     const h = dateString.hours();
     const m = dateString.minute();
     const s = dateString.seconds();
-
     let maxTime = moment();
 
     maxTime.set({
@@ -269,32 +208,13 @@ function SectionA({ keys }) {
         seconds: 0,
       });
       setTimeElapsed(true);
-      // if (
-      //   countDown.days === 0 &&
-      //   countDown.hours === 0 &&
-      //   countDown.minutes === 0 &&
-      //   countDown.seconds === 0
-      // ) {
-      //   // maxTime = moment();
-      //   // maxTime.set({ date: d, hour: h, minute: m, second: s, millisecond: 0 });
-      //   console.log(lotteryStatus);
-      //   if (lotteryStatus === Open) {
-      //     console.log("close");
 
-      //     await closeLottery();
-      //   } else if (lotteryStatus === closed) {
-      //     console.log("drawit");
-
-      //     await drawLottery();
-      //   } else if (lotteryStatus === Pending || lotteryStatus === claimable) {
-      //     console.log("start");
-
-      //     await startLottery();
-      //   }
-      // }
       return;
     }
+
     setTimeElapsed(false);
+
+    // countdown calculation
     const countDownDate = moment.unix(maxTime.unix());
     const timeleft = countDownDate - moment();
     const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
@@ -357,7 +277,7 @@ function SectionA({ keys }) {
                   "cursor-not-allowed bg-gray-600"
                 }`}
                 onClick={() => {
-                  setbuyModalStat(true);
+                  setbuyModalState(true);
                 }}
               >
                 Get your tickets
@@ -605,7 +525,7 @@ function SectionA({ keys }) {
                                   "cursor-not-allowed bg-gray-600"
                                 }`}
                                 onClick={() => {
-                                  setbuyModalStat(true);
+                                  setbuyModalState(true);
                                 }}
                               >
                                 Buy now!
@@ -672,7 +592,7 @@ function SectionA({ keys }) {
                     "cursor-not-allowed bg-gray-600"
                   }`}
                   onClick={() => {
-                    setbuyModalStat(true);
+                    setbuyModalState(true);
                   }}
                 >
                   Join TLOS pool

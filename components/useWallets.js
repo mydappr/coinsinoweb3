@@ -57,7 +57,6 @@ function useWallets() {
         // handle other "switch" errors
       }
       let _networkId = await ethereum.request({ method: "eth_chainId" });
- 
 
       if (_networkId !== chainIdInHex) {
         return;
@@ -87,7 +86,7 @@ function useWallets() {
   const connectWalletConnect = async () => {
     const p = new WalletConnectProvider({
       rpc: {
-        chainId: rpcUrl,
+        41: rpcUrl,
       },
     });
     //  Enable session (triggers QR Code modal)
@@ -153,7 +152,7 @@ function useWallets() {
       if (!ethereum) {
         const p = new WalletConnectProvider({
           rpc: {
-            chainId: rpcUrl,
+            41: rpcUrl,
           },
         });
 
