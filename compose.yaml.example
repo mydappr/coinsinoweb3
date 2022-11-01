@@ -17,9 +17,7 @@ services:
       appId: ${appId}
       measurementId: ${measurementId}
       jwt_secret: ${jwt_secret}
-      startLotteryID: ${startLotteryID}
-      closeLotteryID: ${closeLotteryID}
-      drawLotteryID: ${drawLotteryID}
+      entryKey: ${entryKey}
     ports:
       - '3000:3000'
 networks:

@@ -12,9 +12,7 @@ pipeline {
           appId = credentials('appId')
           measurementId = credentials('measurementId')
           jwt_secret = credentials('jwt_secret')
-          startLotteryID = credentials('startLotteryID')
-          closeLotteryID = credentials('closeLotteryID')
-          drawLotteryID = credentials('drawLotteryID')
+          entryKey = credentials('entryKey')
         }
   stages {
     stage('Build') {
