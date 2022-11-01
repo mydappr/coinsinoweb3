@@ -2,10 +2,6 @@ import { ethers } from "ethers";
 import OperatorFunctions from "../../components/OperatorFunctions";
 import { NonceManager } from "@ethersproject/experimental";
 import Sinoabi from "../../utils/Coinsino.json";
-
-import jwt from "jsonwebtoken";
-import { app, database } from "./Firebase";
-import { doc, getDoc } from "firebase/firestore";
 const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
 
 const { startLottery, closeLottery, drawLottery } = OperatorFunctions();
@@ -15,17 +11,8 @@ export default async function handler(req, res) {
   try {
     const authorization_key = req.headers.authorization;
 
-    console.log(authorization_key);
-    const docRef = doc(database, "authorization", authorization_key);
-    const docSnap = await getDoc(docRef);
-
-    console.log("passed authorization check");
-
-    // console.log(docSnap.exists());
-
-    // check if key exists move to next process
-    if (!docSnap.exists())
-      return res.status(401).json({ Error: "Unauthorized" });
+    if (authorization_key !== process.env.entryKey);
+    return res.status(401).json({ Error: "Unauthorized" });
   } catch (error) {
     return res.status(400).json({ Error: "Not Authorized!" });
   }
