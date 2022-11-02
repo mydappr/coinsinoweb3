@@ -124,7 +124,7 @@ export const connectorType = atom({
 });
 
 export const drandData = atom({
-  key: " _drandData",
+  key: " _drandData ",
   default: {},
 });
 export const timeCountDown = atom({
