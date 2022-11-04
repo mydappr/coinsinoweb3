@@ -1,7 +1,6 @@
 import { useEffect, useState, Fragment, useRef } from "react";
-import { Tabs } from "flowbite-react";
 import CountUp from "react-countup";
-import { BeakerIcon, PlayIcon } from "@heroicons/react/solid";
+import { PlayIcon } from "@heroicons/react/solid";
 import RandomImage from "./randomenumber";
 import {
   latestLotteryId,
@@ -32,8 +31,7 @@ import SectionA from "./sectionA";
 import UseToaster from "./UseToaster";
 import UseLoadingSpinner from "./UseLoadingSpinner";
 import { Dialog, Transition } from "@headlessui/react";
-import { ArrowSmRightIcon, XIcon } from "@heroicons/react/solid";
-
+import { XIcon } from "@heroicons/react/solid";
 import Web3 from "web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { NonceManager } from "@ethersproject/experimental";
@@ -88,6 +86,20 @@ function SectionB({ keys }) {
     return operatorcoinSinoContract;
   };
 
+  const getUserProvider = async () => {
+    let provider;
+    if (providerConnector === "walletConnect") {
+      provider = new WalletConnectProvider({
+        rpc: {
+          [41]: rpcUrl,
+        },
+      });
+    } else if (providerConnector === "metaMask") {
+      provider = window.ethereum;
+    }
+    return provider;
+  };
+
   // to close view ticketModal
   function closeViewTickets() {
     setVieWinningTickets(false);
@@ -110,10 +122,7 @@ function SectionB({ keys }) {
   const closed = 2;
   const claimable = 3;
 
-  console.log(winningNo);
-
   // reward Calculator
-
   let _ticketIds;
   let _tickets;
   let _rewards;
@@ -130,20 +139,11 @@ function SectionB({ keys }) {
     _rewards,
     _rewardpools
   ) => {
-    let provider;
     if (
       providerConnector === "metaMask" ||
       providerConnector === "walletConnect"
     ) {
-      if (providerConnector === "walletConnect") {
-        provider = new WalletConnectProvider({
-          rpc: {
-            [41]: rpcUrl,
-          },
-        });
-      } else if (providerConnector === "metaMask") {
-        provider = window.ethereum;
-      }
+      const provider = await getUserProvider();
 
       await provider.enable();
 
@@ -164,8 +164,7 @@ function SectionB({ keys }) {
         }
       });
 
-      console.log(won_rewardpool);
-
+      // update reward states
       setWonTicketSize(won_tickets.length);
       setclaimpoolLength(won_rewardpool);
       setwonId(wonId);
@@ -206,27 +205,17 @@ function SectionB({ keys }) {
       }
     }
   };
+
   // check ticket
   let Check = async () => {
     try {
-      let provider;
-
       setisloading(true);
 
       if (
         providerConnector === "metaMask" ||
         providerConnector === "walletConnect"
       ) {
-        if (providerConnector === "walletConnect") {
-          provider = new WalletConnectProvider({
-            rpc: {
-              [41]: rpcUrl,
-            },
-          });
-        } else if (providerConnector === "metaMask") {
-          provider = window.ethereum;
-        }
-
+        const provider = await getUserProvider();
         await provider.enable();
 
         const web3 = new Web3(provider);
@@ -294,7 +283,6 @@ function SectionB({ keys }) {
 
           rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
         } else {
-          console.log("less ");
           const viewMaxRewardsForTicketId = await coinSinoContract.methods
             .viewMaxRewardsForTicketId(
               currentAccount,
@@ -308,9 +296,6 @@ function SectionB({ keys }) {
           _tickets = viewMaxRewardsForTicketId[1];
           _rewards = viewMaxRewardsForTicketId[2];
           _rewardpools = viewMaxRewardsForTicketId[3];
-
-          // const userTickets = _tickets.map((e) => Number(e));
-          // setUserTickets(userTickets);
 
           rewardCalculator(_ticketIds, _tickets, _rewards, _rewardpools);
         }
@@ -469,46 +454,7 @@ function SectionB({ keys }) {
             setisReady(true);
           }
         }
-
-        // const userticketIds = [];
-        // for (let i = 0; i < userInfo[0].length; i++) {
-        //   const ticketId = Number(userInfo[0][i]);
-        //   userticketIds.push(ticketId);
-        // }
-
-        //   const userInfo =
-        //   await operatorcoinSinoContract.viewUserInfoForLotteryId(
-        //     currentAccount,
-        //     roundCount,
-        //     0,
-        //     100
-        //   );
-
-        // const userticketIds = [];
-        // for (let i = 0; i < userInfo[0].length; i++) {
-        //   const ticketId = Number(userInfo[0][i]);
-        //   userticketIds.push(ticketId);
-        // }
-
-        // // list of user's tickets
-        // const list =
-        //   await operatorcoinSinoContract.viewNumbersAndStatusesForTicketIds(
-        //     userticketIds
-        //   );
-
-        // setUserTickets(list[0]);
       }
-
-      // setWinningNO(finalNumber);
-      // setLastDrawTime({
-      //   year,
-      //   hour,
-      //   date,
-      //   month,
-      //   hour,
-      //   minute,
-      //   antePost,
-      // });
 
       // setisReady(true);
     } catch (error) {
@@ -554,8 +500,15 @@ function SectionB({ keys }) {
     }
   };
 
+  // firework
+  const options = {
+    mouse: { click: false, move: false, max: 3 },
+  };
+
   return (
     <section className="   my-0  mx-auto mt-10 mb-40 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
+      {/* sjdsjd */}
+
       <h2 className=" text-center text-lg font-bold text-coinSinoGreen">
         Finished Rounds
       </h2>
@@ -591,6 +544,7 @@ function SectionB({ keys }) {
           )}
         </div>
       )}
+
       <div className=" my-5  p-2">
         {rewardMessage && (
           <div className="space-y-5 text-center text-white">
@@ -600,10 +554,7 @@ function SectionB({ keys }) {
             </p>
 
             {unClaimedUserRewards > 0 && rewardMessage != "Reward Claimed!" && (
-              <img
-                src="./images/congratulations.gif"
-                className="  mx-auto mt-0 w-80 "
-              />
+              <div className="mx-auto mt-0   h-72 w-72 bg-black bg-[url('/images/congratulations.gif')]  bg-cover md:h-96  md:w-96" />
             )}
 
             {unClaimedUserRewards > 0 && rewardMessage != "Reward Claimed!" && (
@@ -827,6 +778,7 @@ function SectionB({ keys }) {
                           defaultValue={roundCount}
                           onChange={(e) => {
                             e.preventDefault();
+                            setisReady(false);
                             let invalidChars = /[^0-9]/gi;
                             if (invalidChars.test(e.target.value)) {
                               e.target.value = e.target.value.replace(
