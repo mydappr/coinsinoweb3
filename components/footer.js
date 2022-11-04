@@ -1,8 +1,20 @@
+import { ChevronDoubleUpIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function Footer({ scrollTargetElementRef }) {
+  const [atTheTop, setAtTheTop] = useState(false);
+  useEffect(() => {
+    window.onscroll = () => {
+      if (window.pageYOffset === 0) {
+        setAtTheTop(true);
+      } else setAtTheTop(false);
+    };
+
+    return () => (window.onscroll = null);
+  });
+
   function goToTop() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }
@@ -102,12 +114,14 @@ function Footer({ scrollTargetElementRef }) {
         </div>
       </footer>
 
-      <button
-        onClick={goToTop}
-        className=" z-90 fixed bottom-20 right-8 h-12 w-12 rounded-full  border-0  bg-indigo-500  text-3xl font-bold text-white outline-none drop-shadow-md sm:bottom-8 sm:block sm:h-14 sm:w-14 sm:text-5xl"
-      >
-        &uarr;
-      </button>
+      {!atTheTop && (
+        <button
+          onClick={goToTop}
+          className=" z-90 fixed bottom-20 right-8 h-12 w-12 rounded-full  border-0  bg-coinSinoPink  text-3xl font-bold text-white outline-none drop-shadow-md sm:bottom-8 sm:block sm:h-14 sm:w-14 sm:text-5xl"
+        >
+          <ChevronDoubleUpIcon className="mx-auto mt-0 h-7" />
+        </button>
+      )}
     </div>
   );
 }

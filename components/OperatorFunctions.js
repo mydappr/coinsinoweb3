@@ -70,21 +70,6 @@ function OperatorFunctions() {
     console.log("starting from operatorfuncs");
 
     try {
-      // signers wallet get smartcontract
-      // const operatorProvider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      // // operator signer and contract
-
-      // const operatorSigner = new ethers.Wallet(
-      //   process.env.opkey,
-      //   operatorProvider
-      // );
-      // const managedSigner = new NonceManager(operatorSigner);
-
-      // const operatorcoinSinoContract = new ethers.Contract(
-      //   coinSinoContractAddress,
-      //   Sinoabi,
-      //   managedSigner
-      // );
       const lottryDuration = await convertInput("28 minutes");
 
       // start a lottery
