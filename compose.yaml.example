@@ -19,7 +19,7 @@ services:
       jwt_secret: ${jwt_secret}
       entryKey: ${entryKey}
     ports:
-      - '80:3000'
+      - '82:3000'
 networks:
   coinsino:
     external: true
