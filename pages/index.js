@@ -61,16 +61,6 @@ export default function Home({
 }) {
   const opkey = process.env.opkey;
 
-  // initial lotterdata
-
-  InitialLotteryData(
-    _endTime,
-    _lotteryid,
-    _status,
-    _amountCollectedInTelos,
-    opkey
-  );
-
   return (
     <div>
       <Head>
@@ -84,6 +74,13 @@ export default function Home({
         className=" border-transparent  bg-[url('/images/bg.png')]  bg-center"
       >
         <Header />
+        <InitialLotteryData
+          _endTime={_endTime}
+          _lotteryid={_lotteryid}
+          _status={_status}
+          _amountCollectedInTelos={_amountCollectedInTelos}
+          opkey={opkey}
+        />
         <SectionA keys={opkey} />
       </div>
       <SectionB keys={opkey} />

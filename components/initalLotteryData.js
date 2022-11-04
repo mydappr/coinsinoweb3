@@ -31,11 +31,11 @@ const closed = 2;
 const claimable = 3;
 
 function InitialLotteryData(
-  _endTime,
+  {_endTime,
   _lotteryid,
   _status,
   _amountCollectedInTelos,
-  opkey
+  opkey}
 ) {
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
 
@@ -162,8 +162,7 @@ function InitialLotteryData(
   };
 
   useEffect(() => {
-    let intervalId = setInterval(getLatestLotteryInfo, 1000);
-    return () => clearInterval(intervalId);
+     getLatestLotteryInfo()
   }, [currentLotteryId, endTime, lotteryStatus, totalLotteryDeposit]);
 
   // fetch user tickets on launch
@@ -213,6 +212,8 @@ function InitialLotteryData(
 
     return () => (isSubscribed = false);
   }, [currentLotteryId, currentAccount]);
+
+  return <></>;
 }
 
 export default InitialLotteryData;
