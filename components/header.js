@@ -54,7 +54,7 @@ function Header() {
     return `${router.pathname == `/${page}` ? "activeNave" : "inActiveNave"}`;
   };
   return (
-    <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/images/bg.png')]  sm:bg-top sm:bg-cover  ">
+    <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/images/bg.png')]  sm:bg-cover sm:bg-top  ">
       {" "}
       <header className="sticky  z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
         <Link href={"/"}>
@@ -95,7 +95,7 @@ function Header() {
               <div className="">
                 <ChevronDownIcon className="h-6" />
               </div>
-              <div className=" absolute top-9 -right-4 hidden  h-[20px]  w-64 space-y-3 rounded-md  text-center     text-coinSinoPink       hover:inline-block  group-hover:inline-block sm:-right-30 sm:w-80">
+              <div className=" sm:-right-30 absolute top-9 -right-4  hidden  h-[20px] w-64 space-y-3  rounded-md     text-center       text-coinSinoPink  hover:inline-block group-hover:inline-block sm:w-80">
                 {[2].map((e, i) => (
                   <div
                     key={i}
@@ -118,7 +118,7 @@ function Header() {
           <div
             className={`flex flex-col ${naveStyle("faq")} cursor-pointer`}
             onClick={() => {
-              router.push("/faq");
+              router.push("/faq", undefined, { shallow: true });
             }}
           >
             <div>
@@ -130,7 +130,7 @@ function Header() {
           <div
             className={`flex flex-col ${naveStyle("winners")} cursor-pointer`}
             onClick={() => {
-              router.push("/winners");
+              router.push("/winners", undefined, { shallow: true });
             }}
           >
             <div>
@@ -144,7 +144,7 @@ function Header() {
           <div
             className={`flex flex-col ${naveStyle("oddPool")} cursor-pointer`}
             onClick={() => {
-              router.push("/oddPool");
+              router.push("/oddPool", undefined, { shallow: true });
             }}
           >
             <div>

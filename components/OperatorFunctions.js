@@ -70,7 +70,7 @@ function OperatorFunctions() {
     console.log("starting from operatorfuncs");
 
     try {
-      const lottryDuration = await convertInput("28 minutes");
+      const lottryDuration = await convertInput("718 minutes");
 
       // start a lottery
       const startLottery = await operatorcoinSinoContract.startLottery(

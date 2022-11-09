@@ -500,10 +500,7 @@ function SectionB({ keys }) {
     }
   };
 
-  // firework
-  const options = {
-    mouse: { click: false, move: false, max: 3 },
-  };
+ 
 
   return (
     <section className="   my-0  mx-auto mt-10 mb-40 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">
