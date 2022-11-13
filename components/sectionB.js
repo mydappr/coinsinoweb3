@@ -377,6 +377,7 @@ function SectionB({ keys }) {
       console.log(error);
       setClaiming(false);
       setRewardMessage("");
+      setisloading(false);
     }
   };
 
@@ -499,8 +500,6 @@ function SectionB({ keys }) {
       setLastDrawTime([]);
     }
   };
-
- 
 
   return (
     <section className="   my-0  mx-auto mt-10 mb-40 w-full p-2 text-white md:max-w-2xl lg:max-w-4xl    xl:max-w-6xl   ">

@@ -53,6 +53,8 @@ export const getServerSideProps = async () => {
   };
 };
 
+
+
 export default function Home({
   _endTime,
   _lotteryid,

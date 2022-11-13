@@ -647,7 +647,7 @@ function SectionA({ keys }) {
               </p>
             </div>
           </div>
-          <p className=" mt-3 p-2 text-center text-lg text-coinSinoTextColor">
+          <p className=" mt-3 p-2 text-center text-base text-coinSinoTextColor">
             Match the winning numbers in the same order and share prizes:
             Current prizes for grabs
           </p>
@@ -723,14 +723,14 @@ function SectionA({ keys }) {
             </ul>
           </div>
 
-          <div className=" mx-auto my-0    max-w-[700px]">
+          <div className=" mx-auto my-0 max-w-[700px] p-5    text-center">
             {telosPool && (
-              <div className="flex   flex-wrap justify-start gap-2 sm:justify-start">
+              <div className="flex flex-wrap  gap-2 sm:justify-start">
                 <div className=" poolBar">
                   <h2 className="text-base  font-bold  text-coinSinoTextColor">
                     March first 1
                   </h2>
-                  <strong className="text-lg font-bold  text-coinSinoGreen">
+                  <strong className="text-base font-bold  text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -755,7 +755,8 @@ function SectionA({ keys }) {
                   <h2 className="text-base font-bold  text-coinSinoTextColor">
                     March first 2
                   </h2>
-                  <strong className="text-lg font-bold text-coinSinoGreen">
+
+                  <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -765,7 +766,7 @@ function SectionA({ keys }) {
                     />
                     TLOS
                   </strong>
-                  <p className=" text-center   text-coinSinoTextColor2">
+                  <p className="    text-coinSinoTextColor2">
                     ~$
                     <CountUp
                       duration={3}
@@ -777,10 +778,10 @@ function SectionA({ keys }) {
                   </p>
                 </div>
                 <div className="poolBar">
-                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                  <h2 className="text-base font-bold  text-coinSinoTextColor">
                     March first 3
                   </h2>
-                  <strong className="text-lg font-bold text-coinSinoGreen">
+                  <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -790,7 +791,7 @@ function SectionA({ keys }) {
                     />{" "}
                     TLOS
                   </strong>
-                  <p className=" text-center   text-coinSinoTextColor2">
+                  <p className="    text-coinSinoTextColor2">
                     ~${" "}
                     <CountUp
                       duration={3}
@@ -802,10 +803,10 @@ function SectionA({ keys }) {
                   </p>
                 </div>
                 <div className="poolBar">
-                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                  <h2 className="text-base font-bold  text-coinSinoTextColor">
                     March first 4
                   </h2>
-                  <strong className="text-lg font-bold text-coinSinoGreen">
+                  <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -815,7 +816,7 @@ function SectionA({ keys }) {
                     />{" "}
                     TLOS
                   </strong>
-                  <p className=" text-center   text-coinSinoTextColor2">
+                  <p className="    text-coinSinoTextColor2">
                     ~${" "}
                     <CountUp
                       duration={3}
@@ -827,10 +828,10 @@ function SectionA({ keys }) {
                   </p>
                 </div>
                 <div className="poolBar">
-                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                  <h2 className="text-base font-bold  text-coinSinoTextColor">
                     March first 5
                   </h2>
-                  <strong className="text-lg font-bold text-coinSinoGreen">
+                  <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -840,7 +841,7 @@ function SectionA({ keys }) {
                     />{" "}
                     TLOS
                   </strong>
-                  <p className=" text-center   text-coinSinoTextColor2">
+                  <p className="    text-coinSinoTextColor2">
                     ~${" "}
                     <CountUp
                       duration={3}
@@ -852,10 +853,10 @@ function SectionA({ keys }) {
                   </p>
                 </div>
                 <div className="poolBar">
-                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                  <h2 className="text-base font-bold  text-coinSinoTextColor">
                     March first 6
                   </h2>
-                  <strong className="text-lg font-bold text-coinSinoGreen">
+                  <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -865,7 +866,7 @@ function SectionA({ keys }) {
                     />{" "}
                     TLOS
                   </strong>
-                  <p className=" text-center   text-coinSinoTextColor2">
+                  <p className="    text-coinSinoTextColor2">
                     ~${" "}
                     <CountUp
                       duration={3}
@@ -878,10 +879,10 @@ function SectionA({ keys }) {
                 </div>
 
                 <div className="poolBar">
-                  <h2 className="text-lg font-bold  text-coinSinoTextColor">
+                  <h2 className="text-base font-bold  text-coinSinoTextColor">
                     Platform fee
                   </h2>
-                  <strong className="text-lg font-bold text-coinSinoGreen">
+                  <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
                       duration={3}
                       separator=" "
@@ -891,7 +892,7 @@ function SectionA({ keys }) {
                     />{" "}
                     TLOS
                   </strong>
-                  <p className=" text-center   text-coinSinoTextColor2">
+                  <p className="    text-coinSinoTextColor2">
                     ~$
                     <CountUp
                       duration={3}

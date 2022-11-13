@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import { RecoilRoot } from "recoil";
+import { useEffect } from "react";
 
 function MyApp({ Component, pageProps }) {
   return (

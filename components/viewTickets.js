@@ -84,25 +84,10 @@ function ViewTickets() {
                     />
                   </Dialog.Title>
 
-                  {/* <div className=" text-md space-y-10 border-t-[1px] border-coinSinoTextColor2 text-center">
-                    <h2 className="my-5 font-bold text-coinSinoTextColor">
-                      Winning Number
-                    </h2>
-                    <RandomImage />
-                  </div> */}
                   <p className="flex justify-between">
                     <span className=" text-xs text-white">Total tickets</span>{" "}
                     <span className="">{userTickets.length}</span>
                   </p>
-
-                  {/* <p className="flex justify-between">
-                    <span className=" text-xs text-white">Winning tickets</span>{" "}
-                    <span className="">{wonTicketSize}</span>
-                  </p> */}
-
-                  {/* <p className="text-sm">
-                    You matched the following number(s) in pink
-                  </p> */}
 
                   <div className="mt-2">
                     <div className="text-sm ">

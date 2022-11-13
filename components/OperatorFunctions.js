@@ -21,7 +21,7 @@ const claimable = 3;
 
 function OperatorFunctions() {
   console.log(
-    "----------------------------------------------------starting----------------------------------------------------"
+    "----------------------------------------------------OperatorFunctions----------------------------------------------------"
   );
   // const [currentLotteryId, setCurrentLotteryId] =
   //   useRecoilState(latestLotteryId);
@@ -78,7 +78,7 @@ function OperatorFunctions() {
         ethers.utils.parseUnits(pricePerTicket, "ether"),
         2000,
         [500, 960, 1430, 1910, 2390, 2810],
-        1000
+        500
       );
       console.log("asigned start");
 

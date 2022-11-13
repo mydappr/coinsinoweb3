@@ -30,13 +30,13 @@ const Open = 1;
 const closed = 2;
 const claimable = 3;
 
-function InitialLotteryData(
-  {_endTime,
+function InitialLotteryData({
+  _endTime,
   _lotteryid,
   _status,
   _amountCollectedInTelos,
-  opkey}
-) {
+  opkey,
+}) {
   const [unClaimedUserRewards, setunClaimedUserRewards] = useState(0);
 
   const [userTickets, setUserTickets] = useRecoilState(accountTicket);
@@ -162,7 +162,8 @@ function InitialLotteryData(
   };
 
   useEffect(() => {
-     getLatestLotteryInfo()
+    let intervalId = setInterval(getLatestLotteryInfo, 1000);
+    return () => clearInterval(intervalId);
   }, [currentLotteryId, endTime, lotteryStatus, totalLotteryDeposit]);
 
   // fetch user tickets on launch
