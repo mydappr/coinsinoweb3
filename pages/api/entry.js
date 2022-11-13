@@ -11,8 +11,6 @@ export default async function handler(req, res) {
   try {
     const authorization_key = req.headers.authorization;
 
-    console.log(process.env.entryKey);
-
     if (authorization_key !== process.env.entryKey) {
       return res.status(401).json({ Error: "Unauthorized" });
     }

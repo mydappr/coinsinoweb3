@@ -26,22 +26,24 @@ function Footer({ scrollTargetElementRef }) {
           <div className="w-25 hidden cursor-pointer md:inline">
             <Image height={30} width={120} src={"/images/logoForDarkBg.png"} />
           </div>
-          <p className="text-lg text-coinSinoTextColor2">
+          <p className="text-lg text-coinSinoTextColor2 ">
             © 2022 coinSino. All Rights Reserved.
           </p>
           <ul className="flex space-x-2">
             <li className="group cursor-pointer">
-              <img
-                className="w-15 h-15 group-hover:hidden"
-                src={"/images/twitterActive.png"}
-              />
-              <img
-                className="w-15 h-15 hidden group-hover:inline"
-                src={"/images/twitterInActive.png"}
-              />
+              <a href="https://twitter.com/mydappr">
+                <img
+                  className="w-15 h-15 group-hover:hidden"
+                  src={"/images/twitterActive.png"}
+                />
+                <img
+                  className="w-15 h-15 hidden group-hover:inline"
+                  src={"/images/twitterInActive.png"}
+                />
+              </a>
             </li>
 
-            <li className="group cursor-pointer">
+            {/* <li className="group cursor-pointer">
               <img
                 className="w-15 h-15 group-hover:hidden"
                 src={"/images/fbActive.png"}
@@ -50,41 +52,47 @@ function Footer({ scrollTargetElementRef }) {
                 className="w-15 h-15 hidden group-hover:inline"
                 src={"/images/fbInActive.png"}
               />
+            </li> */}
+
+            <li className="group cursor-pointer">
+              <a href="https://www.instagram.com/mydappr.io/?hl=en">
+                <img
+                  className="w-15 h-15 group-hover:hidden"
+                  src={"/images/instagramActive.png"}
+                />
+                <img
+                  className="w-15 h-15 hidden group-hover:inline"
+                  src={"/images/instagramInActive.png"}
+                />
+              </a>
             </li>
 
             <li className="group cursor-pointer">
-              <img
-                className="w-15 h-15 group-hover:hidden"
-                src={"/images/instagramActive.png"}
-              />
-              <img
-                className="w-15 h-15 hidden group-hover:inline"
-                src={"/images/instagramInActive.png"}
-              />
+              <a href="https://github.com/mydappr">
+                <img
+                  className="w-15 h-15 group-hover:hidden"
+                  src={"/images/githubActive.png"}
+                />
+                <img
+                  className="w-15 h-15 hidden group-hover:inline"
+                  src={"/images/githubInActive.png"}
+                />
+              </a>
             </li>
 
             <li className="group cursor-pointer">
-              <img
-                className="w-15 h-15 group-hover:hidden"
-                src={"/images/githubActive.png"}
-              />
-              <img
-                className="w-15 h-15 hidden group-hover:inline"
-                src={"/images/githubInActive.png"}
-              />
+              <a href="https://medium.com/@MydAppr">
+                <img
+                  className="w-15 h-15 group-hover:hidden"
+                  src={"/images/mediumActive.png"}
+                />
+                <img
+                  className="w-15 h-15 hidden group-hover:inline"
+                  src={"/images/mediumInActive.png"}
+                />
+              </a>
             </li>
-
-            <li className="group cursor-pointer">
-              <img
-                className="w-15 h-15 group-hover:hidden"
-                src={"/images/mediumActive.png"}
-              />
-              <img
-                className="w-15 h-15 hidden group-hover:inline"
-                src={"/images/mediumInActive.png"}
-              />
-            </li>
-
+            {/* 
             <li className="group cursor-pointer">
               <img
                 className="w-15 h-15 group-hover:hidden"
@@ -94,7 +102,7 @@ function Footer({ scrollTargetElementRef }) {
                 className="w-15 h-15 hidden group-hover:inline"
                 src={"/images/telegramInActive.png"}
               />
-            </li>
+            </li> */}
           </ul>
         </div>
 

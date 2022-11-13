@@ -57,7 +57,7 @@ function Header() {
     <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/images/bg.png')]  sm:bg-cover sm:bg-top  ">
       {" "}
       <header className="sticky  z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
-        <Link href={"/"}>
+        <Link href="/" passHref>
           <a>
             {" "}
             <Image height={30} width={100} src={"/images/logoForDarkBg.png"} />
@@ -115,27 +115,24 @@ function Header() {
 
         <ul className="fixed  bottom-0 left-0 z-10 flex h-16 w-full items-center  justify-between rounded-xl border border-coinSinoTextColor2 bg-coinSinoPurpleNav p-2  text-center text-xs font-bold text-white/80     sm:static  sm:top-0      sm:float-right  sm:w-fit  sm:space-x-3 sm:border-none sm:text-base ">
           {/* how to play */}
-          <div
-            className={`flex flex-col ${naveStyle("faq")} cursor-pointer`}
-            onClick={() => {
-              router.push("/faq", undefined, { shallow: true });
-            }}
-          >
-            <div>
-              <a>How to play</a>
-            </div>
+          <div className={`flex flex-col ${naveStyle("faq")} cursor-pointer`}>
+            <Link href="/faq" passHref>
+              <a target="_blank" rel="noopener noreferrer">
+                How to play
+              </a>
+            </Link>
             <QuestionMarkCircleIcon className="h-6 self-center text-center sm:hidden" />
           </div>
 
           <div
             className={`flex flex-col ${naveStyle("winners")} cursor-pointer`}
-            onClick={() => {
-              router.push("/winners", undefined, { shallow: true });
-            }}
           >
-            <div>
-              <a>Winner list</a>
-            </div>
+            <Link href="/winners" passHref>
+              <a target="_blank" rel="noopener noreferrer">
+                Winner list
+              </a>
+            </Link>
+
             <ViewListIcon className="h-6 self-center text-center sm:hidden" />
           </div>
 
@@ -143,13 +140,12 @@ function Header() {
 
           <div
             className={`flex flex-col ${naveStyle("oddPool")} cursor-pointer`}
-            onClick={() => {
-              router.push("/oddPool", undefined, { shallow: true });
-            }}
           >
-            <div>
-              <a>Odd Pool</a>
-            </div>
+            <Link href="/oddPool" passHref>
+              <a target="_blank" rel="noopener noreferrer">
+                Odd pool
+              </a>
+            </Link>
             <LightningBoltIcon className="h-6 self-center text-center sm:hidden" />
           </div>
         </ul>

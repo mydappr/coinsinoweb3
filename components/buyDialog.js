@@ -239,13 +239,6 @@ export default function BuyDialog() {
 
         if (_networkId !== chainId) return;
 
-        // const accounts = await ethereum.request({
-        //   method: "eth_requestAccounts",
-        // });
-        // let chainId = await ethereum.request({ method: "eth_chainId" });
-
-        // if (Number(chainId) !== 41) return;
-
         const _costOfTickets = ethers.utils.parseUnits(
           String(Number(pricePerTicket) * noOfTickets),
           "ether"
@@ -253,12 +246,6 @@ export default function BuyDialog() {
         const costOfTickets = BigNumber.from(String(_costOfTickets));
 
         // buy a ticket and wait for completion
-
-        // const tickets = await generateTicketNumbers(noOfTickets);
-        // console.log("user tickets", tickets);
-
-        // const gas_price = await web3.eth.getGasPrice();
-        // let block = await web3.eth.getBlock("latest");
 
         const buyTicket = await coinSinoContract.methods
           .buyTickets(currentLotteryId, listOfTicketsToBuy)
@@ -474,11 +461,6 @@ export default function BuyDialog() {
                     </p>
                   )}
                   <div className="mt-5 max-h-60 space-y-2 overflow-y-scroll text-xs text-coinSinoTextColor2   scrollbar-hide">
-                    {/* <div className="flex w-full items-center justify-between text-sm  font-bold  ">
-                      <p>Buy</p>
-                      <p>Tickets</p>
-                    </div> */}
-
                     {listOfTicketsToBuy.map((el, li) => {
                       const splitTicket = Array.from(String(el));
 
@@ -509,29 +491,6 @@ export default function BuyDialog() {
                         </p>
                       );
                     })}
-
-                    {/* <p className=" absolute bottom-2 right-2 text-xs   text-coinSinoTextColor2 ">
-                        {noOfTickets > 0 && `~ ${totalTicketsPrice} Tlos`}
-                      </p> */}
-                    {/* 
-                    {userBalance < totalTicketsPrice && (
-                      <div className="text-end ">
-                        <p className=" text-coinSinoPink  ">
-                          Insufficient CAKE balance
-                        </p>
-                        <p>Telos Balance: {userBalance}</p>
-                      </div>
-                    )}
-                    <p className="flex justify-between">
-                      <span>Cost (Telos)</span>
-                      <span> 3 Telos</span>
-                    </p>
-                    <ps className="flex justify-between">
-                      <span>0% Bulk discount</span> <span>~0 CAKE</span>
-                    </ps>
-                    <p className="flex justify-between">
-                      <span>You pay</span> <span>~1.18 CAKE</span>
-                    </p> */}
                   </div>
                   <div className=" mt-5 space-y-2    text-coinSinoTextColor2">
                     {" "}
