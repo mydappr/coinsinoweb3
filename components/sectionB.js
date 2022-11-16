@@ -627,7 +627,7 @@ function SectionB({ keys }) {
                               <h2 className="my-5 font-bold text-coinSinoTextColor">
                                 Winning Number
                               </h2>
-                              <RandomImage />
+                              <RandomImage winningNo={winningNo} />
                             </div>
                             <p className="flex justify-between">
                               <span className=" text-xs text-white">

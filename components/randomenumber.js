@@ -33,7 +33,7 @@ function RandomImage() {
   return (
     <>
       {splittedWinningValues.length > 5 ? (
-        <div className="mx-auto  mt-0 flex w-[]   max-w-lg  items-center justify-between  ">
+        <div className="mx-auto  mt-0 flex    max-w-lg  items-center justify-between  ">
           {splittedWinningValues.map((e, i) => {
             const balls =
               i === 0

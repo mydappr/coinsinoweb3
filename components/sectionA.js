@@ -189,6 +189,10 @@ function SectionA({ keys }) {
     const s = dateString.seconds();
     let maxTime = moment();
 
+
+
+    
+
     maxTime.set({
       year: y,
       month: mo,
@@ -440,13 +444,7 @@ function SectionA({ keys }) {
                       onClick={() => setShowCurrentTickets(true)}
                       className=" cursor-pointer text-lg text-coinSinoGreen  hover:bg-coinSinoPurple hover:text-coinSinoGreen"
                     >
-                      <CountUp
-                        duration={3}
-                        separator=" "
-                        decimals={0}
-                        decimal="."
-                        end={currentUserTicket.length}
-                      />{" "}
+                      {currentUserTicket.length}
                     </strong>{" "}
                     ticket for the current round
                   </span>
@@ -640,10 +638,10 @@ function SectionA({ keys }) {
             </div>
             <div>
               <p className="joinBtn cursor-not-allowed bg-gray-600">
-                Join SOL pool
+                Join Eos pool
               </p>
               <p className=" mt-3 text-center">
-                Total SOL: <strong className=" text-coinSinoGreen">0</strong>
+                Total Eos: <strong className=" text-coinSinoGreen">0</strong>
               </p>
             </div>
           </div>
@@ -677,7 +675,7 @@ function SectionA({ keys }) {
               </li>
               <li className="mr-2" role="presentation">
                 <button
-                  disabled={true}
+                  
                   className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
                     bnbPool &&
                     " border-blue-600  text-blue-600 hover:text-blue-600"
@@ -725,10 +723,10 @@ function SectionA({ keys }) {
 
           <div className=" mx-auto my-0 max-w-[700px] p-5    text-center">
             {telosPool && (
-              <div className="flex flex-wrap  gap-2 sm:justify-start">
+              <div className="flex flex-wrap  gap-2 justify-between  sm:justify-start ">
                 <div className=" poolBar">
                   <h2 className="text-base  font-bold  text-coinSinoTextColor">
-                    March first 1
+                    Match first 1
                   </h2>
                   <strong className="text-base font-bold  text-coinSinoGreen">
                     <CountUp
@@ -753,7 +751,7 @@ function SectionA({ keys }) {
                 </div>
                 <div className="poolBar">
                   <h2 className="text-base font-bold  text-coinSinoTextColor">
-                    March first 2
+                    Match first 2
                   </h2>
 
                   <strong className="text-base font-bold text-coinSinoGreen">
@@ -779,7 +777,7 @@ function SectionA({ keys }) {
                 </div>
                 <div className="poolBar">
                   <h2 className="text-base font-bold  text-coinSinoTextColor">
-                    March first 3
+                    Match first 3
                   </h2>
                   <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
@@ -804,7 +802,7 @@ function SectionA({ keys }) {
                 </div>
                 <div className="poolBar">
                   <h2 className="text-base font-bold  text-coinSinoTextColor">
-                    March first 4
+                    Match first 4
                   </h2>
                   <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
@@ -829,7 +827,7 @@ function SectionA({ keys }) {
                 </div>
                 <div className="poolBar">
                   <h2 className="text-base font-bold  text-coinSinoTextColor">
-                    March first 5
+                    Match first 5
                   </h2>
                   <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
@@ -854,7 +852,7 @@ function SectionA({ keys }) {
                 </div>
                 <div className="poolBar">
                   <h2 className="text-base font-bold  text-coinSinoTextColor">
-                    March first 6
+                    Match first 6
                   </h2>
                   <strong className="text-base font-bold text-coinSinoGreen">
                     <CountUp
