@@ -7,10 +7,32 @@ import {
   ChevronUpIcon,
   XCircleIcon,
 } from "@heroicons/react/solid";
+import { useEffect, useRef, useState } from "react";
 
 function Faq() {
   const winning_Number_Example = 264939;
   const splittedWinningValues = Array.from(String(winning_Number_Example));
+  const [lottie, setLottie] = useState();
+  const ref = useRef(null);
+  useEffect(() => {
+    import("@lottiefiles/lottie-player");
+  });
+
+  useEffect(() => {
+    if (lottie && ref.current) {
+      const animation = lottie.loadAnimation({
+        container: ref.current,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        // path to your animation file, place it inside public folder
+        path: "/images/faq.json",
+      });
+
+      return () => animation.destroy();
+    }
+  }, [lottie]);
+
   return (
     <>
       {" "}
@@ -20,13 +42,22 @@ function Faq() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <div className="mx-auto my-10  md:max-w-2xl    lg:max-w-4xl  xl:max-w-6xl">
-        <div className="p-5">
+      <div className="mx-auto my-10    md:max-w-2xl    lg:max-w-4xl  xl:max-w-6xl">
+        <div className="p-5 lg:p-0">
           <div className="flex flex-col justify-between  text-coinSinoTextColor">
             {/* how to play */}
 
-            <div className="mx-auto    items-center sm:flex sm:w-full sm:justify-between sm:space-x-10 ">
-              <div className="">
+            <div className="mx-auto   items-center space-y-5  md:flex md:w-full md:flex-wrap md:justify-between md:space-x-10 ">
+              <div className="mx-auto max-w-xs">
+                <lottie-player
+                  id="firstLottie"
+                  ref={ref}
+                  autoplay
+                  mode="normal"
+                  src="./images/faq.json"
+                />
+              </div>
+              {/* <div className="">
                 {" "}
                 <h1 className="m-5 text-center text-2xl font-bold text-coinSinoGreen sm:m-0 sm:text-start ">
                   How to Enter Lottery
@@ -35,12 +66,12 @@ function Faq() {
                   The lottery is open for you to join, you can follow this
                   simple step to begin{" "}
                 </p>
-              </div>
-              <div className="mx-auto w-full max-w-md rounded-2xl bg-slate-300 p-2 text-coinSinoPurpleNav">
+              </div> */}
+              {/* <div className="mx-auto w-full max-w-md rounded-2xl bg-slate-300 p-2 text-coinSinoPurpleNav">
                 <Disclosure>
                   {({ open }) => (
                     <>
-                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
                         <span>Step1: Connect your wallet</span>
 
                         <ChevronUpIcon
@@ -49,7 +80,7 @@ function Faq() {
                           } h-5 w-5 text-purple-500`}
                         />
                       </Disclosure.Button>
-                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm">
+                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base">
                         Make sure you have the supported crypto token then
                         afterwards connect your wallet by clicking &apos;connect
                         wallet&apos;.
@@ -60,7 +91,7 @@ function Faq() {
                 <Disclosure as="div" className="mt-2">
                   {({ open }) => (
                     <>
-                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
                         <span>Step2: Purchase Tickets</span>
                         <ChevronUpIcon
                           className={`${
@@ -68,7 +99,7 @@ function Faq() {
                           } h-5 w-5 text-purple-500`}
                         />
                       </Disclosure.Button>
-                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm ">
+                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
                         Click the buy ticket button, you can manually edit your
                         tickets or randomly generate tickets. Max buy at once is
                         50 tickets but you can purchase 50 tickets as many as
@@ -81,7 +112,7 @@ function Faq() {
                 <Disclosure as="div" className="mt-2">
                   {({ open }) => (
                     <>
-                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
                         <span>Step3: The draw is a must </span>
 
                         <ChevronUpIcon
@@ -90,7 +121,7 @@ function Faq() {
                           } h-5 w-5 text-purple-500`}
                         />
                       </Disclosure.Button>
-                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm">
+                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base">
                         Wait for the draw to check if you are lucky. The draw
                         happens at least once everyday between 1:00 AM UTC
                         daily.
@@ -102,7 +133,7 @@ function Faq() {
                 <Disclosure as="div" className="mt-2">
                   {({ open }) => (
                     <>
-                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+                      <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
                         <span>Step4: Check to see if you won</span>
 
                         <ChevronUpIcon
@@ -111,43 +142,264 @@ function Faq() {
                           } h-5 w-5 text-purple-500`}
                         />
                       </Disclosure.Button>
-                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm ">
+                      <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
                         Always check back to see if you won after the lottery
                         has been drawn. Click "Check if you won".
                       </Disclosure.Panel>
                     </>
                   )}
                 </Disclosure>
+              </div> */}
+              <div className="">
+                <div className="mb-5  text-center md:text-2xl font-bold text-coinSinoGreen sm:m-0  ">
+                  Ticket Related questions
+                </div>
+                <div className="mx-auto  mt-5 w-full max-w-md rounded-2xl bg-slate-300 p-2 text-coinSinoPurpleNav">
+                  <Disclosure>
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full  justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>How do I purchase a ticket? </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base">
+                          To get a ticket is very easy, connect your wallet and
+                          click on get ticket, you can either edit your tickets
+                          manually or let the platform automatically choose
+                          random tickets.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>
+                            My ticket matches several numbers but I can't claim
+                            a prize.
+                          </span>
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          Tickets are only eligible for prizes if matching
+                          numbers from left to right match the winning digits.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>Do I claim manually if I win a ticket? </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          Yes, after clicking the "Check if you won." button and
+                          you are a winner, you will need to claim your winnings
+                          manually, but don't worry it is very easy and even if
+                          you missed claiming your tickets, can always go back
+                          to claim them.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>
+                            Can I swap my ticket back to tokens?
+                          </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          No, you can't, once you have purchased a ticket, you
+                          can't swap back the ticket for the token.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>
+                           Can I edit two tickets with the same numbers?
+                          </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          Yes, you are eligible since each ticket is treated as
+                          a separate entry to the Lottery. But bear in mind that
+                          every winning ticket in a pool shares equal wins.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                </div>
+              </div>
+              {/*  */}
+
+              <div className=" ">
+                <div className=" mt-11 text-center md:text-2xl font-bold capitalize text-coinSinoGreen sm:m-0 ">
+                  Other lottery Related questions
+                </div>
+                <div className="mx-auto mt-5 w-full max-w-md rounded-2xl bg-slate-300 p-2 text-coinSinoPurpleNav">
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>​​How does the bulk discount work? </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base">
+                          The bulk discount varies from ticket to ticket, The
+                          more tickets you purchase the more you are discounted.
+                          Max cap 50 tickets = 2.45%.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>What if there are no winners? </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          If the tokens in the prize pools aren't won or
+                          claimed, it does not go to waste! 50% of Unclaimed
+                          tokens in the pool are rolled over to the next Lottery
+                          round while the 50% left is moved to the odd pool for
+                          more betting experience.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>How often is the lottery? </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          The lottery is a daily affair, it starts around 12 AM
+                          - to 1 AM and draws around 12am - 1am the next day
+                          with an estimation’s of 24hrs.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                  <Disclosure as="div" className="mt-2">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
+                          <span>
+                            Am I charged a transaction fee for purchasing
+                            ticket/tickets?{" "}
+                          </span>
+
+                          <ChevronUpIcon
+                            className={`${
+                              open ? "rotate-180 transform" : ""
+                            } h-5 w-5 text-purple-500`}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
+                          You don't pay a transaction fee for purchasing a
+                          ticket instantly but after the draw of the lottery,
+                          the system deducts an 8% fee from the total amount in
+                          the pool for platform maintenance. However, every user
+                          accounts for the blockchain fees needed by block
+                          validators.
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+                </div>
               </div>
             </div>
 
             <div className="my-10 border  border-white/30"></div>
             {/* winning criteria */}
             <div className=" w-full md:flex md:items-center md:justify-between  md:space-x-10">
-              <div className="relative max-w-2xl space-y-5 text-sm leading-relaxed">
+              <div className="relative max-w-2xl space-y-5 text-sm leading-relaxed md:text-base">
                 <h2 className=" text-lg  font-extrabold capitalize text-coinSinoGreen">
-                  winning Criteria
+                  The Lottery Rules
                 </h2>
-                <h3 className="font-bold">
+                {/* <h3 className="font-bold">
                   The digits on your ticket must match in the correct order to
                   win.
-                </h3>
-                <p>Here’s an example lottery draw, with two tickets, A and B</p>
-                <p> </p>
-                <p className="ml-5">
+                </h3> */}
+                {/* <p>Here’s an example lottery draw, with two tickets, A and B</p> */}
+
+                <p className="">
                   {" "}
-                  Ticket A: Even though the last 5 digits match, the first digit
-                  is wrong, so this ticket doesn’t win a prize.
+                  The ticket numbers are between 0-9 On the Coinsino platform.
+                  However, 0 (Zero) can not start or end a valid ticket.
                 </p>
-                <p className="ml-5">
+                <p className="">
                   {" "}
-                  Ticket B: Even though the last 5 digits match, the first digit
-                  is wrong, so this ticket doesn’t win a prize.
+                  The maximum ticket one could purchase at once is capped at 50
+                  max, but you can purchase as many max tickets as possible.
                 </p>
                 <p>
-                  Prize brackets don’t ‘stack’: if you match the first 3 digits
-                  in order, you’ll only win prizes from the ‘Match 3’ bracket,
-                  and not from ‘Match 1’ and ‘Match 2’.
+                  To be eligible as a winner, your ticket digits starting from
+                  the left must match the exact starting numbers of the winning
+                  digits.
+                </p>
+                <p>
+                  Ticket discount is active on the platform and discount is
+                  better with buying bulk tickets. Discounts start from 2
+                  tickets (0.05% discount) to the max of 50 tickets (2.45%
+                  discount). But don't forget you can always get as many Max
+                  tickets as possible.
                 </p>
               </div>
               {/* criteria image */}
@@ -245,84 +497,83 @@ function Faq() {
             <div className="my-10 border border-white/30"></div>
 
             {/* price funds */}
-            <div>
-              <div className="md:flex md:items-center md:justify-between md:space-x-5">
-                <div className="max-w-sm space-y-5 ">
+            <div className="">
+              <div className="   mx-auto w-full lg:space-x-4 lg:flex lg:items-center    lg:justify-between">
+                <div className=" max-w-lg  space-y-5    ">
                   {" "}
                   <h2 className="my-2  text-lg font-extrabold text-coinSinoGreen">
-                    Prize Funds
+                    The Pool Prizes
                   </h2>
                   <p>
-                    The prizes for each lottery round come from three sources:
+                    The prizes for each lottery round come from these two
+                    sources:
                   </p>{" "}
                   <div>
                     <h3 className="font-extrabold text-coinSinoGreen">
                       Ticket Purchases
                     </h3>
-                    <p className="ml-2 text-sm leading-relaxed">
-                      100% of the CAKE paid by people buying tickets that round
-                      goes back into the prize pools.
+                    <p className=" text-sm leading-relaxed md:text-base">
+                      100% of the native tokens paid by people who purchased
+                      tickets for that round go back into the prize pools.
                     </p>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-coinSinoGreen">
-                      Rollover Prizes
+                      Grant proposal
                     </h3>
-                    <p className="ml-2 text-sm leading-relaxed">
-                      After every round, if nobody wins in one of the prize
-                      brackets, the unclaimed CAKE for that bracket rolls over
-                      into the next round and are redistributed among the prize
-                      pools.
+                    <p className=" text-sm leading-relaxed md:text-base">
+                      The funds could be from the team or a grant proposal.
                     </p>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-coinSinoGreen">
-                      CAKE Injections
+                      The Unclaimed Funds
                     </h3>
-                    <p className="ml-2 text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed md:text-base">
                       {" "}
-                      An average total of 35,000 CAKE from the treasury is added
-                      to lottery rounds over the course of a week. This CAKE is
-                      of course also included in rollovers! Read more in our
-                      guide to CAKE Tokenomics.
+                      If there are no winners in one of the prized pools, 50% of
+                      unclaimed tokens for that batch roll over into the next
+                      round and are redistributed among the next round prize
+                      pools. Meanwhile, the other 50% is transferred to the odd
+                      pool for betting continuity and platform improvement.
                     </p>
                   </div>
                 </div>
                 {/* price funds image */}
-                <div className="mx-auto my-5 w-full max-w-md rounded-xl border-2 border-coinSinoGreen bg-black/20 p-2">
+                <div className="mx-auto my-5 w-full max-w-lg rounded-xl border-2 border-coinSinoGreen bg-black/20 p-2">
                   <div height="auto" className="flex flex-col">
-                    <div className="bg-[url('/images/pieChart.png')] bg-contain bg-no-repeat bg-white rounded-full w-[200px] h-[200px] self-center"></div>
+                    <div className="h-[200px] w-[200px] self-center rounded-2xl bg-white bg-[url('/images/pieChart.png')] bg-contain bg-no-repeat"></div>
                     <div className="my-2 space-y-2">
-                      <div className="flex items-center  justify-between text-center text-sm font-semibold   capitalize text-coinSinoGreen">
+                      <div className="flex items-center  justify-between text-center text-sm font-semibold capitalize   text-coinSinoGreen md:text-base">
                         <h3>Digits matched</h3>
                         <h3>Prize pool allocation</h3>
                       </div>
 
-                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1 text-sm">
+                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1 text-sm md:text-base">
                         <p>Matches first 1</p>
                         <p>3%</p>
                       </div>
-                      <div className="flex items-center  justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm">
+                      <div className="flex items-center  justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm md:text-base">
                         <p>Matches first 2</p>
                         <p>4%</p>
                       </div>
-                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm">
+                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm md:text-base">
                         <p>Matches first 3</p>
                         <p>10%</p>
                       </div>
-                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm">
+                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm md:text-base">
                         <p>Matches first 4</p>
                         <p>13%</p>
                       </div>
-                      <div className="flex items-center  justify-between rounded-full  border border-coinSinoGreen/20 p-1 text-sm">
+                      <div className="flex items-center  justify-between rounded-full  border border-coinSinoGreen/20 p-1 text-sm md:text-base">
                         <p>Matches first 5</p>
                         <p>21%</p>
                       </div>
-                      <div className="flex items-center  justify-between rounded-full  border border-coinSinoGreen/20 p-1 text-sm">
+                      <div className="flex items-center  justify-between rounded-full  border border-coinSinoGreen/20 p-1 text-sm md:text-base">
                         <p>Matches first 6</p>
                         <p>41%</p>
                       </div>
-                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm">
+                      <div className="flex items-center justify-between rounded-full  border border-coinSinoGreen/20 p-1  text-sm md:text-base">
                         <p>Platform fee</p>
                         <p>8%</p>
                       </div>

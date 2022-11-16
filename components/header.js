@@ -115,41 +115,29 @@ function Header() {
 
         <ul className="fixed  bottom-0 left-0 z-10 flex h-16 w-full items-center  justify-between rounded-xl border border-coinSinoTextColor2 bg-coinSinoPurpleNav p-2  text-center text-xs font-bold text-white/80     sm:static  sm:top-0      sm:float-right  sm:w-fit  sm:space-x-3 sm:border-none sm:text-base ">
           {/* how to play */}
-          <Link href="/faq" passHref> 
-          <div className={`flex flex-col ${naveStyle("faq")} cursor-pointer`}>
-           
-              <a target="_blank" rel="noopener noreferrer">
-                How to play
-              </a>
-           
-            <QuestionMarkCircleIcon className="h-6 self-center text-center sm:hidden" />
-          </div>
-          </Link>
 
-          <div
+          <h2 className={`flex flex-col ${naveStyle("faq")} cursor-pointer`}>
+            {" "}
+            <Link href="/faq">How to play</Link>
+            <QuestionMarkCircleIcon className="h-6 self-center text-center sm:hidden" />
+          </h2>
+
+          <h2
             className={`flex flex-col ${naveStyle("winners")} cursor-pointer`}
           >
-            <Link href="/winners" passHref>
-              <a target="_blank" rel="noopener noreferrer">
-                Winner list
-              </a>
-            </Link>
-
-            <ViewListIcon className="h-6 self-center text-center sm:hidden" />
-          </div>
+            {" "}
+            <Link href="/winners">Winners List</Link>
+            <QuestionMarkCircleIcon className="h-6 self-center text-center sm:hidden" />
+          </h2>
 
           {/* odd pool */}
-
-          <div
+          <h2
             className={`flex flex-col ${naveStyle("oddPool")} cursor-pointer`}
           >
-            <Link href="/oddPool" passHref>
-              <a target="_blank" rel="noopener noreferrer">
-                Odd pool
-              </a>
-            </Link>
-            <LightningBoltIcon className="h-6 self-center text-center sm:hidden" />
-          </div>
+            {" "}
+            <Link href="/oddPool">Odd Pool</Link>
+            <QuestionMarkCircleIcon className="h-6 self-center text-center sm:hidden" />
+          </h2>
         </ul>
       </header>
       {/* mobile menu/nav */}
