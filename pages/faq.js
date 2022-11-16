@@ -12,26 +12,6 @@ import { useEffect, useRef, useState } from "react";
 function Faq() {
   const winning_Number_Example = 264939;
   const splittedWinningValues = Array.from(String(winning_Number_Example));
-  const [lottie, setLottie] = useState();
-  const ref = useRef(null);
-  useEffect(() => {
-    import("@lottiefiles/lottie-player");
-  });
-
-  useEffect(() => {
-    if (lottie && ref.current) {
-      const animation = lottie.loadAnimation({
-        container: ref.current,
-        renderer: "svg",
-        loop: true,
-        autoplay: true,
-        // path to your animation file, place it inside public folder
-        path: "/images/faq.json",
-      });
-
-      return () => animation.destroy();
-    }
-  }, [lottie]);
 
   return (
     <>
@@ -47,16 +27,8 @@ function Faq() {
           <div className="flex flex-col justify-between  text-coinSinoTextColor">
             {/* how to play */}
 
-            <div className="mx-auto   items-center space-y-5  md:flex md:w-full md:flex-wrap md:justify-between md:space-x-10 ">
-              <div className="mx-auto max-w-xs">
-                <lottie-player
-                  id="firstLottie"
-                  ref={ref}
-                  autoplay
-                  mode="normal"
-                  src="./images/faq.json"
-                />
-              </div>
+            <div className="mx-auto    items-center space-y-5  md:flex md:w-full md:flex-wrap md:justify-between md:space-x-10 ">
+              <div className="mx-auto h-[200px]  w-[200px] max-w-xs bg-[url('/images/faqs.gif')] bg-contain bg-no-repeat"></div>
               {/* <div className="">
                 {" "}
                 <h1 className="m-5 text-center text-2xl font-bold text-coinSinoGreen sm:m-0 sm:text-start ">
@@ -151,7 +123,7 @@ function Faq() {
                 </Disclosure>
               </div> */}
               <div className="">
-                <div className="mb-5  text-center md:text-2xl font-bold text-coinSinoGreen sm:m-0  ">
+                <div className="mb-5  text-center font-bold text-coinSinoGreen sm:m-0 md:text-2xl  ">
                   Ticket Related questions
                 </div>
                 <div className="mx-auto  mt-5 w-full max-w-md rounded-2xl bg-slate-300 p-2 text-coinSinoPurpleNav">
@@ -182,8 +154,8 @@ function Faq() {
                       <>
                         <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
                           <span>
-                            My ticket matches several numbers but I can't claim
-                            a prize.
+                            My ticket matches several numbers but I can&apos;t
+                            claim a prize.
                           </span>
                           <ChevronUpIcon
                             className={`${
@@ -211,11 +183,11 @@ function Faq() {
                           />
                         </Disclosure.Button>
                         <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
-                          Yes, after clicking the "Check if you won." button and
-                          you are a winner, you will need to claim your winnings
-                          manually, but don't worry it is very easy and even if
-                          you missed claiming your tickets, can always go back
-                          to claim them.
+                          Yes, after clicking the &apos;Check if you won.&apos;
+                          button and you are a winner, you will need to claim
+                          your winnings manually, but don&apos;t worry it is
+                          very easy and even if you missed claiming your
+                          tickets, can always go back to claim them.
                         </Disclosure.Panel>
                       </>
                     )}
@@ -224,9 +196,7 @@ function Faq() {
                     {({ open }) => (
                       <>
                         <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
-                          <span>
-                            Can I swap my ticket back to tokens?
-                          </span>
+                          <span>Can I swap my ticket back to tokens?</span>
 
                           <ChevronUpIcon
                             className={`${
@@ -235,8 +205,8 @@ function Faq() {
                           />
                         </Disclosure.Button>
                         <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
-                          No, you can't, once you have purchased a ticket, you
-                          can't swap back the ticket for the token.
+                          No, you can&apos;t, once you have purchased a ticket,
+                          you can&apos;t swap back the ticket for the token.
                         </Disclosure.Panel>
                       </>
                     )}
@@ -246,7 +216,7 @@ function Faq() {
                       <>
                         <Disclosure.Button className="flex w-full justify-between rounded-lg bg-purple-100 px-4 py-5 text-left text-sm font-medium text-purple-900 hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 md:text-base">
                           <span>
-                           Can I edit two tickets with the same numbers?
+                            Can I edit two tickets with the same numbers?
                           </span>
 
                           <ChevronUpIcon
@@ -268,7 +238,7 @@ function Faq() {
               {/*  */}
 
               <div className=" ">
-                <div className=" mt-11 text-center md:text-2xl font-bold capitalize text-coinSinoGreen sm:m-0 ">
+                <div className=" mt-11 text-center font-bold capitalize text-coinSinoGreen sm:m-0 md:text-2xl ">
                   Other lottery Related questions
                 </div>
                 <div className="mx-auto mt-5 w-full max-w-md rounded-2xl bg-slate-300 p-2 text-coinSinoPurpleNav">
@@ -306,7 +276,7 @@ function Faq() {
                           />
                         </Disclosure.Button>
                         <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
-                          If the tokens in the prize pools aren't won or
+                          If the tokens in the prize pools aren&apos;t won or
                           claimed, it does not go to waste! 50% of Unclaimed
                           tokens in the pool are rolled over to the next Lottery
                           round while the 50% left is moved to the odd pool for
@@ -352,7 +322,7 @@ function Faq() {
                           />
                         </Disclosure.Button>
                         <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm md:text-base ">
-                          You don't pay a transaction fee for purchasing a
+                          You don&apos;t pay a transaction fee for purchasing a
                           ticket instantly but after the draw of the lottery,
                           the system deducts an 8% fee from the total amount in
                           the pool for platform maintenance. However, every user
@@ -398,8 +368,8 @@ function Faq() {
                   Ticket discount is active on the platform and discount is
                   better with buying bulk tickets. Discounts start from 2
                   tickets (0.05% discount) to the max of 50 tickets (2.45%
-                  discount). But don't forget you can always get as many Max
-                  tickets as possible.
+                  discount). But don&apos;t forget you can always get as many
+                  Max tickets as possible.
                 </p>
               </div>
               {/* criteria image */}
@@ -498,7 +468,7 @@ function Faq() {
 
             {/* price funds */}
             <div className="">
-              <div className="   mx-auto w-full lg:space-x-4 lg:flex lg:items-center    lg:justify-between">
+              <div className="   mx-auto w-full lg:flex lg:items-center lg:justify-between    lg:space-x-4">
                 <div className=" max-w-lg  space-y-5    ">
                   {" "}
                   <h2 className="my-2  text-lg font-extrabold text-coinSinoGreen">
