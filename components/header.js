@@ -115,14 +115,16 @@ function Header() {
 
         <ul className="fixed  bottom-0 left-0 z-10 flex h-16 w-full items-center  justify-between rounded-xl border border-coinSinoTextColor2 bg-coinSinoPurpleNav p-2  text-center text-xs font-bold text-white/80     sm:static  sm:top-0      sm:float-right  sm:w-fit  sm:space-x-3 sm:border-none sm:text-base ">
           {/* how to play */}
+          <Link href="/faq" passHref> 
           <div className={`flex flex-col ${naveStyle("faq")} cursor-pointer`}>
-            <Link href="/faq" passHref>
+           
               <a target="_blank" rel="noopener noreferrer">
                 How to play
               </a>
-            </Link>
+           
             <QuestionMarkCircleIcon className="h-6 self-center text-center sm:hidden" />
           </div>
+          </Link>
 
           <div
             className={`flex flex-col ${naveStyle("winners")} cursor-pointer`}

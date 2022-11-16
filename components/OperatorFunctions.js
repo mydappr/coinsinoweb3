@@ -78,7 +78,7 @@ function OperatorFunctions() {
         ethers.utils.parseUnits(pricePerTicket, "ether"),
         2000,
         [500, 960, 1430, 1910, 2390, 2810],
-        500
+        800
       );
       console.log("asigned start");
 
