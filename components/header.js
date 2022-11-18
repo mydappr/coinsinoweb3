@@ -8,18 +8,8 @@ import WalletModal from "./connectWalletModal";
 import useWallets from "./useWallets";
 
 import {
-  ArrowCircleDownIcon,
-  ArrowDownIcon,
-  ArrowLeftIcon,
-  ArrowSmDownIcon,
-  ArrowSmRightIcon,
-  AtSymbolIcon,
-  CheckCircleIcon,
   ChevronDownIcon,
-  LightningBoltIcon,
-  PresentationChartLineIcon,
   QuestionMarkCircleIcon,
-  ViewListIcon,
 } from "@heroicons/react/solid";
 
 function Header() {
@@ -57,11 +47,8 @@ function Header() {
     <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/images/bg.png')]  sm:bg-cover sm:bg-top  ">
       {" "}
       <header className="sticky  z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
-        <Link href="/" passHref>
-          <a>
-            {" "}
-            <Image height={30} width={100} src={"/images/logoForDarkBg.png"} />
-          </a>
+        <Link href="/" className="cursor-pointer">
+          <Image height={30} width={100} src={"/images/logoForDarkBg.png"} />
         </Link>
 
         <WalletModal />
