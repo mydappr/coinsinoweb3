@@ -16,6 +16,10 @@ const nextConfig = {
     jwt_secret: process.env.jwt_secret,
   },
   productionBrowserSourceMaps: false,
+  images: {
+    loader: "akamai",
+    path: "",
+  },
 };
 
 module.exports = nextConfig;

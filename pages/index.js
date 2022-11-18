@@ -13,7 +13,7 @@ import InitialLotteryData from "../components/initalLotteryData";
 
 // getserverside
 // // serverside
-export const getServerSideProps = async () => {
+export const getInitialProps = async () => {
   // conract address
   const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
   // node url
