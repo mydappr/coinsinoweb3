@@ -18,7 +18,7 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   images: {
     loader: "akamai",
-    path: "coinsinoweb3/",
+    path: "coinsinoweb3",
   },
   basePath: "coinsinoweb3",
   assetPrefix: "coinsinoweb3",
