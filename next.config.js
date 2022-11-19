@@ -20,8 +20,8 @@ const nextConfig = {
     loader: "akamai",
     path: "",
   },
-  basePath: "",
-  assetPrefix: "",
+  basePath: "coinsinoweb3",
+  assetPrefix: "coinsinoweb3",
 };
 
 module.exports = nextConfig;
