@@ -5,6 +5,7 @@ import Sinoabi from "../utils/Coinsino.json";
 import moment from "moment";
 import { useRecoilState } from "recoil";
 import { XIcon } from "@heroicons/react/solid";
+import Image from "next/image";
 
 import {
   latestLotteryId,
@@ -189,10 +190,6 @@ function SectionA({ keys }) {
     const s = dateString.seconds();
     let maxTime = moment();
 
-
-
-    
-
     maxTime.set({
       year: y,
       month: mo,
@@ -249,7 +246,7 @@ function SectionA({ keys }) {
       >
         {/* toast Message */}
         <ToastContainer />
-        <div className=" mx-auto mt-0 h-[300px] w-full bg-[url('/images/heroBg.png')] bg-cover bg-right  md:h-[500px]">
+        <div className=" mx-auto mt-0 h-[300px] w-full bg-[url('/coinsinoweb3/images/heroBg.png')] bg-cover bg-right  md:h-[500px]">
           <div className="mx-auto flex h-full  max-w-[300px] flex-col justify-between text-center  ">
             <h2 className="mt-2 text-base font-bold text-coinSinoTextColor md:mt-3">
               The pool lottery
@@ -371,7 +368,7 @@ function SectionA({ keys }) {
                 </div>
               ) : lotteryStatus === closed ||
                 (lotteryStatus === Open && timeElasped) ? (
-                <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
+                <div className="relative h-40 bg-[url('/coinsinoweb3/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
                   <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
                     <p>
                       {" "}
@@ -570,11 +567,13 @@ function SectionA({ keys }) {
               </Transition>
             </div>
             {/* end of view ticket */}
+            <div className="  mt-5 h-[200px] w-[200px] bg-cover bg-[url('/coinsinoweb3/images/gift.png')]    sm:max-h-[20%] sm:max-w-[20%]"></div>
 
+            {/* 
             <img
               className="  mt-5 max-h-[300px] w-[300px]  object-contain   sm:max-h-[20%] sm:max-w-[20%]"
               src={"/images/gift.png"}
-            />
+            /> */}
           </div>
 
           <BuyDialog />
@@ -675,7 +674,6 @@ function SectionA({ keys }) {
               </li>
               <li className="mr-2" role="presentation">
                 <button
-                  
                   className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
                     bnbPool &&
                     " border-blue-600  text-blue-600 hover:text-blue-600"
@@ -723,7 +721,7 @@ function SectionA({ keys }) {
 
           <div className=" mx-auto my-0 max-w-[700px] p-5    text-center">
             {telosPool && (
-              <div className="flex flex-wrap  gap-2 justify-between  sm:justify-start ">
+              <div className="flex flex-wrap  justify-between gap-2  sm:justify-start ">
                 <div className=" poolBar">
                   <h2 className="text-base  font-bold  text-coinSinoTextColor">
                     Match first 1
