@@ -11,11 +11,8 @@ import InitialLotteryData from "../components/initalLotteryData";
 
 // load InitialLotteryData
 
-export default function Home({ lotteryData }) {
-  const _endTime = lotteryData._endTime;
-  const _lotteryid = lotteryData._lotteryid;
-  const _status = lotteryData._status;
-  const _amountCollectedInTelos = lotteryData._amountCollectedInTelos;
+export default function Home({ _endTime, _lotteryid, _status, _amountCollectedInTelos }) {
+ 
 
   const opkey = process.env.opkey;
 
@@ -51,7 +48,7 @@ export default function Home({ lotteryData }) {
 // getserverside
 // // serverside
 
-Home.getInitialProps = async () => {
+export async function getStaticProps() {
   // conract address
   const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
   // node url
@@ -87,6 +84,6 @@ Home.getInitialProps = async () => {
   // fetch initial status for lottery
 
   return {
-    lotteryData: { _endTime, _lotteryid, _status, _amountCollectedInTelos },
+    props: { _endTime, _lotteryid, _status, _amountCollectedInTelos },
   };
 };
