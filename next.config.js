@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   reactStrictMode: true,
 
@@ -22,6 +23,19 @@ const nextConfig = {
   },
   basePath: "/coinsinoweb3",
   assetPrefix: "/coinsinoweb3",
+
+  exportPathMap: async function (
+    defaultPathMap,
+    { dev, dir, outDir, distDir, buildId }
+  ) {
+    return {
+      "/": { page: "/" },
+      "/entry": { page: "/entry" },
+      "/faq": { page: "/faq" },
+      "/winners": { page: "/winners" },
+      "/oddPool": { page: "/oddPool" },
+    };
+  },
 };
 
 module.exports = nextConfig;
