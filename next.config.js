@@ -21,7 +21,7 @@ const nextConfig = {
     loader: "akamai",
     path: "/coinsinoweb3/",
   },
-  basePath: "/coinsinoweb3",
+  basePath: "",
   assetPrefix: "/coinsinoweb3",
 
   // exportPathMap: async function (
