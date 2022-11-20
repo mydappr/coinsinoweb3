@@ -19,24 +19,23 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   images: {
     loader: "akamai",
-    path: "",
+    path: "/coinsinoweb3/",
   },
   basePath: "/coinsinoweb3",
   assetPrefix: "/coinsinoweb3",
 
-  // exportPathMap: async function (
-  //   defaultPathMap,
-  //   { dev, dir, outDir, distDir, buildId }
-  // ) {
-  //   return {
-  //     "/": { page: "/" },
+  exportPathMap: async function (
+    defaultPathMap,
+    { dev, dir, outDir, distDir, buildId }
+  ) {
+    return {
+      "/": { page: "/" },
 
-  //     "/faq": { page: "/faq" },
-  //     "/api/entry": { page: "/api/entry" },
-  //     "/api/winners": { page: "/api/winners" },
-  //     "/api/oddPool": { page: "/api/oddPool" },
-  //   };
-  // },
+      "/faq": { page: "/faq" },
+      "/winners": { page: "/winners" },
+      "/oddPool": { page: "/oddPool" },
+    };
+  },
 };
 
 module.exports = nextConfig;
