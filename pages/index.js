@@ -11,9 +11,12 @@ import InitialLotteryData from "../components/initalLotteryData";
 
 // load InitialLotteryData
 
-export default function Home({ _endTime, _lotteryid, _status, _amountCollectedInTelos }) {
- 
-
+export default function Home({
+  _endTime,
+  _lotteryid,
+  _status,
+  _amountCollectedInTelos,
+}) {
   const opkey = process.env.opkey;
 
   return (
@@ -86,4 +89,4 @@ export async function getStaticProps() {
   return {
     props: { _endTime, _lotteryid, _status, _amountCollectedInTelos },
   };
-};
+}

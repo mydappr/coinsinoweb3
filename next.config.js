@@ -30,10 +30,11 @@ const nextConfig = {
   ) {
     return {
       "/": { page: "/" },
-      "/entry": { page: "/entry" },
+
       "/faq": { page: "/faq" },
-      "/winners": { page: "/winners" },
-      "/oddPool": { page: "/oddPool" },
+      "/api/entry": { page: "/api/entry" },
+      "/api/winners": { page: "/api/winners" },
+      "/api/oddPool": { page: "/api/oddPool" },
     };
   },
 };
