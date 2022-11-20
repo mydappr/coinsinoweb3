@@ -246,7 +246,7 @@ function SectionA({ keys }) {
       >
         {/* toast Message */}
         <ToastContainer />
-        <div className=" mx-auto mt-0 h-[300px] w-full bg-[url('/coinsinoweb3/images/heroBg.png')] bg-cover bg-right  md:h-[500px]">
+        <div className=" mx-auto mt-0 h-[300px] w-full bg-[url('/images/heroBg.png')] bg-cover bg-right  md:h-[500px]">
           <div className="mx-auto flex h-full  max-w-[300px] flex-col justify-between text-center  ">
             <h2 className="mt-2 text-base font-bold text-coinSinoTextColor md:mt-3">
               The pool lottery
@@ -368,7 +368,7 @@ function SectionA({ keys }) {
                 </div>
               ) : lotteryStatus === closed ||
                 (lotteryStatus === Open && timeElasped) ? (
-                <div className="relative h-40 bg-[url('/coinsinoweb3/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
+                <div className="relative h-40 bg-[url('/images/Draw.gif')] bg-contain bg-center bg-no-repeat">
                   <div className=" absolute bottom-0 mx-auto flex  w-full items-center justify-center space-x-1 text-center font-bold">
                     <p>
                       {" "}
@@ -567,7 +567,7 @@ function SectionA({ keys }) {
               </Transition>
             </div>
             {/* end of view ticket */}
-            <div className="  mt-5 h-[200px] w-[200px] bg-cover bg-[url('/coinsinoweb3/images/gift.png')]    sm:max-h-[20%] sm:max-w-[20%]"></div>
+            <div className="  mt-5 h-[200px] w-[200px] bg-cover bg-[url('/images/gift.png')]    sm:max-h-[20%] sm:max-w-[20%]"></div>
 
             {/* 
             <img

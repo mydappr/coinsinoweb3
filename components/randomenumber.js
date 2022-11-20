@@ -52,7 +52,7 @@ function RandomImage() {
             return (
               <div
                 key={i}
-                className={`relative  h-[45px] w-[80%]    items-center   rounded-full  bg-center sm:h-[68px]  ${negetiveAngle}rotate-12  bg-[url('/coinsinoweb3/images/${balls}.svg')] bg-no-repeat `}
+                className={`relative  h-[45px] w-[80%]    items-center   rounded-full  bg-center sm:h-[68px]  ${negetiveAngle}rotate-12  bg-[url('/images/${balls}.svg')] bg-no-repeat `}
               >
                 <div className="shadow-[2px]  absolute right-0 left-0 top-2 bottom-0 text-center  text-[21px]   font-bold   blur-[0.8px] sm:text-[35px] ">
                   {e}

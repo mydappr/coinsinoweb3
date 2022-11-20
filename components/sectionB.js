@@ -550,7 +550,7 @@ function SectionB({ keys }) {
             </p>
 
             {unClaimedUserRewards > 0 && rewardMessage != "Reward Claimed!" && (
-              <div className="mx-auto mt-0   h-72 w-72 bg-black bg-[url('/coinsinoweb3/images/congratulations.gif')]  bg-cover md:h-96  md:w-96" />
+              <div className="mx-auto mt-0   h-72 w-72 bg-black bg-[url('/images/congratulations.gif')]  bg-cover md:h-96  md:w-96" />
             )}
 
             {unClaimedUserRewards > 0 && rewardMessage != "Reward Claimed!" && (

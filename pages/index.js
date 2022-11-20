@@ -51,7 +51,7 @@ export default function Home({
 // getserverside
 // // serverside
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   // conract address
   const coinSinoContractAddress = "0xc65F1221147BE339704a1DB0A0B65F2DE3cA7aFC";
   // node url

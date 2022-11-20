@@ -44,7 +44,7 @@ function Header() {
     return `${router.pathname == `/${page}` ? "activeNave" : "inActiveNave"}`;
   };
   return (
-    <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/coinsinoweb3/images/bg.png')]  sm:bg-cover sm:bg-top  ">
+    <div className=" mx-auto  w-full border-b-[0.095rem]     border-transparent  bg-[url('/images/bg.png')]  sm:bg-cover sm:bg-top  ">
       {" "}
       <header className="sticky  z-20    mx-auto flex max-w-7xl items-center  justify-between p-5   text-coinSinoTextColor   ">
         <Link href="/" className="cursor-pointer">
@@ -76,7 +76,7 @@ function Header() {
             <div
               className={` group relative flex cursor-pointer items-center space-x-1   rounded-2xl border-2 border-white/30  bg-coinSinoGreen/10  p-1  hover:bg-coinSinoPurpleNav sm:max-w-sm  `}
             >
-              <div className=" mx-auto mt-0 h-6 w-6  rounded-full border-2 border-coinSinoGreen bg-[url('/coinsinoweb3/images/walletIcon.svg')] bg-no-repeat text-white  hover:text-coinSinoPurpleNav  "></div>
+              <div className=" mx-auto mt-0 h-6 w-6  rounded-full border-2 border-coinSinoGreen bg-[url('/images/walletIcon.svg')] bg-no-repeat text-white  hover:text-coinSinoPurpleNav  "></div>
 
               <div> {truncatedAddress}</div>
               <div className="">
@@ -91,7 +91,7 @@ function Header() {
                   >
                     <p className="p-2 text-base  font-semibold">Disconnect</p>
 
-                    <p className="  h-6  w-6 bg-[url('/coinsinoweb3/images/logoutIcon.svg')]   bg-no-repeat text-white"></p>
+                    <p className="  h-6  w-6 bg-[url('/images/logoutIcon.svg')]   bg-no-repeat text-white"></p>
                   </div>
                 ))}
               </div>

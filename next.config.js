@@ -17,25 +17,6 @@ const nextConfig = {
     jwt_secret: process.env.jwt_secret,
   },
   productionBrowserSourceMaps: false,
-  images: {
-    loader: "akamai",
-    path: "/coinsinoweb3/",
-  },
-  basePath: "/coinsinoweb3",
-  assetPrefix: "/coinsinoweb3",
-
-  exportPathMap: async function (
-    defaultPathMap,
-    { dev, dir, outDir, distDir, buildId }
-  ) {
-    return {
-      "/": { page: "/" },
-
-      "/faq": { page: "/faq" },
-      "/winners": { page: "/winners" },
-      "/oddPool": { page: "/oddPool" },
-    };
-  },
 };
 
 module.exports = nextConfig;

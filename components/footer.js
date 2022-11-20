@@ -24,7 +24,7 @@ function Footer({ scrollTargetElementRef }) {
         <div className="my-5 mt-10 mb-28 space-y-2 ">
           {" "}
           <div className="w-25 hidden cursor-pointer md:inline">
-            <Image height={30} width={120} src={"/coinsinoweb3/images/logoForDarkBg.png"} />
+            <Image height={30} width={120} src={"/images/logoForDarkBg.png"} />
           </div>
           <p className="text-lg text-coinSinoTextColor2 ">
             © 2022 coinSino. All Rights Reserved.
@@ -34,11 +34,11 @@ function Footer({ scrollTargetElementRef }) {
               <a href="https://twitter.com/mydappr">
                 <img
                   className="w-15 h-15 group-hover:hidden"
-                  src={"/coinsinoweb3/images/twitterActive.png"}
+                  src={"/images/twitterActive.png"}
                 />
                 <img
                   className="w-15 h-15 hidden group-hover:inline"
-                  src={"/coinsinoweb3/images/twitterInActive.png"}
+                  src={"/images/twitterInActive.png"}
                 />
               </a>
             </li>
@@ -46,11 +46,11 @@ function Footer({ scrollTargetElementRef }) {
             {/* <li className="group cursor-pointer">
               <img
                 className="w-15 h-15 group-hover:hidden"
-                src={"/coinsinoweb3/images/fbActive.png"}
+                src={"/images/fbActive.png"}
               />
               <img
                 className="w-15 h-15 hidden group-hover:inline"
-                src={"/coinsinoweb3/images/fbInActive.png"}
+                src={"/images/fbInActive.png"}
               />
             </li> */}
 
@@ -58,11 +58,11 @@ function Footer({ scrollTargetElementRef }) {
               <a href="https://www.instagram.com/mydappr.io/?hl=en">
                 <img
                   className="w-15 h-15 group-hover:hidden"
-                  src={"/coinsinoweb3/images/instagramActive.png"}
+                  src={"/images/instagramActive.png"}
                 />
                 <img
                   className="w-15 h-15 hidden group-hover:inline"
-                  src={"/coinsinoweb3/images/instagramInActive.png"}
+                  src={"/images/instagramInActive.png"}
                 />
               </a>
             </li>
@@ -71,11 +71,11 @@ function Footer({ scrollTargetElementRef }) {
               <a href="https://github.com/mydappr">
                 <img
                   className="w-15 h-15 group-hover:hidden"
-                  src={"/coinsinoweb3/images/githubActive.png"}
+                  src={"/images/githubActive.png"}
                 />
                 <img
                   className="w-15 h-15 hidden group-hover:inline"
-                  src={"/coinsinoweb3/images/githubInActive.png"}
+                  src={"/images/githubInActive.png"}
                 />
               </a>
             </li>
@@ -84,11 +84,11 @@ function Footer({ scrollTargetElementRef }) {
               <a href="https://medium.com/@MydAppr">
                 <img
                   className="w-15 h-15 group-hover:hidden"
-                  src={"/coinsinoweb3/images/mediumActive.png"}
+                  src={"/images/mediumActive.png"}
                 />
                 <img
                   className="w-15 h-15 hidden group-hover:inline"
-                  src={"/coinsinoweb3/images/mediumInActive.png"}
+                  src={"/images/mediumInActive.png"}
                 />
               </a>
             </li>
@@ -96,11 +96,11 @@ function Footer({ scrollTargetElementRef }) {
             <li className="group cursor-pointer">
               <img
                 className="w-15 h-15 group-hover:hidden"
-                src={"/coinsinoweb3/images/telegramActive.png"}
+                src={"/images/telegramActive.png"}
               />
               <img
                 className="w-15 h-15 hidden group-hover:inline"
-                src={"/coinsinoweb3/images/telegramInActive.png"}
+                src={"/images/telegramInActive.png"}
               />
             </li> */}
           </ul>
