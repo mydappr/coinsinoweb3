@@ -263,7 +263,7 @@ function SectionA({ keys }) {
                     decimal="."
                     end={totalLotteryDeposit}
                   />{" "}
-                  Tlos
+                  TLOS
                 </h2>
               ) : (
                 <div className="waiting w-40 md:w-80"></div>
@@ -429,7 +429,7 @@ function SectionA({ keys }) {
                     decimal="."
                     end={totalLotteryDeposit}
                   />{" "}
-                  Tlos
+                  TLOS
                 </strong>
               </p>
               {currentAccount && (
@@ -606,7 +606,7 @@ function SectionA({ keys }) {
               )}
 
               <p className=" mt-3 text-center">
-                Total Tlos:{" "}
+                Total TLOS:{" "}
                 <strong className=" text-coinSinoGreen">
                   <CountUp
                     duration={3}
@@ -647,7 +647,7 @@ function SectionA({ keys }) {
                     setbuyModalState(true);
                   }}
                 >
-                  Coming soon on Eos
+                  Coming soon on EOS
                 </button>
               ) : (
                 <p
@@ -660,7 +660,7 @@ function SectionA({ keys }) {
                 </p>
               )}
               <p className=" mt-3 text-center">
-                Total Eos: <strong className=" text-coinSinoGreen">0</strong>
+                Total EOS: <strong className=" text-coinSinoGreen">0</strong>
               </p>
             </div>
           </div>
@@ -689,7 +689,7 @@ function SectionA({ keys }) {
                     seteosPool(false);
                   }}
                 >
-                  Tlos pool
+                  TLOS pool
                 </button>
               </li>
 
@@ -710,7 +710,7 @@ function SectionA({ keys }) {
                     seteosPool(true);
                   }}
                 >
-                  Eos pool
+                  EOS pool
                 </button>
               </li>
             </ul>
@@ -901,7 +901,7 @@ function SectionA({ keys }) {
 
             {eosPool && (
               <div>
-                <p>Coming soon on Eos</p>
+                <p>Coming soon on EOS</p>
               </div>
             )}
 
