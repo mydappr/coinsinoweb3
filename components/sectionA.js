@@ -78,7 +78,7 @@ function SectionA({ keys }) {
   const [showCurrentTickets, setShowCurrentTickets] = useState(false);
   const [telosPool, setTelosPool] = useState(true);
   const [ethPool, setEthPool] = useState(false);
-  const [bnbPool, setBnbPool] = useState(false);
+  const [eosPool, seteosPool] = useState(false);
 
   // closeviewticket
   function closeViewTickets() {
@@ -567,7 +567,7 @@ function SectionA({ keys }) {
               </Transition>
             </div>
             {/* end of view ticket */}
-            <div className="  mt-5 h-[200px] w-[200px] bg-cover bg-[url('/images/gift.png')]    sm:max-h-[20%] sm:max-w-[20%]"></div>
+            <div className="  mt-5 h-[200px] w-[200px] bg-[url('/images/gift.png')] bg-cover    sm:max-h-[20%] sm:max-w-[20%]"></div>
 
             {/* 
             <img
@@ -579,7 +579,7 @@ function SectionA({ keys }) {
           <BuyDialog />
 
           {/* list of pools */}
-          <div className=" my-5 flex flex-wrap justify-between  gap-2 p-2   sm:p-10">
+          <div className=" my-5 flex flex-wrap justify-between lg:justify-around  gap-2 p-2   sm:p-10">
             <div>
               {currentAccount ? (
                 <button
@@ -619,26 +619,46 @@ function SectionA({ keys }) {
               </p>
             </div>
 
-            <div>
+            {/* <div>
               <p className="joinBtn cursor-not-allowed bg-gray-600">
                 Join BNB pool
               </p>
               <p className=" mt-3 text-center">
                 Total BNB: <strong className=" text-coinSinoGreen">0</strong>
               </p>
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
               <p className="joinBtn cursor-not-allowed bg-gray-600">
                 Join ETH pool
               </p>
               <p className=" mt-3 text-center">
                 Total ETH: <strong className=" text-coinSinoGreen">0</strong>
               </p>
-            </div>
+            </div> */}
             <div>
-              <p className="joinBtn cursor-not-allowed bg-gray-600">
-                Join Eos pool
-              </p>
+              {currentAccount ? (
+                <button
+                  disabled={true}
+                  className={`joinBtn 
+                   
+                    } cursor-not-allowed
+                  bg-gray-600`}
+                  onClick={() => {
+                    setbuyModalState(true);
+                  }}
+                >
+                  Coming soon on Eos
+                </button>
+              ) : (
+                <p
+                  className="joinBtn"
+                  onClick={() => {
+                    setwalletModal(true);
+                  }}
+                >
+                  Connect Wallet
+                </p>
+              )}
               <p className=" mt-3 text-center">
                 Total Eos: <strong className=" text-coinSinoGreen">0</strong>
               </p>
@@ -666,39 +686,17 @@ function SectionA({ keys }) {
                   onClick={() => {
                     setEthPool(false);
                     setTelosPool(true);
-                    setBnbPool(false);
+                    seteosPool(false);
                   }}
                 >
                   Tlos pool
                 </button>
               </li>
-              <li className="mr-2" role="presentation">
-                <button
-                  className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
-                    bnbPool &&
-                    " border-blue-600  text-blue-600 hover:text-blue-600"
-                  }`}
-                  id="dashboard-tab"
-                  data-tabs-target="#dashboard"
-                  type="button"
-                  role="tab"
-                  aria-controls="dashboard"
-                  aria-selected="false"
-                  onClick={() => {
-                    setEthPool(false);
-                    setTelosPool(false);
-                    setBnbPool(true);
-                  }}
-                >
-                  Bnb Pool(Inactive)
-                </button>
-              </li>
 
               <li className="mr-2" role="presentation">
                 <button
-                  disabled={true}
                   className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
-                    bnbPool &&
+                    eosPool &&
                     " border-blue-600  text-blue-600 hover:text-blue-600"
                   }`}
                   id="dashboard-tab"
@@ -708,12 +706,11 @@ function SectionA({ keys }) {
                   aria-controls="dashboard"
                   aria-selected="false"
                   onClick={() => {
-                    setEthPool(true);
                     setTelosPool(false);
-                    setBnbPool(false);
+                    seteosPool(true);
                   }}
                 >
-                  Eth Pool(Inactive)
+                  Eos pool
                 </button>
               </li>
             </ul>
@@ -902,9 +899,15 @@ function SectionA({ keys }) {
               </div>
             )}
 
+            {eosPool && (
+              <div>
+                <p>Coming soon on Eos</p>
+              </div>
+            )}
+
             {/* <button
                         onClick={() => {
-                          setBnbPool(true);
+                          seteosPool(true);
                           setTelosPool(false);
                           setEthPool(false);
                         }}
@@ -914,7 +917,7 @@ function SectionA({ keys }) {
                       </button>
                       <button
                         onClick={() => {
-                          setBnbPool(false);
+                          seteosPool(false);
                           setTelosPool(false);
                           setEthPool(true);
                         }}
