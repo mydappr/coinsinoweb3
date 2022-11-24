@@ -695,7 +695,7 @@ function SectionA({ keys }) {
 
               <li className="mr-2" role="presentation">
                 <button
-                  className={`inline-block cursor-not-allowed rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
+                  className={`inline-block  rounded-t-lg border-b-2  border-transparent p-4 text-coinSinoTextColor2  outline-none ${
                     eosPool &&
                     " border-blue-600  text-blue-600 hover:text-blue-600"
                   }`}
